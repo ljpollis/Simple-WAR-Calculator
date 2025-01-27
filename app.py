@@ -39,7 +39,27 @@ app.layout = [
     html.Br(),
     dcc.Input(value = '150', type = 'number'),
     html.Br(),
-    html.Br()
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Label('Primary Position'),
+    dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF'),
+    html.Br(),
+    html.Label('Defensive Performance'),
+    dcc.Slider(
+      min = 20,
+      max = 80,
+      step = 10,
+      value = 50,
+        ),
+    html.Br(),
+    html.Label('Baserunning Performance'),
+    dcc.Slider(
+      min = 20,
+      max = 80,
+      step = 10,
+      value = 50,
+        )
   ])
 ]
 
