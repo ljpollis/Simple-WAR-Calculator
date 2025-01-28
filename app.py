@@ -5,7 +5,7 @@ app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.config.suppress_callback_exceptions = True
 
-column2 = [
+outputs = [
   html.Div(children=[
     html.Div(id='xwrc'),
     html.Div(id='batting-runs'),
@@ -32,27 +32,27 @@ column2 = [
     html.H4(id='wins-above-replacement-display')
     ])]
 
-column4 = [
-    html.Label('Primary Position'),
-    dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
-    html.Br(),
-    html.Label('Defensive Performance'),
-    dcc.Slider(
-      id = 'defense',
-      min = 20,
-      max = 80,
-      step = 5,
-      value = 50,
-        ),
-    html.Br(),
-    html.Label('Baserunning Performance'),
-    dcc.Slider(
-      id = 'baserunning', 
-      min = 20,
-      max = 80,
-      step = 5,
-      value = 50,
-        )
+nontextselections = [
+  html.Label('Primary Position'),
+  dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
+  html.Br(),
+  html.Label('Defensive Performance'),
+  dcc.Slider(
+    id = 'defense',
+    min = 20,
+    max = 80,
+    step = 5,
+    value = 50
+    ),
+  html.Br(),
+  html.Label('Baserunning Performance'),
+  dcc.Slider(
+    id = 'baserunning', 
+    min = 20,
+    max = 80,
+    step = 5,
+    value = 50
+    )
 ]
 
 home_runs_label = html.Label('Home Runs:')
@@ -140,10 +140,10 @@ app.layout = [
         games_row,
         html.Br(),
         dbc.Row([
-          dbc.Col(column4, width = 10)
+          dbc.Col(nontextselections, width = 10)
         ])
       ], style = {"margin-left": "10px"}, width = 3),
-      dbc.Col(column2, width = 3)
+      dbc.Col(outputs, width = 3)
     ], justify = "start"
   )
 ]
