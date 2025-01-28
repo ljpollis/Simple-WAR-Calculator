@@ -33,7 +33,9 @@ outputs = [
     html.Br(),
     html.Br(),
     html.H4(id='wins-above-replacement-display')
-    ])]
+    ]
+  )
+]
 
 nontextselections = [
   html.Label('Primary Position'),
@@ -128,31 +130,31 @@ app.layout = [
 ## Calculation callbacks
 
 @callback(
-    Output(component_id = 'xwrc', component_property = 'data'),
-    Input(component_id = 'home-runs', component_property = 'value'),
-    Input(component_id = 'walks', component_property = 'value'),
-    Input(component_id = 'strikeouts', component_property = 'value'),
-    Input(component_id = 'stolen-bases', component_property = 'value'),
-    Input(component_id = 'babip', component_property = 'value'),
-    Input(component_id = 'plate-appearances', component_property = 'value')
-    )
+  Output(component_id = 'xwrc', component_property = 'data'),
+  Input(component_id = 'home-runs', component_property = 'value'),
+  Input(component_id = 'walks', component_property = 'value'),
+  Input(component_id = 'strikeouts', component_property = 'value'),
+  Input(component_id = 'stolen-bases', component_property = 'value'),
+  Input(component_id = 'babip', component_property = 'value'),
+  Input(component_id = 'plate-appearances', component_property = 'value')
+  )
 def update_xwrc(hr, bb, k, sb, babip, pa):
-    return (1184.34 * float(hr) / float(pa) + 275.21 * float(bb) / float(pa) - 180.52 * float(k) / float(pa) + 422.14 * float(babip) + 151.75 * float(sb) / float(pa) - 51.57)
+  return (1184.34 * float(hr) / float(pa) + 275.21 * float(bb) / float(pa) - 180.52 * float(k) / float(pa) + 422.14 * float(babip) + 151.75 * float(sb) / float(pa) - 51.57)
 
 @callback(
-    Output('batting-runs', 'data'),
-    Input('xwrc', 'data'),
-    Input('plate-appearances', 'value')
-    )
+  Output('batting-runs', 'data'),
+  Input('xwrc', 'data'),
+  Input('plate-appearances', 'value')
+  )
 def update_batting_runs(xwrc, pa):
-    return float(xwrc - 100) * 0.1123 * float(pa) / 100
+  return float(xwrc - 100) * 0.1123 * float(pa) / 100
 
 @callback(
-    Output('defense-runs', 'data'),
-    Input('position', 'value'),
-    Input('defense', 'value'),
-    Input('games', 'value')
-    )
+  Output('defense-runs', 'data'),
+  Input('position', 'value'),
+  Input('defense', 'value'),
+  Input('games', 'value')
+  )
 def update_defense_runs(position, defense, games):
   if position == 'DH':
     defense = 0
@@ -161,18 +163,18 @@ def update_defense_runs(position, defense, games):
   return defense
 
 @callback(
-    Output('baserunning-runs', 'data'),
-    Input('baserunning', 'value'),
-    Input('plate-appearances', 'value')
-    )
+  Output('baserunning-runs', 'data'),
+  Input('baserunning', 'value'),
+  Input('plate-appearances', 'value')
+  )
 def update_baserunning_runs(baserunning, pa):
-    return (float(baserunning) - 50) / 2 * float(pa) / 600
+  return (float(baserunning) - 50) / 2 * float(pa) / 600
 
 @callback(
-    Output('positional-runs', 'data'),
-    Input('position', 'value'),
-    Input('games', 'value')
-    )
+  Output('positional-runs', 'data'),
+  Input('position', 'value'),
+  Input('games', 'value')
+  )
 def update_positional_runs(position, games):
   if position == 'C':
     value = 12.5
@@ -189,52 +191,52 @@ def update_positional_runs(position, games):
   return float(value) * float(games) / 162
 
 @callback(
-    Output('replacement-runs', 'data'),
-    Input('plate-appearances', 'value')
-    )
+  Output('replacement-runs', 'data'),
+  Input('plate-appearances', 'value')
+  )
 def update_replacement_runs(pa):
-    return float(pa) / 30
+  return float(pa) / 30
 
 @callback(
-    Output('runs-above-replacement', 'data'),
-    Input('batting-runs', 'data'),
-    Input('defense-runs', 'data'),
-    Input('baserunning-runs', 'data'),
-    Input('positional-runs', 'data'),
-    Input('replacement-runs', 'data')
-    )
+  Output('runs-above-replacement', 'data'),
+  Input('batting-runs', 'data'),
+  Input('defense-runs', 'data'),
+  Input('baserunning-runs', 'data'),
+  Input('positional-runs', 'data'),
+  Input('replacement-runs', 'data')
+  )
 def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns):
-    return battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
+  return battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
 
 @callback(
-    Output('wins-above-replacement', 'data'),
-    Input('runs-above-replacement', 'data')
-    )
+  Output('wins-above-replacement', 'data'),
+  Input('runs-above-replacement', 'data')
+  )
 def update_wins_above_replacement(runsabovereplacement):
-    return runsabovereplacement / 10
+  return runsabovereplacement / 10
 
 
 ## Display callbacks
 
 @callback(
-    Output(component_id = 'xwrc-display', component_property = 'children'),
-    Input(component_id = 'xwrc', component_property = 'data')
-    )
+  Output(component_id = 'xwrc-display', component_property = 'children'),
+  Input(component_id = 'xwrc', component_property = 'data')
+  )
 def update_xwrc_display(xwrc):
-    return f'xwRC+: ' + str(int(xwrc))
+  return f'xwRC+: ' + str(int(xwrc))
 
 @callback(
-    Output('batting-runs-display', 'children'),
-    Input('batting-runs', 'data')
-    )
+  Output('batting-runs-display', 'children'),
+  Input('batting-runs', 'data')
+  )
 def update_batting_runs_display(battingruns):
-    return f'Batting Runs: ' + str(round(battingruns, 1))
+  return f'Batting Runs: ' + str(round(battingruns, 1))
 
 @callback(
-    Output('defense-runs-display', 'children'),
-    Input('position', 'value'),
-    Input('defense-runs', 'data')
-    )
+  Output('defense-runs-display', 'children'),
+  Input('position', 'value'),
+  Input('defense-runs', 'data')
+  )
 def update_defense_runs_display(position, defenseruns):
   if position == 'DH':
     dh_caveat = ' (DH, does not play defense)'
@@ -243,39 +245,39 @@ def update_defense_runs_display(position, defenseruns):
   return f'Defensive Runs: ' + str(round(defenseruns, 1)) + dh_caveat
 
 @callback(
-    Output('baserunning-runs-display', 'children'),
-    Input('baserunning-runs', 'data')
-    )
+  Output('baserunning-runs-display', 'children'),
+  Input('baserunning-runs', 'data')
+  )
 def update_baserunning_runs_display(baserunningruns):
-    return f'Baserunning Runs: ' + str(round(baserunningruns, 1))
+  return f'Baserunning Runs: ' + str(round(baserunningruns, 1))
 
 @callback(
-    Output('positional-runs-display', 'children'),
-    Input('positional-runs', 'data')
-    )
+  Output('positional-runs-display', 'children'),
+  Input('positional-runs', 'data')
+  )
 def update_replacement_runs_display(positionalruns):
-    return f'Positional Runs: ' + str(round(positionalruns, 1))
+  return f'Positional Runs: ' + str(round(positionalruns, 1))
 
 @callback(
-    Output('replacement-runs-display', 'children'),
-    Input('replacement-runs', 'data')
-    )
+  Output('replacement-runs-display', 'children'),
+  Input('replacement-runs', 'data')
+  )
 def update_replacement_runs_display(replacementruns):
-    return f'Replacement Runs: ' + str(round(replacementruns, 1))
+  return f'Replacement Runs: ' + str(round(replacementruns, 1))
 
 @callback(
-    Output('runs-above-replacement-display', 'children'),
-    Input('runs-above-replacement', 'data')
-    )
+  Output('runs-above-replacement-display', 'children'),
+  Input('runs-above-replacement', 'data')
+  )
 def update_runs_above_replacement_display(runsabovereplacement):
-    return f'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
+  return f'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
 
 @callback(
-    Output('wins-above-replacement-display', 'children'),
-    Input('wins-above-replacement', 'data')
-    )
+  Output('wins-above-replacement-display', 'children'),
+  Input('wins-above-replacement', 'data')
+  )
 def update_wins_above_replacement_display(winsabovereplacement):
-    return f'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
+  return f'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
 
 if __name__ == '__main__':
     app.run(debug=True)
