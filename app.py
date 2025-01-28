@@ -2,6 +2,8 @@ from dash import callback, Dash, dcc, html, Input, Output
 
 app = Dash()
 
+app.config.suppress_callback_exceptions = True
+
 app.layout = [
   html.H1('Simple WAR Calculator'),
   html.Div(children=[
@@ -64,21 +66,41 @@ app.layout = [
         )
   ]),
   html.Div(children=[
-    html.Div(id='xwrc')
+    html.Div(id='xwrc'),
+    html.Div(id='xwrc-display'),
+    html.Br(),
+    html.Br(),
+    html.Div(id='batting-runs')
   ])
 ]
 
 @callback(
-    Output(component_id = 'xwrc', component_property='children'),
+    Output(component_id = 'xwrc', component_property = 'data'),
     Input(component_id = 'home-runs', component_property = 'value'),
     Input(component_id = 'walks', component_property = 'value'),
     Input(component_id = 'strikeouts', component_property = 'value'),
     Input(component_id = 'stolen-bases', component_property = 'value'),
     Input(component_id = 'babip', component_property = 'value'),
     Input(component_id = 'plate-appearances', component_property = 'value')
-)
-def update_output_div(hr, bb, k, sb, babip, pa):
-    return f'xwRC+: ' + str(int(1184.34 * float(hr) / float(pa) + 275.21 * float(bb) / float(pa) - 180.52 * float(k) / float(pa) + 422.14 * float(babip) + 151.75 * float(sb) / float(pa) - 51.57))
+    )
+def update_xwrc(hr, bb, k, sb, babip, pa):
+    return (1184.34 * float(hr) / float(pa) + 275.21 * float(bb) / float(pa) - 180.52 * float(k) / float(pa) + 422.14 * float(babip) + 151.75 * float(sb) / float(pa) - 51.57)
+
+@callback(
+    Output(component_id = 'xwrc-display', component_property = 'children'),
+    Input(component_id = 'xwrc', component_property = 'data')
+    )
+def update_xwrc_display(xwrc):
+    return f'xwRC+: ' + str(int(xwrc))
+
+@callback(
+    Output('batting-runs', 'children'),
+    Input('xwrc', 'data'),
+    Input('plate-appearances', 'value')
+    )
+def update_batting_runs(xwrc, pa):
+    return f'Batting Runs: ' + str(int(float(xwrc - 100) * 0.1123 * float(pa) / 100))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
