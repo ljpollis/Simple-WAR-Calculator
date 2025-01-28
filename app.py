@@ -72,6 +72,7 @@ app.layout = [
     html.Div(id='baserunning-runs'),
     html.Div(id='replacement-runs'),
     html.Div(id='runs-above-replacement'),
+    html.Div(id='wins-above-replacement'),
     html.Div(id='xwrc-display'),
     html.Br(),
     html.Br(),
@@ -87,7 +88,10 @@ app.layout = [
     html.Div(id='replacement-runs-display'),
     html.Br(),
     html.Br(),
-    html.Div(id='runs-above-replacement-display')
+    html.Div(id='runs-above-replacement-display'),
+    html.Br(),
+    html.Br(),
+    html.Div(id='wins-above-replacement-display')
   ])
 ]
 
@@ -147,6 +151,13 @@ def update_replacement_runs(pa):
 def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, replacementruns):
     return battingruns + defenseruns + baserunningruns + replacementruns
 
+@callback(
+    Output('wins-above-replacement', 'data'),
+    Input('runs-above-replacement', 'data')
+    )
+def update_wins_above_replacement(runsabovereplacement):
+    return runsabovereplacement / 10
+
 
 ## Display callbacks
 
@@ -191,6 +202,13 @@ def update_replacement_runs_display(replacementruns):
     )
 def update_replacement_runs_display(runsabovereplacement):
     return f'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
+
+@callback(
+    Output('wins-above-replacement-display', 'children'),
+    Input('wins-above-replacement', 'data')
+    )
+def update_wins_above_replacement_display(winsabovereplacement):
+    return f'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
 
 if __name__ == '__main__':
     app.run(debug=True)
