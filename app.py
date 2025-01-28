@@ -162,35 +162,35 @@ def update_xwrc_display(xwrc):
     Input('batting-runs', 'data')
     )
 def update_batting_runs_display(battingruns):
-    return f'Batting Runs: ' + str((battingruns))
+    return f'Batting Runs: ' + str(round(battingruns, 1))
 
 @callback(
     Output('defense-runs-display', 'children'),
     Input('defense-runs', 'data')
     )
 def update_defense_runs_display(defenseruns):
-    return f'Defensive Runs: ' + str((defenseruns))
+    return f'Defensive Runs: ' + str(round(defenseruns, 1))
 
 @callback(
     Output('baserunning-runs-display', 'children'),
     Input('baserunning-runs', 'data')
     )
 def update_baserunning_runs_display(baserunningruns):
-    return f'Baserunning Runs: ' + str((baserunningruns))
+    return f'Baserunning Runs: ' + str(round(baserunningruns, 1))
 
 @callback(
     Output('replacement-runs-display', 'children'),
     Input('replacement-runs', 'data')
     )
 def update_replacement_runs_display(replacementruns):
-    return f'Replacement Runs: ' + str((replacementruns))
+    return f'Replacement Runs: ' + str(round(replacementruns, 1))
 
 @callback(
     Output('runs-above-replacement-display', 'children'),
     Input('runs-above-replacement', 'data')
     )
 def update_replacement_runs_display(runsabovereplacement):
-    return f'Runs Above Replacement: ' + str(runsabovereplacement)
+    return f'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
 
 if __name__ == '__main__':
     app.run(debug=True)
