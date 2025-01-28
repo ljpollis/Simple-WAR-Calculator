@@ -11,6 +11,7 @@ outputs = [
     html.Div(id='batting-runs'),
     html.Div(id='defense-runs'),
     html.Div(id='baserunning-runs'),
+    html.Div(id='positional-runs'),
     html.Div(id='replacement-runs'),
     html.Div(id='runs-above-replacement'),
     html.Div(id='wins-above-replacement'),
@@ -22,6 +23,8 @@ outputs = [
     html.H6(id='defense-runs-display'),
     html.Br(),
     html.H6(id='baserunning-runs-display'),
+    html.Br(),
+    html.H6(id='positional-runs-display'),
     html.Br(),
     html.H6(id='replacement-runs-display'),
     html.Br(),
@@ -161,6 +164,26 @@ def update_baserunning_runs(baserunning, pa):
     return (float(baserunning) - 50) / 2 * float(pa) / 600
 
 @callback(
+    Output('positional-runs', 'data'),
+    Input('position', 'value'),
+    Input('games', 'value')
+    )
+def update_positional_runs(position, games):
+  if position == 'C':
+    value = 12.5
+  elif position == '1B':
+    value = -12.5
+  elif position in ['2B', '3B', 'CF']:
+    value = 2.5
+  elif position == 'SS':
+    value = 7.5
+  elif position in ['LF', 'RF']:
+    value = -7.5
+  else:
+    value = -17.5
+  return float(value) * float(games) / 162
+
+@callback(
     Output('replacement-runs', 'data'),
     Input('plate-appearances', 'value')
     )
@@ -172,10 +195,11 @@ def update_replacement_runs(pa):
     Input('batting-runs', 'data'),
     Input('defense-runs', 'data'),
     Input('baserunning-runs', 'data'),
+    Input('positional-runs', 'data'),
     Input('replacement-runs', 'data')
     )
-def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, replacementruns):
-    return battingruns + defenseruns + baserunningruns + replacementruns
+def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns):
+    return battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
 
 @callback(
     Output('wins-above-replacement', 'data'),
@@ -214,6 +238,13 @@ def update_defense_runs_display(defenseruns):
     )
 def update_baserunning_runs_display(baserunningruns):
     return f'Baserunning Runs: ' + str(round(baserunningruns, 1))
+
+@callback(
+    Output('positional-runs-display', 'children'),
+    Input('positional-runs', 'data')
+    )
+def update_replacement_runs_display(positionalruns):
+    return f'Positional Runs: ' + str(round(positionalruns, 1))
 
 @callback(
     Output('replacement-runs-display', 'children'),
