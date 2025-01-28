@@ -70,7 +70,10 @@ app.layout = [
     html.Div(id='xwrc-display'),
     html.Br(),
     html.Br(),
-    html.Div(id='batting-runs')
+    html.Div(id='batting-runs'),
+    html.Br(),
+    html.Br(),
+    html.Div(id='baserunning-runs')
   ])
 ]
 
@@ -101,6 +104,13 @@ def update_xwrc_display(xwrc):
 def update_batting_runs(xwrc, pa):
     return f'Batting Runs: ' + str(int(float(xwrc - 100) * 0.1123 * float(pa) / 100))
 
+@callback(
+    Output('baserunning-runs', 'children'),
+    Input('baserunning', 'value'),
+    Input('plate-appearances', 'value')
+    )
+def update_batting_runs(baserunning, pa):
+    return f'Baserunning Runs: ' + str((float(baserunning) - 50) / 2 * float(pa) / 600)
 
 if __name__ == '__main__':
     app.run(debug=True)
