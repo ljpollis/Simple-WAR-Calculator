@@ -71,6 +71,7 @@ app.layout = [
     html.Div(id='defense-runs'),
     html.Div(id='baserunning-runs'),
     html.Div(id='replacement-runs'),
+    html.Div(id='runs-above-replacement'),
     html.Div(id='xwrc-display'),
     html.Br(),
     html.Br(),
@@ -83,7 +84,10 @@ app.layout = [
     html.Div(id='baserunning-runs-display'),
     html.Br(),
     html.Br(),
-    html.Div(id='replacement-runs-display')
+    html.Div(id='replacement-runs-display'),
+    html.Br(),
+    html.Br(),
+    html.Div(id='runs-above-replacement-display')
   ])
 ]
 
@@ -133,6 +137,16 @@ def update_baserunning_runs(baserunning, pa):
 def update_replacement_runs(pa):
     return float(pa) / 30
 
+@callback(
+    Output('runs-above-replacement', 'data'),
+    Input('batting-runs', 'data'),
+    Input('defense-runs', 'data'),
+    Input('baserunning-runs', 'data'),
+    Input('replacement-runs', 'data')
+    )
+def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, replacementruns):
+    return battingruns + defenseruns + baserunningruns + replacementruns
+
 
 ## Display callbacks
 
@@ -148,28 +162,35 @@ def update_xwrc_display(xwrc):
     Input('batting-runs', 'data')
     )
 def update_batting_runs_display(battingruns):
-    return f'Batting Runs: ' + str(int(battingruns))
+    return f'Batting Runs: ' + str((battingruns))
 
 @callback(
     Output('defense-runs-display', 'children'),
     Input('defense-runs', 'data')
     )
 def update_defense_runs_display(defenseruns):
-    return f'Defensive Runs: ' + str(int(defenseruns))
+    return f'Defensive Runs: ' + str((defenseruns))
 
 @callback(
     Output('baserunning-runs-display', 'children'),
     Input('baserunning-runs', 'data')
     )
 def update_baserunning_runs_display(baserunningruns):
-    return f'Baserunning Runs: ' + str(int(baserunningruns))
+    return f'Baserunning Runs: ' + str((baserunningruns))
 
 @callback(
     Output('replacement-runs-display', 'children'),
     Input('replacement-runs', 'data')
     )
 def update_replacement_runs_display(replacementruns):
-    return f'Replacement Runs: ' + str(int(replacementruns))
+    return f'Replacement Runs: ' + str((replacementruns))
+
+@callback(
+    Output('runs-above-replacement-display', 'children'),
+    Input('runs-above-replacement', 'data')
+    )
+def update_replacement_runs_display(runsabovereplacement):
+    return f'Runs Above Replacement: ' + str(runsabovereplacement)
 
 if __name__ == '__main__':
     app.run(debug=True)
