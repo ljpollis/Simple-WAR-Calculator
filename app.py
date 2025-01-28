@@ -1,4 +1,4 @@
-from dash import Dash, dcc, html
+from dash import callback, Dash, dcc, html, Input, Output
 
 app = Dash()
 
@@ -62,8 +62,23 @@ app.layout = [
       step = 10,
       value = 50,
         )
+  ]),
+  html.Div(children=[
+    html.Div(id='xwrc')
   ])
 ]
+
+@callback(
+    Output(component_id = 'xwrc', component_property='children'),
+    Input(component_id = 'home-runs', component_property = 'value'),
+    Input(component_id = 'walks', component_property = 'value'),
+    Input(component_id = 'strikeouts', component_property = 'value'),
+    Input(component_id = 'stolen-bases', component_property = 'value'),
+    Input(component_id = 'babip', component_property = 'value'),
+    Input(component_id = 'plate-appearances', component_property = 'value')
+)
+def update_output_div(hr, bb, k, sb, babip, pa):
+    return f'xwRC+: ' + str(int(1184.34 * float(hr) / float(pa) + 275.21 * float(bb) / float(pa) - 180.52 * float(k) / float(pa) + 422.14 * float(babip) + 151.75 * float(sb) / float(pa) - 51.57))
 
 if __name__ == '__main__':
     app.run(debug=True)
