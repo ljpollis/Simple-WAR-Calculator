@@ -96,6 +96,11 @@ games_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'games', value = '150', type = 'number'), width = 1)
 ])
 
+park_factor_row = dbc.Row([
+  dbc.Col(html.Label('Park Factor:'), width = 4),
+  dbc.Col(dcc.Input(id = 'park-factor', value = '100', type = 'number'), width = 1)
+])
+
 
 app.layout = [
   html.H1('Simple WAR Calculator'),
@@ -116,6 +121,8 @@ app.layout = [
         plate_appearances_row,
         html.Br(),
         games_row,
+        html.Br(),
+        park_factor_row,
         html.Br(),
         dbc.Row([
           dbc.Col(nontextselections, width = 10)
