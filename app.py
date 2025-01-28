@@ -76,7 +76,10 @@ app.layout = [
     html.Div(id='defense-runs'),
     html.Br(),
     html.Br(),
-    html.Div(id='baserunning-runs')
+    html.Div(id='baserunning-runs'),
+    html.Br(),
+    html.Br(),
+    html.Div(id='replacement-runs')
   ])
 ]
 
@@ -122,6 +125,13 @@ def update_batting_runs(defense, games):
     )
 def update_batting_runs(baserunning, pa):
     return f'Baserunning Runs: ' + str((float(baserunning) - 50) / 2 * float(pa) / 600)
+
+@callback(
+    Output('replacement-runs', 'children'),
+    Input('plate-appearances', 'value')
+    )
+def update_batting_runs(pa):
+    return f'Replacement Runs: ' + str(float(pa) / 30)
 
 if __name__ == '__main__':
     app.run(debug=True)
