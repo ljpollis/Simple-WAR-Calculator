@@ -5,34 +5,6 @@ app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.config.suppress_callback_exceptions = True
 
-column1 = [
-    html.Div(children=[
-    html.Label('Home Runs:'),
-    html.Br(),
-    html.Br(),
-    html.Label('Walks:'),
-    html.Br(),
-    html.Br(),
-    html.Label('Strikeouts:'),
-    html.Br(),
-    html.Br(),
-    html.Label('Stolen Bases:'),
-    html.Br(),
-    html.Br(),
-    html.Label('BABIP:'),
-    html.Br(),
-    html.Br(),
-    html.Label('Plate Appearances:'),
-    html.Br(),
-    html.Br(),
-    html.Label('Games:'),
-    html.Br(),
-    html.Br(),
-    html.Br(),
-    html.Br()
-]
-)]
-
 column2 = [
   html.Div(children=[
     html.Div(id='xwrc'),
@@ -63,34 +35,6 @@ column2 = [
     html.Div(id='wins-above-replacement-display')
     ])]
 
-column3 = [
-    html.Div(children=[
-    dcc.Input(id = 'home-runs', value = '16', type = 'number', style={"margin-left": "10px"}),
-    html.Br(),
-    html.Br(),
-    dcc.Input(id = 'walks', value = '50', type = 'number', style={"margin-left": "10px"}),
-    html.Br(),
-    html.Br(),
-    dcc.Input(id = 'strikeouts', value = '75', type = 'number', style={"margin-left": "10px"}),
-    html.Br(),
-    html.Br(),
-    dcc.Input(id = 'stolen-bases', value = '8', type = 'number', style={"margin-left": "10px"}),
-    html.Br(),
-    html.Br(),
-    dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001, style={"margin-left": "10px"}),
-    html.Br(),
-    html.Br(),
-    dcc.Input(id = 'plate-appearances', value = '600', type = 'number', style={"margin-left": "10px"}),
-    html.Br(),
-    html.Br(),
-    dcc.Input(id = 'games', value = '150', type = 'number', style={"margin-left": "10px"}),
-    html.Br(),
-    html.Br(),
-    html.Br()
-        
-]
-)]
-
 column4 = [
     html.Label('Primary Position'),
     dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
@@ -114,22 +58,96 @@ column4 = [
         )
 ]
 
+home_runs_label = html.Label('Home Runs:')
+
+home_runs_input = dcc.Input(id = 'home-runs', value = '16', type = 'number')
+
+home_runs_row = dbc.Row([
+  dbc.Col(home_runs_label, width = 3),
+  dbc.Col(home_runs_input, width = 1)
+])
+
+walks_label = html.Label('Walks:')
+
+walks_input = dcc.Input(id = 'walks', value = '50', type = 'number')
+
+walks_row = dbc.Row([
+  dbc.Col(walks_label, width = 3),
+  dbc.Col(walks_input, width = 1)
+])
+
+strikeouts_label = html.Label('Strikeouts:')
+
+strikeouts_input = dcc.Input(id = 'strikeouts', value = '75', type = 'number')
+
+strikeouts_row = dbc.Row([
+  dbc.Col(strikeouts_label, width = 3),
+  dbc.Col(strikeouts_input, width = 1)
+])
+
+stolen_bases_label = html.Label('Stolen Bases:')
+
+stolen_bases_input = dcc.Input(id = 'stolen-bases', value = '8', type = 'number')
+
+stolen_bases_row = dbc.Row([
+  dbc.Col(stolen_bases_label, width = 3),
+  dbc.Col(stolen_bases_input, width = 1)
+])
+
+babip_label = html.Label('BABIP:')
+
+babip_input = dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001)
+
+babip_row = dbc.Row([
+  dbc.Col(babip_label, width = 3),
+  dbc.Col(babip_input, width = 1)
+])
+
+plate_appearances_label = html.Label('PA:')
+
+plate_appearances_input = dcc.Input(id = 'plate-appearances', value = '600', type = 'number')
+
+plate_appearances_row = dbc.Row([
+  dbc.Col(plate_appearances_label, width = 3),
+  dbc.Col(plate_appearances_input, width = 1)
+])
+
+games_label = html.Label('Games:')
+
+games_input = dcc.Input(id = 'games', value = '150', type = 'number')
+
+games_row = dbc.Row([
+  dbc.Col(games_label, width = 3),
+  dbc.Col(games_input, width = 1)
+])
+
+
 app.layout = [
   html.H1('Simple WAR Calculator'),
+  html.Br(),
   dbc.Row(
     [
       dbc.Col([
-        dbc.Row(
-        [
-          dbc.Col(column1, width = 3, style = {"margin-left": "10px"}),
-          dbc.Col(column3, width = 1, style = {"margin-left": "10px"})
-        ]),
+        home_runs_row,
+        html.Br(),
+        walks_row,
+        html.Br(),
+        strikeouts_row,
+        html.Br(),
+        stolen_bases_row,
+        html.Br(),
+        babip_row,
+        html.Br(),
+        plate_appearances_row,
+        html.Br(),
+        games_row,
+        html.Br(),
         dbc.Row([
-          dbc.Col(column4, width = 4, style = {"margin-left": "10px"})
+          dbc.Col(column4, style = {"margin-left": "10px"}, width = 9)
         ])
-      ]),
+      ], style = {"margin-left": "10px"}, width = 3),
       dbc.Col(column2, width = 3)
-    ]
+    ], justify = "start"
   )
 ]
 
