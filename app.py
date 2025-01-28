@@ -73,6 +73,9 @@ app.layout = [
     html.Div(id='batting-runs'),
     html.Br(),
     html.Br(),
+    html.Div(id='defense-runs'),
+    html.Br(),
+    html.Br(),
     html.Div(id='baserunning-runs')
   ])
 ]
@@ -103,6 +106,14 @@ def update_xwrc_display(xwrc):
     )
 def update_batting_runs(xwrc, pa):
     return f'Batting Runs: ' + str(int(float(xwrc - 100) * 0.1123 * float(pa) / 100))
+
+@callback(
+    Output('defense-runs', 'children'),
+    Input('defense', 'value'),
+    Input('games', 'value')
+    )
+def update_batting_runs(defense, games):
+    return f'Defensive Runs: ' + str((float(defense) - 50) * float(games) / 150)
 
 @callback(
     Output('baserunning-runs', 'children'),
