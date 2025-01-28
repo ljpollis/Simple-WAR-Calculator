@@ -67,21 +67,28 @@ app.layout = [
   ]),
   html.Div(children=[
     html.Div(id='xwrc'),
+    html.Div(id='batting-runs'),
+    html.Div(id='defense-runs'),
+    html.Div(id='baserunning-runs'),
+    html.Div(id='replacement-runs'),
     html.Div(id='xwrc-display'),
     html.Br(),
     html.Br(),
-    html.Div(id='batting-runs'),
+    html.Div(id='batting-runs-display'),
     html.Br(),
     html.Br(),
-    html.Div(id='defense-runs'),
+    html.Div(id='defense-runs-display'),
     html.Br(),
     html.Br(),
-    html.Div(id='baserunning-runs'),
+    html.Div(id='baserunning-runs-display'),
     html.Br(),
     html.Br(),
-    html.Div(id='replacement-runs')
+    html.Div(id='replacement-runs-display')
   ])
 ]
+
+
+## Calculation callbacks
 
 @callback(
     Output(component_id = 'xwrc', component_property = 'data'),
@@ -96,6 +103,40 @@ def update_xwrc(hr, bb, k, sb, babip, pa):
     return (1184.34 * float(hr) / float(pa) + 275.21 * float(bb) / float(pa) - 180.52 * float(k) / float(pa) + 422.14 * float(babip) + 151.75 * float(sb) / float(pa) - 51.57)
 
 @callback(
+    Output('batting-runs', 'data'),
+    Input('xwrc', 'data'),
+    Input('plate-appearances', 'value')
+    )
+def update_batting_runs(xwrc, pa):
+    return float(xwrc - 100) * 0.1123 * float(pa) / 100
+
+@callback(
+    Output('defense-runs', 'data'),
+    Input('defense', 'value'),
+    Input('games', 'value')
+    )
+def update_defense_runs(defense, games):
+    return (float(defense) - 50) * float(games) / 150
+
+@callback(
+    Output('baserunning-runs', 'data'),
+    Input('baserunning', 'value'),
+    Input('plate-appearances', 'value')
+    )
+def update_baserunning_runs(baserunning, pa):
+    return (float(baserunning) - 50) / 2 * float(pa) / 600
+
+@callback(
+    Output('replacement-runs', 'data'),
+    Input('plate-appearances', 'value')
+    )
+def update_replacement_runs(pa):
+    return float(pa) / 30
+
+
+## Display callbacks
+
+@callback(
     Output(component_id = 'xwrc-display', component_property = 'children'),
     Input(component_id = 'xwrc', component_property = 'data')
     )
@@ -103,35 +144,32 @@ def update_xwrc_display(xwrc):
     return f'xwRC+: ' + str(int(xwrc))
 
 @callback(
-    Output('batting-runs', 'children'),
-    Input('xwrc', 'data'),
-    Input('plate-appearances', 'value')
+    Output('batting-runs-display', 'children'),
+    Input('batting-runs', 'data')
     )
-def update_batting_runs(xwrc, pa):
-    return f'Batting Runs: ' + str(int(float(xwrc - 100) * 0.1123 * float(pa) / 100))
+def update_batting_runs_display(battingruns):
+    return f'Batting Runs: ' + str(int(battingruns))
 
 @callback(
-    Output('defense-runs', 'children'),
-    Input('defense', 'value'),
-    Input('games', 'value')
+    Output('defense-runs-display', 'children'),
+    Input('defense-runs', 'data')
     )
-def update_batting_runs(defense, games):
-    return f'Defensive Runs: ' + str((float(defense) - 50) * float(games) / 150)
+def update_defense_runs_display(defenseruns):
+    return f'Defensive Runs: ' + str(int(defenseruns))
 
 @callback(
-    Output('baserunning-runs', 'children'),
-    Input('baserunning', 'value'),
-    Input('plate-appearances', 'value')
+    Output('baserunning-runs-display', 'children'),
+    Input('baserunning-runs', 'data')
     )
-def update_batting_runs(baserunning, pa):
-    return f'Baserunning Runs: ' + str((float(baserunning) - 50) / 2 * float(pa) / 600)
+def update_baserunning_runs_display(baserunningruns):
+    return f'Baserunning Runs: ' + str(int(baserunningruns))
 
 @callback(
-    Output('replacement-runs', 'children'),
-    Input('plate-appearances', 'value')
+    Output('replacement-runs-display', 'children'),
+    Input('replacement-runs', 'data')
     )
-def update_batting_runs(pa):
-    return f'Replacement Runs: ' + str(float(pa) / 30)
+def update_replacement_runs_display(replacementruns):
+    return f'Replacement Runs: ' + str(int(replacementruns))
 
 if __name__ == '__main__':
     app.run(debug=True)
