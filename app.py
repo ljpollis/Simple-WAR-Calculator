@@ -149,11 +149,16 @@ def update_batting_runs(xwrc, pa):
 
 @callback(
     Output('defense-runs', 'data'),
+    Input('position', 'value'),
     Input('defense', 'value'),
     Input('games', 'value')
     )
-def update_defense_runs(defense, games):
-    return (float(defense) - 50) * float(games) / 150
+def update_defense_runs(position, defense, games):
+  if position == 'DH':
+    defense = 0
+  else:
+    defense = (float(defense) - 50) * float(games) / 150
+  return defense
 
 @callback(
     Output('baserunning-runs', 'data'),
@@ -227,10 +232,15 @@ def update_batting_runs_display(battingruns):
 
 @callback(
     Output('defense-runs-display', 'children'),
+    Input('position', 'value'),
     Input('defense-runs', 'data')
     )
-def update_defense_runs_display(defenseruns):
-    return f'Defensive Runs: ' + str(round(defenseruns, 1))
+def update_defense_runs_display(position, defenseruns):
+  if position == 'DH':
+    dh_caveat = ' (DH, does not play defense)'
+  else:
+    dh_caveat = ''
+  return f'Defensive Runs: ' + str(round(defenseruns, 1)) + dh_caveat
 
 @callback(
     Output('baserunning-runs-display', 'children'),
