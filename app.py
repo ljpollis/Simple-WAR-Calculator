@@ -7,63 +7,29 @@ app.config.suppress_callback_exceptions = True
 
 column1 = [
     html.Div(children=[
-    html.Label('Home Runs'),
-    html.Br(),
-    dcc.Input(id = 'home-runs', value = '16', type = 'number'),
+    html.Label('Home Runs:'),
     html.Br(),
     html.Br(),
-    html.Label('Walks'),
-    html.Br(),
-    dcc.Input(id = 'walks', value = '50', type = 'number'),
+    html.Label('Walks:'),
     html.Br(),
     html.Br(),
-    html.Label('Strikeouts'),
-    html.Br(),
-    dcc.Input(id = 'strikeouts', value = '75', type = 'number'),
+    html.Label('Strikeouts:'),
     html.Br(),
     html.Br(),
-    html.Label('Stolen Bases'),
-    html.Br(),
-    dcc.Input(id = 'stolen-bases', value = '8', type = 'number'),
+    html.Label('Stolen Bases:'),
     html.Br(),
     html.Br(),
-    html.Label('BABIP'),
-    html.Br(),
-    dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001),
+    html.Label('BABIP:'),
     html.Br(),
     html.Br(),
-    html.Label('Plate Appearances'),
-    html.Br(),
-    dcc.Input(id = 'plate-appearances', value = '600', type = 'number'),
+    html.Label('Plate Appearances:'),
     html.Br(),
     html.Br(),
-    html.Label('Games'),
-    html.Br(),
-    dcc.Input(id = 'games', value = '150', type = 'number'),
+    html.Label('Games:'),
     html.Br(),
     html.Br(),
     html.Br(),
-    html.Br(),
-    html.Label('Primary Position'),
-    dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
-    html.Br(),
-    html.Label('Defensive Performance'),
-    dcc.Slider(
-      id = 'defense',
-      min = 20,
-      max = 80,
-      step = 5,
-      value = 50,
-        ),
-    html.Br(),
-    html.Label('Baserunning Performance'),
-    dcc.Slider(
-      id = 'baserunning', 
-      min = 20,
-      max = 80,
-      step = 5,
-      value = 50,
-        )
+    html.Br()
 ]
 )]
 
@@ -97,13 +63,72 @@ column2 = [
     html.Div(id='wins-above-replacement-display')
     ])]
 
+column3 = [
+    html.Div(children=[
+    dcc.Input(id = 'home-runs', value = '16', type = 'number', style={"margin-left": "10px"}),
+    html.Br(),
+    html.Br(),
+    dcc.Input(id = 'walks', value = '50', type = 'number', style={"margin-left": "10px"}),
+    html.Br(),
+    html.Br(),
+    dcc.Input(id = 'strikeouts', value = '75', type = 'number', style={"margin-left": "10px"}),
+    html.Br(),
+    html.Br(),
+    dcc.Input(id = 'stolen-bases', value = '8', type = 'number', style={"margin-left": "10px"}),
+    html.Br(),
+    html.Br(),
+    dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001, style={"margin-left": "10px"}),
+    html.Br(),
+    html.Br(),
+    dcc.Input(id = 'plate-appearances', value = '600', type = 'number', style={"margin-left": "10px"}),
+    html.Br(),
+    html.Br(),
+    dcc.Input(id = 'games', value = '150', type = 'number', style={"margin-left": "10px"}),
+    html.Br(),
+    html.Br(),
+    html.Br()
+        
+]
+)]
+
+column4 = [
+    html.Label('Primary Position'),
+    dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
+    html.Br(),
+    html.Label('Defensive Performance'),
+    dcc.Slider(
+      id = 'defense',
+      min = 20,
+      max = 80,
+      step = 5,
+      value = 50,
+        ),
+    html.Br(),
+    html.Label('Baserunning Performance'),
+    dcc.Slider(
+      id = 'baserunning', 
+      min = 20,
+      max = 80,
+      step = 5,
+      value = 50,
+        )
+]
 
 app.layout = [
   html.H1('Simple WAR Calculator'),
   dbc.Row(
     [
-      dbc.Col(column1),
-      dbc.Col(column2)
+      dbc.Col([
+        dbc.Row(
+        [
+          dbc.Col(column1, width = 3, style = {"margin-left": "10px"}),
+          dbc.Col(column3, width = 1, style = {"margin-left": "10px"})
+        ]),
+        dbc.Row([
+          dbc.Col(column4, width = 4, style = {"margin-left": "10px"})
+        ])
+      ]),
+      dbc.Col(column2, width = 3)
     ]
   )
 ]
