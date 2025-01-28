@@ -200,7 +200,7 @@ def update_replacement_runs_display(replacementruns):
     Output('runs-above-replacement-display', 'children'),
     Input('runs-above-replacement', 'data')
     )
-def update_replacement_runs_display(runsabovereplacement):
+def update_runs_above_replacement_display(runsabovereplacement):
     return f'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
 
 @callback(
