@@ -1,70 +1,11 @@
 from dash import callback, Dash, dcc, html, Input, Output
+import dash_bootstrap_components as dbc
 
-app = Dash()
+app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.config.suppress_callback_exceptions = True
 
-app.layout = [
-  html.H1('Simple WAR Calculator'),
-  html.Div(children=[
-    html.Label('Home Runs'),
-    html.Br(),
-    dcc.Input(id = 'home-runs', value = '16', type = 'number'),
-    html.Br(),
-    html.Br(),
-    html.Label('Walks'),
-    html.Br(),
-    dcc.Input(id = 'walks', value = '50', type = 'number'),
-    html.Br(),
-    html.Br(),
-    html.Label('Strikeouts'),
-    html.Br(),
-    dcc.Input(id = 'strikeouts', value = '75', type = 'number'),
-    html.Br(),
-    html.Br(),
-    html.Label('Stolen Bases'),
-    html.Br(),
-    dcc.Input(id = 'stolen-bases', value = '8', type = 'number'),
-    html.Br(),
-    html.Br(),
-    html.Label('BABIP'),
-    html.Br(),
-    dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001),
-    html.Br(),
-    html.Br(),
-    html.Label('Plate Appearances'),
-    html.Br(),
-    dcc.Input(id = 'plate-appearances', value = '600', type = 'number'),
-    html.Br(),
-    html.Br(),
-    html.Label('Games'),
-    html.Br(),
-    dcc.Input(id = 'games', value = '150', type = 'number'),
-    html.Br(),
-    html.Br(),
-    html.Br(),
-    html.Br(),
-    html.Label('Primary Position'),
-    dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
-    html.Br(),
-    html.Label('Defensive Performance'),
-    dcc.Slider(
-      id = 'defense',
-      min = 20,
-      max = 80,
-      step = 5,
-      value = 50,
-        ),
-    html.Br(),
-    html.Label('Baserunning Performance'),
-    dcc.Slider(
-      id = 'baserunning', 
-      min = 20,
-      max = 80,
-      step = 5,
-      value = 50,
-        )
-  ]),
+outputs = [
   html.Div(children=[
     html.Div(id='xwrc'),
     html.Div(id='batting-runs'),
@@ -73,26 +14,111 @@ app.layout = [
     html.Div(id='replacement-runs'),
     html.Div(id='runs-above-replacement'),
     html.Div(id='wins-above-replacement'),
-    html.Div(id='xwrc-display'),
+    html.H6(id='xwrc-display'),
     html.Br(),
     html.Br(),
-    html.Div(id='batting-runs-display'),
+    html.H6(id='batting-runs-display'),
+    html.Br(),
+    html.H6(id='defense-runs-display'),
+    html.Br(),
+    html.H6(id='baserunning-runs-display'),
+    html.Br(),
+    html.H6(id='replacement-runs-display'),
+    html.Br(),
+    html.H6(id='runs-above-replacement-display'),
     html.Br(),
     html.Br(),
-    html.Div(id='defense-runs-display'),
     html.Br(),
-    html.Br(),
-    html.Div(id='baserunning-runs-display'),
-    html.Br(),
-    html.Br(),
-    html.Div(id='replacement-runs-display'),
-    html.Br(),
-    html.Br(),
-    html.Div(id='runs-above-replacement-display'),
-    html.Br(),
-    html.Br(),
-    html.Div(id='wins-above-replacement-display')
-  ])
+    html.H4(id='wins-above-replacement-display')
+    ])]
+
+nontextselections = [
+  html.Label('Primary Position'),
+  dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
+  html.Br(),
+  html.Label('Defensive Performance'),
+  dcc.Slider(
+    id = 'defense',
+    min = 20,
+    max = 80,
+    step = 5,
+    value = 50
+    ),
+  html.Br(),
+  html.Label('Baserunning Performance'),
+  dcc.Slider(
+    id = 'baserunning', 
+    min = 20,
+    max = 80,
+    step = 5,
+    value = 50
+    )
+]
+
+
+home_runs_row = dbc.Row([
+  dbc.Col(html.Label('Home Runs:'), width = 4),
+  dbc.Col(dcc.Input(id = 'home-runs', value = '16', type = 'number'), width = 1)
+])
+
+walks_row = dbc.Row([
+  dbc.Col(html.Label('Walks:'), width = 4),
+  dbc.Col(dcc.Input(id = 'walks', value = '50', type = 'number'), width = 1)
+])
+
+strikeouts_row = dbc.Row([
+  dbc.Col(html.Label('Strikeouts:'), width = 4),
+  dbc.Col(dcc.Input(id = 'strikeouts', value = '75', type = 'number'), width = 1)
+])
+
+stolen_bases_row = dbc.Row([
+  dbc.Col(html.Label('Stolen Bases:'), width = 4),
+  dbc.Col(dcc.Input(id = 'stolen-bases', value = '8', type = 'number'), width = 1)
+])
+
+babip_row = dbc.Row([
+  dbc.Col(html.Label('BABIP:'), width = 4),
+  dbc.Col(dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001), width = 1)
+])
+
+plate_appearances_row = dbc.Row([
+  dbc.Col(html.Label('PA:'), width = 4),
+  dbc.Col(dcc.Input(id = 'plate-appearances', value = '600', type = 'number'), width = 1)
+])
+
+games_row = dbc.Row([
+  dbc.Col(html.Label('Games:'), width = 4),
+  dbc.Col(dcc.Input(id = 'games', value = '150', type = 'number'), width = 1)
+])
+
+
+app.layout = [
+  html.H1('Simple WAR Calculator'),
+  html.Br(),
+  dbc.Row(
+    [
+      dbc.Col([
+        home_runs_row,
+        html.Br(),
+        walks_row,
+        html.Br(),
+        strikeouts_row,
+        html.Br(),
+        stolen_bases_row,
+        html.Br(),
+        babip_row,
+        html.Br(),
+        plate_appearances_row,
+        html.Br(),
+        games_row,
+        html.Br(),
+        dbc.Row([
+          dbc.Col(nontextselections, width = 10)
+        ])
+      ], style = {"margin-left": "10px"}, width = 3),
+      dbc.Col(outputs, width = 3)
+    ], justify = "start"
+  )
 ]
 
 
