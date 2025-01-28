@@ -60,7 +60,7 @@ home_runs_label = html.Label('Home Runs:')
 home_runs_input = dcc.Input(id = 'home-runs', value = '16', type = 'number')
 
 home_runs_row = dbc.Row([
-  dbc.Col(home_runs_label, width = 3),
+  dbc.Col(home_runs_label, width = 4),
   dbc.Col(home_runs_input, width = 1)
 ])
 
@@ -69,7 +69,7 @@ walks_label = html.Label('Walks:')
 walks_input = dcc.Input(id = 'walks', value = '50', type = 'number')
 
 walks_row = dbc.Row([
-  dbc.Col(walks_label, width = 3),
+  dbc.Col(walks_label, width = 4),
   dbc.Col(walks_input, width = 1)
 ])
 
@@ -78,7 +78,7 @@ strikeouts_label = html.Label('Strikeouts:')
 strikeouts_input = dcc.Input(id = 'strikeouts', value = '75', type = 'number')
 
 strikeouts_row = dbc.Row([
-  dbc.Col(strikeouts_label, width = 3),
+  dbc.Col(strikeouts_label, width = 4),
   dbc.Col(strikeouts_input, width = 1)
 ])
 
@@ -87,7 +87,7 @@ stolen_bases_label = html.Label('Stolen Bases:')
 stolen_bases_input = dcc.Input(id = 'stolen-bases', value = '8', type = 'number')
 
 stolen_bases_row = dbc.Row([
-  dbc.Col(stolen_bases_label, width = 3),
+  dbc.Col(stolen_bases_label, width = 4),
   dbc.Col(stolen_bases_input, width = 1)
 ])
 
@@ -96,7 +96,7 @@ babip_label = html.Label('BABIP:')
 babip_input = dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001)
 
 babip_row = dbc.Row([
-  dbc.Col(babip_label, width = 3),
+  dbc.Col(babip_label, width = 4),
   dbc.Col(babip_input, width = 1)
 ])
 
@@ -105,7 +105,7 @@ plate_appearances_label = html.Label('PA:')
 plate_appearances_input = dcc.Input(id = 'plate-appearances', value = '600', type = 'number')
 
 plate_appearances_row = dbc.Row([
-  dbc.Col(plate_appearances_label, width = 3),
+  dbc.Col(plate_appearances_label, width = 4),
   dbc.Col(plate_appearances_input, width = 1)
 ])
 
@@ -114,7 +114,7 @@ games_label = html.Label('Games:')
 games_input = dcc.Input(id = 'games', value = '150', type = 'number')
 
 games_row = dbc.Row([
-  dbc.Col(games_label, width = 3),
+  dbc.Col(games_label, width = 4),
   dbc.Col(games_input, width = 1)
 ])
 
@@ -140,7 +140,7 @@ app.layout = [
         games_row,
         html.Br(),
         dbc.Row([
-          dbc.Col(column4, style = {"margin-left": "10px"}, width = 9)
+          dbc.Col(column4, width = 10)
         ])
       ], style = {"margin-left": "10px"}, width = 3),
       dbc.Col(column2, width = 3)
