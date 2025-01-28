@@ -52,7 +52,7 @@ app.layout = [
       id = 'defense',
       min = 20,
       max = 80,
-      step = 10,
+      step = 5,
       value = 50,
         ),
     html.Br(),
@@ -61,7 +61,7 @@ app.layout = [
       id = 'baserunning', 
       min = 20,
       max = 80,
-      step = 10,
+      step = 5,
       value = 50,
         )
   ]),
