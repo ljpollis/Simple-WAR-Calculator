@@ -1,12 +1,12 @@
 from dash import callback, Dash, dcc, html, Input, Output
+import dash_bootstrap_components as dbc
 
-app = Dash()
+app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.config.suppress_callback_exceptions = True
 
-app.layout = [
-  html.H1('Simple WAR Calculator'),
-  html.Div(children=[
+column1 = [
+    html.Div(children=[
     html.Label('Home Runs'),
     html.Br(),
     dcc.Input(id = 'home-runs', value = '16', type = 'number'),
@@ -64,7 +64,10 @@ app.layout = [
       step = 5,
       value = 50,
         )
-  ]),
+]
+)]
+
+column2 = [
   html.Div(children=[
     html.Div(id='xwrc'),
     html.Div(id='batting-runs'),
@@ -92,7 +95,17 @@ app.layout = [
     html.Br(),
     html.Br(),
     html.Div(id='wins-above-replacement-display')
-  ])
+    ])]
+
+
+app.layout = [
+  html.H1('Simple WAR Calculator'),
+  dbc.Row(
+    [
+      dbc.Col(column1),
+      dbc.Col(column2)
+    ]
+  )
 ]
 
 
