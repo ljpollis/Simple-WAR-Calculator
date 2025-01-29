@@ -60,7 +60,6 @@ nontextselections = [
     )
 ]
 
-
 home_runs_row = dbc.Row([
   dbc.Col(html.Label('Home Runs:'), width = 4),
   dbc.Col(dcc.Input(id = 'home-runs', value = '16', type = 'number'), width = 1)
@@ -96,6 +95,26 @@ games_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'games', value = '150', type = 'number'), width = 1)
 ])
 
+park_factor_row = dbc.Row([
+  dbc.Col(html.Label('Park Factor:'), width = 4),
+  dbc.Col(dcc.Input(id = 'park-factor', value = '100', type = 'number'), width = 1)
+])
+
+runs_per_pa_row = dbc.Row([
+  dbc.Col(html.Label('League Runs per PA:'), width = 4),
+  dbc.Col(dcc.Input(id = 'runs-per-pa', value = '.117', type = 'number', step = 0.001), width = 1)
+])
+
+replacement_level_row = dbc.Row([
+  dbc.Col(html.Label('Replacement Level (Runs per 600 PA):'), width = 4),
+  dbc.Col(dcc.Input(id = 'replacement-level', value = '-20', type = 'number', step = 0.1), width = 1)
+])
+
+runs_per_win_row = dbc.Row([
+  dbc.Col(html.Label('Runs per Win Conversion:'), width = 4),
+  dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
+])
+
 
 app.layout = [
   html.H1('Simple WAR Calculator'),
@@ -117,9 +136,20 @@ app.layout = [
         html.Br(),
         games_row,
         html.Br(),
+        park_factor_row,
+        html.Br(),
         dbc.Row([
           dbc.Col(nontextselections, width = 10)
-        ])
+        ]),
+        html.Br(),
+        dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
+        html.Br(),
+        html.Br(),
+        html.Div([runs_per_pa_row,
+        html.Br(),
+        replacement_level_row,
+        html.Br(),
+        runs_per_win_row], id = 'advanced-selection')
       ], style = {"margin-left": "10px"}, width = 3),
       dbc.Col(outputs, width = 3)
     ], justify = "start"
@@ -136,18 +166,21 @@ app.layout = [
   Input(component_id = 'strikeouts', component_property = 'value'),
   Input(component_id = 'stolen-bases', component_property = 'value'),
   Input(component_id = 'babip', component_property = 'value'),
-  Input(component_id = 'plate-appearances', component_property = 'value')
+  Input(component_id = 'plate-appearances', component_property = 'value'),
+  Input(component_id = 'park-factor', component_property = 'value')
   )
-def update_xwrc(hr, bb, k, sb, babip, pa):
-  return (1184.34 * float(hr) / float(pa) + 275.21 * float(bb) / float(pa) - 180.52 * float(k) / float(pa) + 422.14 * float(babip) + 151.75 * float(sb) / float(pa) - 51.57)
+def update_xwrc(hr, bb, k, sb, babip, pa, pf):
+  return (1184.34 * float(hr) / float(pa) + 275.21 * float(bb) / float(pa) - 180.52 * float(k) / float(pa) + 422.14 * float(babip) + 151.75 * float(sb) / float(pa) - 51.57) * 100 / float(pf)
 
 @callback(
   Output('batting-runs', 'data'),
   Input('xwrc', 'data'),
-  Input('plate-appearances', 'value')
+  Input('plate-appearances', 'value'),
+  Input('park-factor', 'value'),
+  Input('runs-per-pa', 'value')
   )
-def update_batting_runs(xwrc, pa):
-  return float(xwrc - 100) * 0.1123 * float(pa) / 100
+def update_batting_runs(xwrc, pa, pf, rppa):
+  return (xwrc + float(pf) - 200) * float(rppa) * float(pa) / 100
 
 @callback(
   Output('defense-runs', 'data'),
@@ -192,10 +225,11 @@ def update_positional_runs(position, games):
 
 @callback(
   Output('replacement-runs', 'data'),
-  Input('plate-appearances', 'value')
+  Input('plate-appearances', 'value'),
+  Input('replacement-level', 'value')
   )
-def update_replacement_runs(pa):
-  return float(pa) / 30
+def update_replacement_runs(pa, replacementlevel):
+  return float(pa) * -float(replacementlevel) / 600
 
 @callback(
   Output('runs-above-replacement', 'data'),
@@ -210,10 +244,11 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
 
 @callback(
   Output('wins-above-replacement', 'data'),
-  Input('runs-above-replacement', 'data')
+  Input('runs-above-replacement', 'data'),
+  Input('runs-per-win', 'value')
   )
-def update_wins_above_replacement(runsabovereplacement):
-  return runsabovereplacement / 10
+def update_wins_above_replacement(runsabovereplacement, runsperwin):
+  return runsabovereplacement / float(runsperwin)
 
 
 ## Display callbacks
@@ -278,6 +313,24 @@ def update_runs_above_replacement_display(runsabovereplacement):
   )
 def update_wins_above_replacement_display(winsabovereplacement):
   return f'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
+
+@callback(
+  Output('advanced-selection', 'hidden'),
+  Input('toggle-button', 'n_clicks')
+  )
+def toggle_advanced(nclicks):
+  return (int(nclicks) % 2 == 0)
+
+@callback(
+  Output('toggle-button', 'children'),
+  Input('toggle-button', 'n_clicks')
+  )
+def toggle_advanced(nclicks):
+  if int(nclicks) % 2 == 1:
+    label = 'Hide Advanced Inputs'
+  else:
+    label = 'Show Advanced Inputs'
+  return label
 
 if __name__ == '__main__':
     app.run(debug=True)
