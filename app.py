@@ -60,18 +60,6 @@ nontextselections = [
     )
 ]
 
-advancedselections = [
-  html.Label('League Runs per PA'),
-  dcc.Input(id = 'runs-per-pa', value = '.117', type = 'number', step = 0.001),
-  html.Br(),
-  html.Label('Replacement Level (Runs per 600 PA)'),
-  dcc.Input(id = 'replacement-level', value = '-20', type = 'number', step = 0.1),
-  html.Br(),
-  html.Label('Runs per Win Conversion'),
-  dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001)
-]
-
-
 home_runs_row = dbc.Row([
   dbc.Col(html.Label('Home Runs:'), width = 4),
   dbc.Col(dcc.Input(id = 'home-runs', value = '16', type = 'number'), width = 1)
@@ -112,6 +100,21 @@ park_factor_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'park-factor', value = '100', type = 'number'), width = 1)
 ])
 
+runs_per_pa_row = dbc.Row([
+  dbc.Col(html.Label('League Runs per PA:'), width = 4),
+  dbc.Col(dcc.Input(id = 'runs-per-pa', value = '.117', type = 'number', step = 0.001), width = 1)
+])
+
+replacement_level_row = dbc.Row([
+  dbc.Col(html.Label('Replacement Level (Runs per 600 PA):'), width = 4),
+  dbc.Col(dcc.Input(id = 'replacement-level', value = '-20', type = 'number', step = 0.1), width = 1)
+])
+
+runs_per_win_row = dbc.Row([
+  dbc.Col(html.Label('Runs per Win Conversion:'), width = 4),
+  dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
+])
+
 
 app.layout = [
   html.H1('Simple WAR Calculator'),
@@ -138,9 +141,11 @@ app.layout = [
         dbc.Row([
           dbc.Col(nontextselections, width = 10)
         ]),
-        dbc.Row([
-          dbc.Col(advancedselections, width = 10)
-        ])
+        runs_per_pa_row,
+        html.Br(),
+        replacement_level_row,
+        html.Br(),
+        runs_per_win_row
       ], style = {"margin-left": "10px"}, width = 3),
       dbc.Col(outputs, width = 3)
     ], justify = "start"
