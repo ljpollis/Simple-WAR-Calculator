@@ -166,10 +166,12 @@ def update_xwrc(hr, bb, k, sb, babip, pa, pf):
 @callback(
   Output('batting-runs', 'data'),
   Input('xwrc', 'data'),
-  Input('plate-appearances', 'value')
+  Input('plate-appearances', 'value'),
+  Input('park-factor', 'value'),
+  Input('runs-per-pa', 'value')
   )
-def update_batting_runs(xwrc, pa):
-  return float(xwrc - 100) * 0.1123 * float(pa) / 100
+def update_batting_runs(xwrc, pa, pf, rppa):
+  return (xwrc + float(pf) - 200) * float(rppa) * float(pa) / 100
 
 @callback(
   Output('defense-runs', 'data'),
