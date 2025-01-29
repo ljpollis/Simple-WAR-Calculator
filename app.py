@@ -1,9 +1,22 @@
 from dash import callback, Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
 
-app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
 
 app.config.suppress_callback_exceptions = True
+
+roundbutton = {
+    "border": None,
+    "border-radius": "50%",
+    "padding": 0,
+    "backgroundColor": "blue",
+    "color": "white",
+    "textAlign": "center",
+    "fontSize": 10,
+    "height": 20,
+    "width": 20,
+    "margin": 2,
+}
 
 outputs = [
   html.Div(children=[
@@ -81,7 +94,16 @@ stolen_bases_row = dbc.Row([
 ])
 
 babip_row = dbc.Row([
-  dbc.Col(html.Label('BABIP:'), width = 4),
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('BABIP:'),
+        dbc.Button('?', id = 'babip-?',style=roundbutton),
+        dbc.Tooltip(
+            "Batting Average on Balls in Play: The proportion of batted balls within the field of play that fall for hits. Essentially batting average that doesn't count home runs or strikeouts.",
+            target="babip-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001), width = 1)
 ])
 
