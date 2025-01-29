@@ -142,7 +142,7 @@ app.layout = [
           dbc.Col(nontextselections, width = 10)
         ]),
         html.Br(),
-        dbc.Button('Toggle Advanced Inputs', outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
+        dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
         html.Br(),
         html.Br(),
         html.Div([runs_per_pa_row,
@@ -250,13 +250,6 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
 def update_wins_above_replacement(runsabovereplacement, runsperwin):
   return runsabovereplacement / float(runsperwin)
 
-@callback(
-  Output('advanced-selection', 'hidden'),
-  Input('toggle-button', 'n_clicks')
-  )
-def toggle_advanced(nclicks):
-  return (int(nclicks) % 2 == 1)
-
 
 ## Display callbacks
 
@@ -320,6 +313,24 @@ def update_runs_above_replacement_display(runsabovereplacement):
   )
 def update_wins_above_replacement_display(winsabovereplacement):
   return f'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
+
+@callback(
+  Output('advanced-selection', 'hidden'),
+  Input('toggle-button', 'n_clicks')
+  )
+def toggle_advanced(nclicks):
+  return (int(nclicks) % 2 == 0)
+
+@callback(
+  Output('toggle-button', 'children'),
+  Input('toggle-button', 'n_clicks')
+  )
+def toggle_advanced(nclicks):
+  if int(nclicks) % 2 == 1:
+    label = 'Hide Advanced Inputs'
+  else:
+    label = 'Show Advanced Inputs'
+  return label
 
 if __name__ == '__main__':
     app.run(debug=True)
