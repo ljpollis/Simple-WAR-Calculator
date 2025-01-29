@@ -141,11 +141,15 @@ app.layout = [
         dbc.Row([
           dbc.Col(nontextselections, width = 10)
         ]),
-        runs_per_pa_row,
+        html.Br(),
+        dbc.Button('Toggle Advanced Inputs', outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
+        html.Br(),
+        html.Br(),
+        html.Div([runs_per_pa_row,
         html.Br(),
         replacement_level_row,
         html.Br(),
-        runs_per_win_row
+        runs_per_win_row], id = 'advanced-selection')
       ], style = {"margin-left": "10px"}, width = 3),
       dbc.Col(outputs, width = 3)
     ], justify = "start"
@@ -245,6 +249,13 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
   )
 def update_wins_above_replacement(runsabovereplacement, runsperwin):
   return runsabovereplacement / float(runsperwin)
+
+@callback(
+  Output('advanced-selection', 'hidden'),
+  Input('toggle-button', 'n_clicks')
+  )
+def toggle_advanced(nclicks):
+  return (int(nclicks) % 2 == 1)
 
 
 ## Display callbacks
