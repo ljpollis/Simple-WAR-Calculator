@@ -60,6 +60,17 @@ nontextselections = [
     )
 ]
 
+advancedselections = [
+  html.Label('League Runs per PA'),
+  dcc.Input(id = 'runs-per-pa', value = '.117', type = 'number', step = 0.001),
+  html.Br(),
+  html.Label('Replacement Level (Runs per 600 PA)'),
+  dcc.Input(id = 'replacement-level', value = '-20', type = 'number', step = 0.1),
+  html.Br(),
+  html.Label('Runs per Win Conversion'),
+  dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001)
+]
+
 
 home_runs_row = dbc.Row([
   dbc.Col(html.Label('Home Runs:'), width = 4),
@@ -126,6 +137,9 @@ app.layout = [
         html.Br(),
         dbc.Row([
           dbc.Col(nontextselections, width = 10)
+        ]),
+        dbc.Row([
+          dbc.Col(advancedselections, width = 10)
         ])
       ], style = {"margin-left": "10px"}, width = 3),
       dbc.Col(outputs, width = 3)
