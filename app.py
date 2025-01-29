@@ -213,10 +213,11 @@ def update_positional_runs(position, games):
 
 @callback(
   Output('replacement-runs', 'data'),
-  Input('plate-appearances', 'value')
+  Input('plate-appearances', 'value'),
+  Input('replacement-level', 'value')
   )
-def update_replacement_runs(pa):
-  return float(pa) / 30
+def update_replacement_runs(pa, replacementlevel):
+  return float(pa) * -float(replacementlevel) / 600
 
 @callback(
   Output('runs-above-replacement', 'data'),
