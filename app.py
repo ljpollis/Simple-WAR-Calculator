@@ -146,7 +146,16 @@ runs_per_pa_row = dbc.Row([
 ])
 
 replacement_level_row = dbc.Row([
-  dbc.Col(html.Label('Replacement Level (Runs per 600 PA):'), width = 4),
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('Replacement Level (Runs per 600 PA):'),
+        dbc.Button('?', id = 'replacement-level-?',style=roundbutton),
+        dbc.Tooltip(
+            "The difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)",
+            target="replacement-level-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'replacement-level', value = '-20', type = 'number', step = 0.1), width = 1)
 ])
 
