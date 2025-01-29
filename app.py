@@ -231,10 +231,11 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
 
 @callback(
   Output('wins-above-replacement', 'data'),
-  Input('runs-above-replacement', 'data')
+  Input('runs-above-replacement', 'data'),
+  Input('runs-per-win', 'value')
   )
-def update_wins_above_replacement(runsabovereplacement):
-  return runsabovereplacement / 10
+def update_wins_above_replacement(runsabovereplacement, runsperwin):
+  return runsabovereplacement / float(runsperwin)
 
 
 ## Display callbacks
