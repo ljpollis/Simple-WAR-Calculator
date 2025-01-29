@@ -132,7 +132,16 @@ park_factor_row = dbc.Row([
 ])
 
 runs_per_pa_row = dbc.Row([
-  dbc.Col(html.Label('League Runs per PA:'), width = 4),
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('League Runs per PA:'),
+        dbc.Button('?', id = 'league-rppa-?',style=roundbutton),
+        dbc.Tooltip(
+            "The baseline runs created per plate appearance across the league.",
+            target="league-rppa-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'runs-per-pa', value = '.117', type = 'number', step = 0.001), width = 1)
 ])
 
