@@ -100,7 +100,7 @@ babip_row = dbc.Row([
         html.Label('BABIP:'),
         dbc.Button('?', id = 'babip-?',style=roundbutton),
         dbc.Tooltip(
-            "Batting Average on Balls in Play: The proportion of batted balls within the field of play that fall for hits. Essentially batting average that doesn't count home runs or strikeouts.",
+            "The proportion of batted balls within the field of play that fall for hits. Essentially batting average that doesn't count home runs or strikeouts.",
             target="babip-?")
       ]
     ), width = 4, style={"verticalAlign": "center"}),
@@ -118,7 +118,16 @@ games_row = dbc.Row([
 ])
 
 park_factor_row = dbc.Row([
-  dbc.Col(html.Label('Park Factor:'), width = 4),
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('Park Factor:'),
+        dbc.Button('?', id = 'park-factor-?',style=roundbutton),
+        dbc.Tooltip(
+            "An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense).",
+            target="park-factor-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'park-factor', value = '100', type = 'number'), width = 1)
 ])
 
