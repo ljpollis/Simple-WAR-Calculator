@@ -228,6 +228,35 @@ lg_slg_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'league-slg', value = '.399', type = 'number', step = 0.001), width = 1)
 ])
 
+era_row = dbc.Row([
+  dbc.Col(html.Label('ERA:'), width = 4),
+  dbc.Col(dcc.Input(id = 'era', value = '4.15', type = 'number', step = 0.01), width = 1)
+])
+
+ip_row = dbc.Row([
+  dbc.Col(html.Label('IP:'), width = 4),
+  dbc.Col(dcc.Input(id = 'ip', value = '200', type = 'number', step = 1), width = 1)
+])
+
+lg_era_row = dbc.Row([
+  dbc.Col(html.Label('League ERA:'), width = 4),
+  dbc.Col(dcc.Input(id = 'league-era', type = 'number', step = 0.01), width = 1)
+])
+
+replacement_level_p_row = dbc.Row([
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('Replacement Level (Runs per 200 IP):'),
+        dbc.Button('?', id = 'replacement-level-p-?',style=roundbutton),
+        dbc.Tooltip(
+            "The difference in performance between an average player and a pitcher you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)",
+            target="replacement-level-p-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
+  dbc.Col(dcc.Input(id = 'replacement-level-p', value = '-18.5', type = 'number', step = 0.1), width = 1)
+])
+
 batting_type = html.Div(
   [
     html.H5(
@@ -321,6 +350,32 @@ opsplus_inputs = dbc.Col(
         runs_per_pa_row,
         html.Br(),
         replacement_level_row,
+        html.Br(),
+        runs_per_win_row], id = 'advanced-selection')
+      ]
+    )
+    
+era_inputs = dbc.Col(
+  [
+    era_row,
+    html.Br(),
+    ip_row,
+    html.Br(),
+    lg_era_row,
+    html.Br(),
+    park_factor_row,
+    html.Br(),
+    dbc.Row([
+      html.Label('Primary Position'),
+      dcc.Dropdown(['Starter', 'Reliever'], 'Starter', id = 'position-p')
+    ]),
+    html.Br(),
+    dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
+    html.Br(),
+    html.Br(),
+    html.Div(
+      [
+        replacement_level_p_row,
         html.Br(),
         runs_per_win_row], id = 'advanced-selection')
       ]
@@ -557,6 +612,17 @@ def update_input_selections(selection):
   else:
     inputtype = opsplus_inputs
   return inputtype
+
+@callback(
+  Output(component_id = 'league-era', component_property = 'value'),
+  Input(component_id = 'position-p', component_property = 'value')
+  )
+def update_lg_era(position):
+  if position == 'Starter':
+    era = 4.15
+  else:
+    era = 3.97
+  return era
 
 
 if __name__ == '__main__':
