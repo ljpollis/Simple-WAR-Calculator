@@ -240,7 +240,7 @@ ip_row = dbc.Row([
 
 lg_era_row = dbc.Row([
   dbc.Col(html.Label('League ERA:'), width = 4),
-  dbc.Col(dcc.Input(id = 'league-era', type = 'number', step = 0.01), width = 1)
+  dbc.Col(dcc.Input(id = 'league-era', value = 4.08, type = 'number', step = 0.01), width = 1)
 ])
 
 replacement_level_p_row = dbc.Row([
@@ -255,6 +255,11 @@ replacement_level_p_row = dbc.Row([
       ]
     ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'replacement-level-p', value = '-18.5', type = 'number', step = 0.1), width = 1)
+])
+
+positional_adjustment_row = dbc.Row([
+  dbc.Col(html.Label('Positional Adjustment:'), width = 4),
+  dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
 ])
 
 batting_type = html.Div(
@@ -376,6 +381,8 @@ era_inputs = dbc.Col(
     html.Br(),
     html.Div(
       [
+        positional_adjustment_row,
+        html.Br(),
         replacement_level_p_row,
         html.Br(),
         runs_per_win_row], id = 'advanced-selection')
@@ -529,10 +536,11 @@ def update_ops_plus(obp, slg, leagueobp, leagueslg):
   Output('pitching-runs', 'data'),
   Input('era', 'value'),
   Input('league-era', 'value'),
-  Input('ip', 'value')
+  Input('ip', 'value'),
+  Input('positional-adjustment', 'value')
   )
-def update_pitching_runs(era, leagueera, ip):
-  return (float(leagueera) - float(era)) * int(ip) / 9
+def update_pitching_runs(era, leagueera, ip, adjustment):
+  return (float(leagueera) - float(era) + adjustment) * int(ip) / 9
 
 @callback(
   Output('replacement-runs-p', 'data'),
@@ -669,14 +677,14 @@ def update_input_selections(selection):
   return inputtype
 
 @callback(
-  Output(component_id = 'league-era', component_property = 'value'),
+  Output(component_id = 'positional-adjustment', component_property = 'value'),
   Input(component_id = 'position-p', component_property = 'value')
   )
-def update_lg_era(position):
+def update_positional_adjustment(position):
   if position == 'Starter':
-    era = 4.15
+    era = 0.07
   else:
-    era = 3.97
+    era = -0.11
   return era
 
 @callback(
