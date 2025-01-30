@@ -282,8 +282,7 @@ xwrcplus_inputs = dbc.Col(
         replacement_level_row,
         html.Br(),
         runs_per_win_row], id = 'advanced-selection')
-      ],
-      style = {"margin-left": "10px"}, width = 3
+      ]
     )
     
 opsplus_inputs = dbc.Col(
@@ -318,8 +317,7 @@ opsplus_inputs = dbc.Col(
         replacement_level_row,
         html.Br(),
         runs_per_win_row], id = 'advanced-selection')
-      ],
-      style = {"margin-left": "10px"}, width = 3
+      ]
     )
 
 
@@ -330,7 +328,7 @@ app.layout = [
   html.Br(),
   dbc.Row(
     [
-      html.Div(id = "inputs"),
+      dbc.Col(id = "inputs", style = {"margin-left": "10px"}, width = 3),
       dbc.Col(outputs, width = 3)
     ], justify = "start"
   )
