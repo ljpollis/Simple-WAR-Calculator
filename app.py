@@ -54,7 +54,15 @@ nontextselections = [
   html.Label('Primary Position'),
   dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
   html.Br(),
-  html.Label('Defensive Performance'),
+  html.Div(
+      [
+        html.Label('Defensive Performance'),
+        dbc.Button('?', id = 'defense-20-80-?',style=roundbutton),
+        dbc.Tooltip(
+            "Baseball scouts grade tools on the 20-80 scale. For defense, 50 is the MLB average, 80 is Ozzie Smith, and 20 is Adam Dunn.",
+            target="defense-20-80-?")
+      ]
+    ),
   dcc.Slider(
     id = 'defense',
     min = 20,
