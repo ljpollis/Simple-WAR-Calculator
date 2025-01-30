@@ -189,42 +189,125 @@ runs_per_win_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
 ])
 
+obp_row = dbc.Row([
+  dbc.Col(html.Label('OBP:'), width = 4),
+  dbc.Col(dcc.Input(id = 'obp', value = '.400', type = 'number', step = 0.001), width = 1)
+])
+
+slg_row = dbc.Row([
+  dbc.Col(html.Label('SLG:'), width = 4),
+  dbc.Col(dcc.Input(id = 'slg', value = '.500', type = 'number', step = 0.001), width = 1)
+])
+
+lg_obp_row = dbc.Row([
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('League OBP:'),
+        dbc.Button('?', id = 'league-obp-?',style=roundbutton),
+        dbc.Tooltip(
+            "The average OBP for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.",
+            target="league-obp-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
+  dbc.Col(dcc.Input(id = 'obp', value = '.312', type = 'number', step = 0.001), width = 1)
+])
+
+lg_slg_row = dbc.Row([
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('League SLG:'),
+        dbc.Button('?', id = 'league-slg-?',style=roundbutton),
+        dbc.Tooltip(
+            "The average SLG for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.",
+            target="league-obp-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
+  dbc.Col(dcc.Input(id = 'slg', value = '.399', type = 'number', step = 0.001), width = 1)
+])
+
+xwrcplus_inputs = dbc.Col(
+  [
+    home_runs_row,
+    html.Br(),
+    walks_row,
+    html.Br(),
+    strikeouts_row,
+    html.Br(),
+    stolen_bases_row,
+    html.Br(),
+    babip_row,
+    html.Br(),
+    plate_appearances_row,
+    html.Br(),
+    games_row,
+    html.Br(),
+    park_factor_row,
+    html.Br(),
+    dbc.Row(
+      [
+        dbc.Col(nontextselections, width = 10)
+      ]
+    ),
+    html.Br(),
+    dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
+    html.Br(),
+    html.Br(),
+    html.Div(
+      [
+        runs_per_pa_row,
+        html.Br(),
+        replacement_level_row,
+        html.Br(),
+        runs_per_win_row], id = 'advanced-selection')
+      ],
+      style = {"margin-left": "10px"}, width = 3
+    )
+    
+opsplus_inputs = dbc.Col(
+  [
+    obp_row,
+    html.Br(),
+    slg_row,
+    html.Br(),
+    lg_obp_row,
+    html.Br(),
+    lg_slg_row,
+    html.Br(),
+    plate_appearances_row,
+    html.Br(),
+    games_row,
+    html.Br(),
+    park_factor_row,
+    html.Br(),
+    dbc.Row(
+      [
+        dbc.Col(nontextselections, width = 10)
+      ]
+    ),
+    html.Br(),
+    dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
+    html.Br(),
+    html.Br(),
+    html.Div(
+      [
+        runs_per_pa_row,
+        html.Br(),
+        replacement_level_row,
+        html.Br(),
+        runs_per_win_row], id = 'advanced-selection')
+      ],
+      style = {"margin-left": "10px"}, width = 3
+    )
+
 
 app.layout = [
   html.H1('Simple WAR Calculator'),
   html.Br(),
   dbc.Row(
     [
-      dbc.Col([
-        home_runs_row,
-        html.Br(),
-        walks_row,
-        html.Br(),
-        strikeouts_row,
-        html.Br(),
-        stolen_bases_row,
-        html.Br(),
-        babip_row,
-        html.Br(),
-        plate_appearances_row,
-        html.Br(),
-        games_row,
-        html.Br(),
-        park_factor_row,
-        html.Br(),
-        dbc.Row([
-          dbc.Col(nontextselections, width = 10)
-        ]),
-        html.Br(),
-        dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
-        html.Br(),
-        html.Br(),
-        html.Div([runs_per_pa_row,
-        html.Br(),
-        replacement_level_row,
-        html.Br(),
-        runs_per_win_row], id = 'advanced-selection')
-      ], style = {"margin-left": "10px"}, width = 3),
+      xwrcplus_inputs,
       dbc.Col(outputs, width = 3)
     ], justify = "start"
   )
