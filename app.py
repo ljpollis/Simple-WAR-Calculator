@@ -272,6 +272,7 @@ batting_type = html.Div(
             [
               {"label": "Original", "value": 1},
               {"label": "OPS+", "value": 2},
+              {"label": "ERA", "value": 3}
             ],
           value=1,
         ),
@@ -409,7 +410,7 @@ app.layout = [
   dbc.Row(
     [
       dbc.Col(id = "inputs", style = {"margin-left": "10px"}, width = 3),
-      dbc.Col(outputs, width = 3)
+      dbc.Col(id = "outputs", width = 3)
     ], justify = "start"
   )
 ]
@@ -661,8 +662,10 @@ def update_xwrc_display(opsplus):
 def update_input_selections(selection):
   if selection == 1:
     inputtype = xwrcplus_inputs
-  else:
+  elif selection == 2:
     inputtype = opsplus_inputs
+  else:
+    inputtype = era_inputs
   return inputtype
 
 @callback(
@@ -703,6 +706,17 @@ def update_runs_above_replacement_p_display(runsabovereplacement):
   )
 def update_wins_above_replacement_p_display(winsabovereplacement):
   return f'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
+
+@callback(
+  Output(component_id = 'outputs', component_property = 'children'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection < 3:
+    inputtype = outputs
+  else:
+    inputtype = outputs_era
+  return inputtype
 
 
 if __name__ == '__main__':
