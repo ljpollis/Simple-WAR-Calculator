@@ -71,7 +71,15 @@ nontextselections = [
     value = 50
     ),
   html.Br(),
-  html.Label('Baserunning Performance'),
+  html.Div(
+      [
+        html.Label('Baserunning Performance'),
+        dbc.Button('?', id = 'baserunning-20-80-?',style=roundbutton),
+        dbc.Tooltip(
+            "Baseball scouts grade tools on the 20-80 scale. For speed, 50 is the MLB average, 80 is Billy Hamilton, and 20 is Billy Butler.",
+            target="baserunning-20-80-?")
+      ]
+    ),
   dcc.Slider(
     id = 'baserunning', 
     min = 20,
