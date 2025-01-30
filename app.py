@@ -230,22 +230,28 @@ lg_slg_row = dbc.Row([
 
 batting_type = html.Div(
   [
-    dbc.RadioItems(
-      id="radios",
-      className="btn-group",
-      inputClassName="btn-check",
-      labelClassName="btn btn-outline-primary",
-      labelCheckedClassName="active",
-      options=
-        [
-          {"label": "Original", "value": 1},
-          {"label": "OPS+", "value": 2},
-        ],
-        value=1,
-      ),
-    html.Div(id="output"),
+    html.H5(
+      [
+        "Version: ",
+        dbc.RadioItems(
+          id="radios",
+          className="btn-group",
+          inputClassName="btn-check",
+          labelClassName="btn btn-outline-primary",
+          labelCheckedClassName="active",
+          options=
+            [
+              {"label": "Original", "value": 1},
+              {"label": "OPS+", "value": 2},
+            ],
+          value=1,
+        ),
+        html.Div(id="output"),
+      ],
+    className="radio-group",
+    )
   ],
-  className="radio-group",
+  style = {"margin-left": "10px"}
 )
 
 xwrcplus_inputs = dbc.Col(
