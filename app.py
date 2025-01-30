@@ -160,7 +160,16 @@ replacement_level_row = dbc.Row([
 ])
 
 runs_per_win_row = dbc.Row([
-  dbc.Col(html.Label('Runs per Win Conversion:'), width = 4),
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('Runs per Win Conversion:'),
+        dbc.Button('?', id = 'runs-per-win-?',style=roundbutton),
+        dbc.Tooltip(
+            "The number of marginal runs scored (or prevented) it takes to increase a team's expected win total by one. Usually around 10 and correlated with R/PA.",
+            target="runs-per-win-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
 ])
 
