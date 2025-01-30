@@ -381,6 +381,25 @@ era_inputs = dbc.Col(
       ]
     )
 
+outputs_era = [
+  html.Div(children=[
+    html.Div(id='pitching-runs'),
+    html.Div(id='replacement-runs-p'),
+    html.Div(id='runs-above-replacement-p'),
+    html.Div(id='wins-above-replacement-p'),
+    html.H6(id='pitching-runs-display'),
+    html.Br(),
+    html.H6(id='replacement-runs-p-display'),
+    html.Br(),
+    html.H6(id='runs-above-replacement-p-display'),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.H4(id='wins-above-replacement-p-display')
+    ]
+  )
+]
+
 
 app.layout = [
   html.H1('Simple WAR Calculator'),
@@ -505,6 +524,39 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
 def update_ops_plus(obp, slg, leagueobp, leagueslg):
   return 100 * (float(obp) / float(leagueobp) + float(slg) / float(leagueslg) - 1)
 
+@callback(
+  Output('pitching-runs', 'data'),
+  Input('era', 'value'),
+  Input('league-era', 'value'),
+  Input('ip', 'value')
+  )
+def update_pitching_runs(era, leagueera, ip):
+  return (float(leagueera) - float(era)) * int(ip) / 9
+
+@callback(
+  Output('replacement-runs-p', 'data'),
+  Input('ip', 'value'),
+  Input('replacement-level-p', 'value')
+  )
+def update_replacement_runs_p(ip, replacementlevel):
+  return float(ip) * - float(replacementlevel) / 200
+
+@callback(
+  Output('runs-above-replacement-p', 'data'),
+  Input('pitching-runs', 'data'),
+  Input('replacement-runs-p', 'data')
+  )
+def update_runs_above_replacement(pitchingruns, replacementruns):
+  return pitchingruns + replacementruns
+
+@callback(
+  Output('wins-above-replacement-p', 'data'),
+  Input('runs-above-replacement-p', 'data'),
+  Input('runs-per-win', 'value')
+  )
+def update_wins_above_replacement(runsabovereplacement, runsperwin):
+  return float(runsabovereplacement) / float(runsperwin)
+
 
 ## Display callbacks
 
@@ -623,6 +675,34 @@ def update_lg_era(position):
   else:
     era = 3.97
   return era
+
+@callback(
+  Output('pitching-runs-display', 'children'),
+  Input('pitching-runs', 'data')
+  )
+def update_pitching_runs_display(pitchingruns):
+  return f'Pitching Runs: ' + str(round(pitchingruns, 1))
+
+@callback(
+  Output('replacement-runs-p-display', 'children'),
+  Input('replacement-runs-p', 'data')
+  )
+def update_replacement_runs_display(replacementruns):
+  return f'Replacement Runs: ' + str(round(replacementruns, 1))
+
+@callback(
+  Output('runs-above-replacement-p-display', 'children'),
+  Input('runs-above-replacement-p', 'data')
+  )
+def update_runs_above_replacement_p_display(runsabovereplacement):
+  return f'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
+
+@callback(
+  Output('wins-above-replacement-p-display', 'children'),
+  Input('wins-above-replacement-p', 'data')
+  )
+def update_wins_above_replacement_p_display(winsabovereplacement):
+  return f'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
 
 
 if __name__ == '__main__':
