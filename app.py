@@ -28,6 +28,7 @@ outputs = [
     html.Div(id='replacement-runs'),
     html.Div(id='runs-above-replacement'),
     html.Div(id='wins-above-replacement'),
+    html.Div(id='ops-plus'),
     html.H6(id='xwrc-display'),
     html.Br(),
     html.Br(),
@@ -407,6 +408,16 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
 def update_wins_above_replacement(runsabovereplacement, runsperwin):
   return runsabovereplacement / float(runsperwin)
 
+@callback(
+  Output('ops-plus', 'data'),
+  Input('obp', 'value'),
+  Input('slg', 'value'),
+  Input('league-obp', 'value'),
+  Input('league-slg', 'value')
+  )
+def update_ops_plus(obp, slg, leagueobp, leagueslg):
+  return 100 * (float(obp) / float(leagueobp) + float(slg) / float(leagueslg) - 1)
+
 
 ## Display callbacks
 
@@ -488,6 +499,13 @@ def toggle_advanced(nclicks):
   else:
     label = 'Show Advanced Inputs'
   return label
+
+@callback(
+  Output(component_id = 'ops-plus-display', component_property = 'children'),
+  Input(component_id = 'ops-plus', component_property = 'data')
+  )
+def update_xwrc_display(opsplus):
+  return f'OPS+: ' + str(int(opsplus))
 
 if __name__ == '__main__':
     app.run(debug=True)
