@@ -29,7 +29,7 @@ outputs = [
     html.Div(id='runs-above-replacement'),
     html.Div(id='wins-above-replacement'),
     html.Div(id='ops-plus'),
-    html.H6(id='xwrc-display'),
+    html.H6(id='rate-stat-display'),
     html.Br(),
     html.Br(),
     html.H6(id='batting-runs-display'),
@@ -211,7 +211,7 @@ lg_obp_row = dbc.Row([
             target="league-obp-?")
       ]
     ), width = 4, style={"verticalAlign": "center"}),
-  dbc.Col(dcc.Input(id = 'obp', value = '.312', type = 'number', step = 0.001), width = 1)
+  dbc.Col(dcc.Input(id = 'league-obp', value = '.312', type = 'number', step = 0.001), width = 1)
 ])
 
 lg_slg_row = dbc.Row([
@@ -225,8 +225,28 @@ lg_slg_row = dbc.Row([
             target="league-obp-?")
       ]
     ), width = 4, style={"verticalAlign": "center"}),
-  dbc.Col(dcc.Input(id = 'slg', value = '.399', type = 'number', step = 0.001), width = 1)
+  dbc.Col(dcc.Input(id = 'league-slg', value = '.399', type = 'number', step = 0.001), width = 1)
 ])
+
+batting_type = html.Div(
+  [
+    dbc.RadioItems(
+      id="radios",
+      className="btn-group",
+      inputClassName="btn-check",
+      labelClassName="btn btn-outline-primary",
+      labelCheckedClassName="active",
+      options=
+        [
+          {"label": "Original", "value": 1},
+          {"label": "OPS+", "value": 2},
+        ],
+        value=1,
+      ),
+    html.Div(id="output"),
+  ],
+  className="radio-group",
+)
 
 xwrcplus_inputs = dbc.Col(
   [
@@ -306,9 +326,11 @@ opsplus_inputs = dbc.Col(
 app.layout = [
   html.H1('Simple WAR Calculator'),
   html.Br(),
+  batting_type,
+  html.Br(),
   dbc.Row(
     [
-      xwrcplus_inputs,
+      html.Div(id = "inputs"),
       dbc.Col(outputs, width = 3)
     ], justify = "start"
   )
@@ -333,12 +355,18 @@ def update_xwrc(hr, bb, k, sb, babip, pa, pf):
 @callback(
   Output('batting-runs', 'data'),
   Input('xwrc', 'data'),
+  Input('ops-plus', 'data'),
   Input('plate-appearances', 'value'),
   Input('park-factor', 'value'),
-  Input('runs-per-pa', 'value')
+  Input('runs-per-pa', 'value'),
+  Input(component_id = 'radios', component_property = 'value')
   )
-def update_batting_runs(xwrc, pa, pf, rppa):
-  return (xwrc + float(pf) - 200) * float(rppa) * float(pa) / 100
+def update_batting_runs(xwrc, opsplus, pa, pf, rppa, selection):
+  if selection == 1:
+    inputtype = xwrc
+  else:
+    inputtype = opsplus
+  return (inputtype + float(pf) - 200) * float(rppa) * float(pa) / 100
 
 @callback(
   Output('defense-runs', 'data'),
@@ -422,11 +450,19 @@ def update_ops_plus(obp, slg, leagueobp, leagueslg):
 ## Display callbacks
 
 @callback(
-  Output(component_id = 'xwrc-display', component_property = 'children'),
-  Input(component_id = 'xwrc', component_property = 'data')
+  Output(component_id = 'rate-stat-display', component_property = 'children'),
+  Input(component_id = 'xwrc', component_property = 'data'),
+  Input(component_id = 'ops-plus', component_property = 'data'),
+  Input(component_id = 'radios', component_property = 'value')
   )
-def update_xwrc_display(xwrc):
-  return f'xwRC+: ' + str(int(xwrc))
+def update_rate_stat(xwrc, opsplus, selection):
+  if selection == 1:
+    stat = xwrc
+    label = 'xwRC+: '
+  else:
+    stat = opsplus
+    label = 'OPS+: '
+  return label + str(int(stat))
 
 @callback(
   Output('batting-runs-display', 'children'),
@@ -506,6 +542,18 @@ def toggle_advanced(nclicks):
   )
 def update_xwrc_display(opsplus):
   return f'OPS+: ' + str(int(opsplus))
+
+@callback(
+  Output(component_id = 'inputs', component_property = 'children'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection == 1:
+    inputtype = xwrcplus_inputs
+  else:
+    inputtype = opsplus_inputs
+  return inputtype
+
 
 if __name__ == '__main__':
     app.run(debug=True)
