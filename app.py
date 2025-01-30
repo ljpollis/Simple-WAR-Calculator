@@ -28,7 +28,8 @@ outputs = [
     html.Div(id='replacement-runs'),
     html.Div(id='runs-above-replacement'),
     html.Div(id='wins-above-replacement'),
-    html.H6(id='xwrc-display'),
+    html.Div(id='ops-plus'),
+    html.H6(id='rate-stat-display'),
     html.Br(),
     html.Br(),
     html.H6(id='batting-runs-display'),
@@ -189,42 +190,151 @@ runs_per_win_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
 ])
 
+obp_row = dbc.Row([
+  dbc.Col(html.Label('OBP:'), width = 4),
+  dbc.Col(dcc.Input(id = 'obp', value = '.400', type = 'number', step = 0.001), width = 1)
+])
 
-app.layout = [
-  html.H1('Simple WAR Calculator'),
-  html.Br(),
-  dbc.Row(
-    [
-      dbc.Col([
-        home_runs_row,
-        html.Br(),
-        walks_row,
-        html.Br(),
-        strikeouts_row,
-        html.Br(),
-        stolen_bases_row,
-        html.Br(),
-        babip_row,
-        html.Br(),
-        plate_appearances_row,
-        html.Br(),
-        games_row,
-        html.Br(),
-        park_factor_row,
-        html.Br(),
-        dbc.Row([
-          dbc.Col(nontextselections, width = 10)
-        ]),
-        html.Br(),
-        dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
-        html.Br(),
-        html.Br(),
-        html.Div([runs_per_pa_row,
+slg_row = dbc.Row([
+  dbc.Col(html.Label('SLG:'), width = 4),
+  dbc.Col(dcc.Input(id = 'slg', value = '.500', type = 'number', step = 0.001), width = 1)
+])
+
+lg_obp_row = dbc.Row([
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('League OBP:'),
+        dbc.Button('?', id = 'league-obp-?',style=roundbutton),
+        dbc.Tooltip(
+            "The average OBP for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.",
+            target="league-obp-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
+  dbc.Col(dcc.Input(id = 'league-obp', value = '.312', type = 'number', step = 0.001), width = 1)
+])
+
+lg_slg_row = dbc.Row([
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('League SLG:'),
+        dbc.Button('?', id = 'league-slg-?',style=roundbutton),
+        dbc.Tooltip(
+            "The average SLG for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.",
+            target="league-obp-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
+  dbc.Col(dcc.Input(id = 'league-slg', value = '.399', type = 'number', step = 0.001), width = 1)
+])
+
+batting_type = html.Div(
+  [
+    html.H5(
+      [
+        "Version: ",
+        dbc.RadioItems(
+          id="radios",
+          className="btn-group",
+          inputClassName="btn-check",
+          labelClassName="btn btn-outline-primary",
+          labelCheckedClassName="active",
+          options=
+            [
+              {"label": "Original", "value": 1},
+              {"label": "OPS+", "value": 2},
+            ],
+          value=1,
+        ),
+        html.Div(id="output"),
+      ],
+    className="radio-group",
+    )
+  ],
+  style = {"margin-left": "10px"}
+)
+
+xwrcplus_inputs = dbc.Col(
+  [
+    home_runs_row,
+    html.Br(),
+    walks_row,
+    html.Br(),
+    strikeouts_row,
+    html.Br(),
+    stolen_bases_row,
+    html.Br(),
+    babip_row,
+    html.Br(),
+    plate_appearances_row,
+    html.Br(),
+    games_row,
+    html.Br(),
+    park_factor_row,
+    html.Br(),
+    dbc.Row(
+      [
+        dbc.Col(nontextselections, width = 10)
+      ]
+    ),
+    html.Br(),
+    dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
+    html.Br(),
+    html.Br(),
+    html.Div(
+      [
+        runs_per_pa_row,
         html.Br(),
         replacement_level_row,
         html.Br(),
         runs_per_win_row], id = 'advanced-selection')
-      ], style = {"margin-left": "10px"}, width = 3),
+      ]
+    )
+    
+opsplus_inputs = dbc.Col(
+  [
+    obp_row,
+    html.Br(),
+    slg_row,
+    html.Br(),
+    lg_obp_row,
+    html.Br(),
+    lg_slg_row,
+    html.Br(),
+    plate_appearances_row,
+    html.Br(),
+    games_row,
+    html.Br(),
+    park_factor_row,
+    html.Br(),
+    dbc.Row(
+      [
+        dbc.Col(nontextselections, width = 10)
+      ]
+    ),
+    html.Br(),
+    dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
+    html.Br(),
+    html.Br(),
+    html.Div(
+      [
+        runs_per_pa_row,
+        html.Br(),
+        replacement_level_row,
+        html.Br(),
+        runs_per_win_row], id = 'advanced-selection')
+      ]
+    )
+
+
+app.layout = [
+  html.H1('Simple WAR Calculator'),
+  html.Br(),
+  batting_type,
+  html.Br(),
+  dbc.Row(
+    [
+      dbc.Col(id = "inputs", style = {"margin-left": "10px"}, width = 3),
       dbc.Col(outputs, width = 3)
     ], justify = "start"
   )
@@ -249,12 +359,18 @@ def update_xwrc(hr, bb, k, sb, babip, pa, pf):
 @callback(
   Output('batting-runs', 'data'),
   Input('xwrc', 'data'),
+  Input('ops-plus', 'data'),
   Input('plate-appearances', 'value'),
   Input('park-factor', 'value'),
-  Input('runs-per-pa', 'value')
+  Input('runs-per-pa', 'value'),
+  Input(component_id = 'radios', component_property = 'value')
   )
-def update_batting_runs(xwrc, pa, pf, rppa):
-  return (xwrc + float(pf) - 200) * float(rppa) * float(pa) / 100
+def update_batting_runs(xwrc, opsplus, pa, pf, rppa, selection):
+  if selection == 1:
+    inputtype = xwrc
+  else:
+    inputtype = opsplus
+  return (inputtype + float(pf) - 200) * float(rppa) * float(pa) / 100
 
 @callback(
   Output('defense-runs', 'data'),
@@ -324,15 +440,33 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
 def update_wins_above_replacement(runsabovereplacement, runsperwin):
   return runsabovereplacement / float(runsperwin)
 
+@callback(
+  Output('ops-plus', 'data'),
+  Input('obp', 'value'),
+  Input('slg', 'value'),
+  Input('league-obp', 'value'),
+  Input('league-slg', 'value')
+  )
+def update_ops_plus(obp, slg, leagueobp, leagueslg):
+  return 100 * (float(obp) / float(leagueobp) + float(slg) / float(leagueslg) - 1)
+
 
 ## Display callbacks
 
 @callback(
-  Output(component_id = 'xwrc-display', component_property = 'children'),
-  Input(component_id = 'xwrc', component_property = 'data')
+  Output(component_id = 'rate-stat-display', component_property = 'children'),
+  Input(component_id = 'xwrc', component_property = 'data'),
+  Input(component_id = 'ops-plus', component_property = 'data'),
+  Input(component_id = 'radios', component_property = 'value')
   )
-def update_xwrc_display(xwrc):
-  return f'xwRC+: ' + str(int(xwrc))
+def update_rate_stat(xwrc, opsplus, selection):
+  if selection == 1:
+    stat = xwrc
+    label = 'xwRC+: '
+  else:
+    stat = opsplus
+    label = 'OPS+: '
+  return label + str(int(stat))
 
 @callback(
   Output('batting-runs-display', 'children'),
@@ -405,6 +539,25 @@ def toggle_advanced(nclicks):
   else:
     label = 'Show Advanced Inputs'
   return label
+
+@callback(
+  Output(component_id = 'ops-plus-display', component_property = 'children'),
+  Input(component_id = 'ops-plus', component_property = 'data')
+  )
+def update_xwrc_display(opsplus):
+  return f'OPS+: ' + str(int(opsplus))
+
+@callback(
+  Output(component_id = 'inputs', component_property = 'children'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection == 1:
+    inputtype = xwrcplus_inputs
+  else:
+    inputtype = opsplus_inputs
+  return inputtype
+
 
 if __name__ == '__main__':
     app.run(debug=True)
