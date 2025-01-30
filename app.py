@@ -1,9 +1,22 @@
 from dash import callback, Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
 
-app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
 
 app.config.suppress_callback_exceptions = True
+
+roundbutton = {
+    "border": None,
+    "border-radius": "50%",
+    "padding": 0,
+    "backgroundColor": "blue",
+    "color": "white",
+    "textAlign": "center",
+    "fontSize": 10,
+    "height": 20,
+    "width": 20,
+    "margin": 2,
+}
 
 outputs = [
   html.Div(children=[
@@ -41,7 +54,15 @@ nontextselections = [
   html.Label('Primary Position'),
   dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
   html.Br(),
-  html.Label('Defensive Performance'),
+  html.Div(
+      [
+        html.Label('Defensive Performance'),
+        dbc.Button('?', id = 'defense-20-80-?',style=roundbutton),
+        dbc.Tooltip(
+            "Baseball scouts grade tools on the 20-80 scale. For defense, 50 is the MLB average, 80 is Ozzie Smith, and 20 is Adam Dunn.",
+            target="defense-20-80-?")
+      ]
+    ),
   dcc.Slider(
     id = 'defense',
     min = 20,
@@ -50,7 +71,15 @@ nontextselections = [
     value = 50
     ),
   html.Br(),
-  html.Label('Baserunning Performance'),
+  html.Div(
+      [
+        html.Label('Baserunning Performance'),
+        dbc.Button('?', id = 'baserunning-20-80-?',style=roundbutton),
+        dbc.Tooltip(
+            "Baseball scouts grade tools on the 20-80 scale. For speed, 50 is the MLB average, 80 is Billy Hamilton, and 20 is Billy Butler.",
+            target="baserunning-20-80-?")
+      ]
+    ),
   dcc.Slider(
     id = 'baserunning', 
     min = 20,
@@ -81,7 +110,16 @@ stolen_bases_row = dbc.Row([
 ])
 
 babip_row = dbc.Row([
-  dbc.Col(html.Label('BABIP:'), width = 4),
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('BABIP:'),
+        dbc.Button('?', id = 'babip-?',style=roundbutton),
+        dbc.Tooltip(
+            "The proportion of batted balls within the field of play that fall for hits. Essentially batting average that doesn't count home runs or strikeouts.",
+            target="babip-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001), width = 1)
 ])
 
@@ -96,22 +134,58 @@ games_row = dbc.Row([
 ])
 
 park_factor_row = dbc.Row([
-  dbc.Col(html.Label('Park Factor:'), width = 4),
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('Park Factor:'),
+        dbc.Button('?', id = 'park-factor-?',style=roundbutton),
+        dbc.Tooltip(
+            "An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense).",
+            target="park-factor-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'park-factor', value = '100', type = 'number'), width = 1)
 ])
 
 runs_per_pa_row = dbc.Row([
-  dbc.Col(html.Label('League Runs per PA:'), width = 4),
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('League Runs per PA:'),
+        dbc.Button('?', id = 'league-rppa-?',style=roundbutton),
+        dbc.Tooltip(
+            "The baseline runs created per plate appearance across the league.",
+            target="league-rppa-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'runs-per-pa', value = '.117', type = 'number', step = 0.001), width = 1)
 ])
 
 replacement_level_row = dbc.Row([
-  dbc.Col(html.Label('Replacement Level (Runs per 600 PA):'), width = 4),
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('Replacement Level (Runs per 600 PA):'),
+        dbc.Button('?', id = 'replacement-level-?',style=roundbutton),
+        dbc.Tooltip(
+            "The difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)",
+            target="replacement-level-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'replacement-level', value = '-20', type = 'number', step = 0.1), width = 1)
 ])
 
 runs_per_win_row = dbc.Row([
-  dbc.Col(html.Label('Runs per Win Conversion:'), width = 4),
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('Runs per Win Conversion:'),
+        dbc.Button('?', id = 'runs-per-win-?',style=roundbutton),
+        dbc.Tooltip(
+            "The number of marginal runs scored (or prevented) it takes to increase a team's expected win total by one. Usually around 10 and correlated with R/PA.",
+            target="runs-per-win-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
 ])
 
