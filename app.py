@@ -555,7 +555,7 @@ def update_ops_plus(obp, slg, leagueobp, leagueslg):
   Input('positional-adjustment', 'value')
   )
 def update_pitching_runs(era, leagueera, ip, adjustment):
-  return (float(leagueera) - float(era) + adjustment) * int(ip) / 9
+  return (float(leagueera) - float(era) + adjustment) * int(ip) / 9 *1.094
 
 @callback(
   Output('replacement-runs-p', 'data'),
