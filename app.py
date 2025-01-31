@@ -259,25 +259,61 @@ runs_per_win_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
 ])
 
-era_row = html.Div(
-      [
-        dbc.Row([
-          dbc.Col(html.Label(id = 'era-label'), width = 4),
-          dbc.Col(dcc.Input(id = 'era', type = 'number', step = 0.01), width = 1),
-          html.Br()
-          ])
-      ], id = 'era-display'
-    )
+era_row = dbc.Row(
+  [
+    dbc.Col(html.Label(id = 'era-label'), width = 4),
+    dbc.Col(dcc.Input(id = 'era', type = 'number', step = 0.01), width = 1),
+  ]
+)
 
-ip_row = dbc.Row([
-  dbc.Col(html.Label('IP:'), width = 4),
-  dbc.Col(dcc.Input(id = 'ip', type = 'number', step = 1), width = 1)
-])
+k_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Strikeouts'), width = 4),
+    dbc.Col(dcc.Input(id = 'k', type = 'number', step = 1), width = 1),
+  ]
+)
 
-lg_era_row = dbc.Row([
-  dbc.Col(html.Label(id = 'league-era-label'), width = 4),
-  dbc.Col(dcc.Input(id = 'league-era', type = 'number', step = 0.01), width = 1)
-])
+bb_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Walks'), width = 4),
+    dbc.Col(dcc.Input(id = 'bb', type = 'number', step = 1), width = 1),
+  ]
+)
+
+hr_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Home Runs'), width = 4),
+    dbc.Col(dcc.Input(id = 'hr', type = 'number', step = 1), width = 1),
+  ]
+)
+
+ip_row = dbc.Row(
+  [
+    dbc.Col(html.Label('IP'), width = 4),
+    dbc.Col(dcc.Input(id = 'ip', type = 'number', step = 1), width = 1),
+  ]
+)
+
+lg_era_row = dbc.Row(
+  [
+    dbc.Col(html.Label(id = 'league-era-label'), width = 4),
+    dbc.Col(dcc.Input(id = 'league-era', type = 'number', step = 0.01), width = 1),
+  ]
+)
+
+leverage_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Entrance Leverage Index:'), width = 4),
+    dbc.Col(dcc.Input(id = 'gmli', value = 1.00, type = 'number', step = 0.01), width = 1)
+  ]
+)
+
+pitching_role_row = dbc.Row(
+  [
+    html.Label('Primary Position'),
+    dcc.Dropdown(['Starter', 'Reliever'], 'Starter', id = 'position-p')
+  ]
+)
 
 replacement_level_p_row = dbc.Row([
   dbc.Col(
@@ -297,39 +333,6 @@ positional_adjustment_row = dbc.Row([
   dbc.Col(html.Label('Positional Adjustment:'), width = 4),
   dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
 ])
-
-leverage_row = html.Div(
-      [
-        dbc.Row([
-          dbc.Col(html.Label('Entrance Leverage Index:'), width = 4),
-          dbc.Col(dcc.Input(id = 'gmli', value = 1.00, type = 'number', step = 0.01), width = 1),
-          html.Br()
-          ])
-      ], id = 'leverage-display'
-    )
-
-k_bb_row = html.Div(
-      [
-        dbc.Col([dbc.Row([
-          dbc.Col(html.Label('Strikeouts:'), width = 4),
-          dbc.Col(dcc.Input(id = 'k', value = 200, type = 'number', step = 1), width = 1)]),
-          html.Br(),
-          dbc.Row([dbc.Col(html.Label('Walks:'), width = 4),
-          dbc.Col(dcc.Input(id = 'bb', value = 50, type = 'number', step = 1), width = 1)]),
-          html.Br()
-          ])
-      ], id = 'k-bb-display'
-    )
-
-hr_row = html.Div(
-      [
-        dbc.Col([dbc.Row([
-          dbc.Col(html.Label('Home Runs:'), width = 4),
-          dbc.Col(dcc.Input(id = 'hr', value = 10, type = 'number', step = 1), width = 1)]),
-          html.Br()
-          ])
-      ], id = 'hr-display'
-    )
 
 player_type_select = html.Div(
   [
@@ -423,7 +426,9 @@ era_inputs = dbc.Col(
   [
     era_row,
     html.Br(),
-    k_bb_row,
+    k_row,
+    html.Br(),
+    bb_row,
     html.Br(),
     hr_row,
     html.Br(),
@@ -435,10 +440,7 @@ era_inputs = dbc.Col(
     html.Br(),
     leverage_row,
     html.Br(),
-    dbc.Row([
-      html.Label('Primary Position'),
-      dcc.Dropdown(['Starter', 'Reliever'], 'Starter', id = 'position-p')
-    ]),
+    pitching_role_row,
     html.Br(),
     dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
     html.Br(),
@@ -449,9 +451,11 @@ era_inputs = dbc.Col(
         html.Br(),
         replacement_level_p_row,
         html.Br(),
-        runs_per_win_row], id = 'advanced-selection')
-      ]
+        runs_per_win_row
+      ], id = 'advanced-selection'
     )
+  ]
+)
 
 outputs_era = [
   html.Div(children=[
