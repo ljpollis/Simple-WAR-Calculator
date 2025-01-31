@@ -290,6 +290,16 @@ k_bb_row = html.Div(
       ], id = 'k-bb-display'
     )
 
+hr_row = html.Div(
+      [
+        dbc.Col([dbc.Row([
+          dbc.Col(html.Label('Home Runs:'), width = 4),
+          dbc.Col(dcc.Input(id = 'hr', value = 10, type = 'number', step = 1), width = 1)]),
+          html.Br()
+          ])
+      ], id = 'hr-display'
+    )
+
 batting_type = html.Div(
   [
     html.H5(
@@ -307,7 +317,8 @@ batting_type = html.Div(
               {"label": "OPS+", "value": 2},
               {"label": "ERA", "value": 3},
               {"label": "RA9", "value": 4},
-              {"label": "kwERA", "value": 5}
+              {"label": "kwERA", "value": 5},
+              {"label": "FIP", "value": 6}
             ],
           value=1,
         ),
@@ -396,6 +407,8 @@ era_inputs = dbc.Col(
     era_row,
     html.Br(),
     k_bb_row,
+    html.Br(),
+    hr_row,
     html.Br(),
     ip_row,
     html.Br(),
@@ -898,6 +911,17 @@ def update_kwera_display(kwera):
   )
 def update_input_selections(selection):
   if selection != 5:
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output(component_id = 'hr-display', component_property = 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection < 6:
     hide = True
   else:
     hide = False
