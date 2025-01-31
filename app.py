@@ -210,8 +210,8 @@ park_factor_row = dbc.Row([
         html.Label('Park Factor:'),
         dbc.Button('?', id = 'park-factor-?',style=roundbutton),
         dbc.Tooltip(
-            "An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense).",
-            target="park-factor-?")
+            target="park-factor-?",
+            id="park-factor-info")
       ]
     ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'park-factor', value = '100', type = 'number'), width = 1)
@@ -621,9 +621,10 @@ def update_ops_plus(obp, slg, leagueobp, leagueslg):
   Input('positional-adjustment', 'value'),
   Input('kwera', 'data'),
   Input('fip', 'data'),
+  Input('park-factor', 'value'),
   Input(component_id = 'radios', component_property = 'value')
   )
-def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, selection):
+def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, pf, selection):
   if selection == 4:
     adjustment = 1
   else:
@@ -634,7 +635,7 @@ def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, s
     erainput = kwera
   else:
     erainput = fip
-  return (float(leagueera) - float(erainput) + float(positionaladjustment)) * int(ip) / 9 * adjustment
+  return (float(leagueera) - float(erainput) * 100 / int(pf) + float(positionaladjustment)) * int(ip) / 9 * adjustment
 
 @callback(
   Output('replacement-runs-p', 'data'),
@@ -1091,6 +1092,21 @@ def update_options(selection):
   else:
     leverage = False
   return leverage, leverage, leverage, leverage
+
+@callback(
+  Output('park-factor-info', 'children'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_options(selection):
+  if selection == 1:
+    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense).'
+  elif selection == 2:
+    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league OBP and SLG, leave this at 100.'
+  elif selection == 4:
+    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league RA9, leave this at 100.'
+  else:
+    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league ERA, leave this at 100.'
+  return info
 
 
 if __name__ == '__main__':
