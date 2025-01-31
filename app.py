@@ -621,9 +621,10 @@ def update_ops_plus(obp, slg, leagueobp, leagueslg):
   Input('positional-adjustment', 'value'),
   Input('kwera', 'data'),
   Input('fip', 'data'),
+  Input('park-factor', 'value'),
   Input(component_id = 'radios', component_property = 'value')
   )
-def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, selection):
+def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, pf, selection):
   if selection == 4:
     adjustment = 1
   else:
@@ -634,7 +635,7 @@ def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, s
     erainput = kwera
   else:
     erainput = fip
-  return (float(leagueera) - float(erainput) + float(positionaladjustment)) * int(ip) / 9 * adjustment
+  return (float(leagueera) - float(erainput) * 100 / int(pf) + float(positionaladjustment)) * int(ip) / 9 * adjustment
 
 @callback(
   Output('replacement-runs-p', 'data'),
