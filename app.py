@@ -430,6 +430,10 @@ outputs_era = [
     html.Div(id='runs-above-replacement-p'),
     html.Div(id='wins-above-replacement-p'),
     html.Div(id='leverage-runs'),
+    html.Div(id='kwera'),
+    html.H6(id='kwera-display'),
+    html.Br(),
+    html.Br(),
     html.H6(id='pitching-runs-display'),
     html.Br(),
     html.H6(id='leverage-runs-display'),
@@ -621,6 +625,16 @@ def update_leverage_runs(pitchingruns, gmli, position):
   else:
     leverage = gmli
   return pitchingruns * (leverage - 1) / 2
+
+@callback(
+  Output('kwera', 'data'),
+  Input('k', 'value'),
+  Input('bb', 'value'),
+  Input('ip', 'value'),
+  Input('league-era', 'value')
+  )
+def update_kwera(k, bb, ip, era):
+  return float(era) + 1.73 - 12 * (float(k) - float(bb)) / float(ip) / 4.23
 
 
 ## Display callbacks
@@ -861,6 +875,24 @@ def update_input_selections(selection):
   )
 def update_input_selections(selection):
   if selection > 4:
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output(component_id = 'kwera-display', component_property = 'children'),
+  Input(component_id = 'kwera', component_property = 'data')
+  )
+def update_kwera_display(kwera):
+  return f'kwERA: ' + str(round(kwera, 2))
+
+@callback(
+  Output(component_id = 'kwera-display', component_property = 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection != 5:
     hide = True
   else:
     hide = False
