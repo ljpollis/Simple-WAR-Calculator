@@ -424,24 +424,24 @@ hitting_inputs = dbc.Col(
     
 era_inputs = dbc.Col(
   [
-    era_row,
-    html.Br(),
-    k_row,
-    html.Br(),
-    bb_row,
-    html.Br(),
-    hr_row,
-    html.Br(),
-    ip_row,
-    html.Br(),
-    lg_era_row,
-    html.Br(),
-    park_factor_row,
-    html.Br(),
-    leverage_row,
-    html.Br(),
-    pitching_role_row,
-    html.Br(),
+    html.Div(era_row, id = 'era-row-display'),
+    html.Br(id = 'era-break-display'),
+    html.Div(k_row, id = 'k-row-display'),
+    html.Br(id = 'k-break-display'),
+    html.Div(bb_row, id = 'bb-row-display'),
+    html.Br(id = 'bb-break-display'),
+    html.Div(hr_row, id = 'hr-row-display'),
+    html.Br(id = 'hr-break-display'),
+    html.Div(ip_row, id = 'ip-row-display'),
+    html.Br(id = 'ip-break-display'),
+    html.Div(lg_era_row, id = 'lg-era-row-display'),
+    html.Br(id = 'lg-era-break-display'),
+    html.Div(park_factor_row, id = 'park_factor-row-display'),
+    html.Br(id = 'park_factor-break-display'),
+    html.Div(leverage_row, id = 'leverage-row-display'),
+    html.Br(id = 'leverage-break-display'),
+    html.Div(pitching_role_row, id = 'pitching-role-display'),
+    html.Br(id = 'pitching-break-display'),
     dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
     html.Br(),
     html.Br(),
@@ -1057,6 +1057,36 @@ def update_options(selection):
     wrcplus = True
     opsplus = False
   return wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus
+
+@callback(
+  Output('era-row-display', 'hidden'),
+  Output('era-break-display', 'hidden'),
+  Output('k-row-display', 'hidden'),
+  Output('k-break-display', 'hidden'),
+  Output('bb-row-display', 'hidden'),
+  Output('bb-break-display', 'hidden'),
+  Output('hr-row-display', 'hidden'),
+  Output('hr-break-display', 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_options(selection):
+  if selection < 5:
+    era = False
+    k = True
+    bb = True
+    hr = True
+  elif selection == 5:
+    era = True
+    k = False
+    bb = False
+    hr = True
+  else:
+    era = True
+    k = False
+    bb = False
+    hr = False
+  return era, era, k, k, bb, bb, hr, hr
+
 
 if __name__ == '__main__':
     app.run(debug=True)
