@@ -474,7 +474,7 @@ outputs_era = [
       html.H6(id='pitching-runs-display'),
       html.Br(),
       html.H6(id='leverage-runs-display'),
-      html.Br(),
+      html.Br(id='leverage-runs-break-display'),
       html.H6(id='replacement-runs-p-display'),
       html.Br(),
       html.H6(id='runs-above-replacement-p-display'),
@@ -1077,6 +1077,20 @@ def update_options(selection):
     fip = False
     estimator = False
   return era, era, k, k, bb, bb, hr, hr, kwera, fip, estimator, estimator
+
+@callback(
+  Output('leverage-row-display', 'hidden'),
+  Output('leverage-break-display', 'hidden'),
+  Output('leverage-runs-break-display', 'hidden'),
+  Output('leverage-runs-display', 'hidden'),
+  Input('position-p', 'value')
+  )
+def update_options(selection):
+  if selection == 'Starter':
+    leverage = True
+  else:
+    leverage = False
+  return leverage, leverage, leverage, leverage
 
 
 if __name__ == '__main__':
