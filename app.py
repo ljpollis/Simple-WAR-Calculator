@@ -262,6 +262,16 @@ positional_adjustment_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
 ])
 
+leverage_row = html.Div(
+      [
+        dbc.Row([
+          dbc.Col(html.Label('Entrance Leverage Index:'), width = 4),
+          dbc.Col(dcc.Input(id = 'gmli', value = 1.00, type = 'number', step = 0.01), width = 1),
+          html.Br()
+          ])
+      ], id = 'leverage-display'
+    )
+
 batting_type = html.Div(
   [
     html.H5(
@@ -371,6 +381,8 @@ era_inputs = dbc.Col(
     html.Br(),
     park_factor_row,
     html.Br(),
+    leverage_row,
+    html.Br(),
     dbc.Row([
       html.Label('Primary Position'),
       dcc.Dropdown(['Starter', 'Reliever'], 'Starter', id = 'position-p')
@@ -395,7 +407,10 @@ outputs_era = [
     html.Div(id='replacement-runs-p'),
     html.Div(id='runs-above-replacement-p'),
     html.Div(id='wins-above-replacement-p'),
+    html.Div(id='leverage-runs'),
     html.H6(id='pitching-runs-display'),
+    html.Br(),
+    html.H6(id='leverage-runs-display'),
     html.Br(),
     html.H6(id='replacement-runs-p-display'),
     html.Br(),
@@ -553,10 +568,11 @@ def update_replacement_runs_p(ip, replacementlevel):
 @callback(
   Output('runs-above-replacement-p', 'data'),
   Input('pitching-runs', 'data'),
+  Input('leverage-runs', 'data'),
   Input('replacement-runs-p', 'data')
   )
-def update_runs_above_replacement(pitchingruns, replacementruns):
-  return pitchingruns + replacementruns
+def update_runs_above_replacement(pitchingruns, leverageruns, replacementruns):
+  return pitchingruns + leverageruns + replacementruns
 
 @callback(
   Output('wins-above-replacement-p', 'data'),
@@ -565,6 +581,19 @@ def update_runs_above_replacement(pitchingruns, replacementruns):
   )
 def update_wins_above_replacement(runsabovereplacement, runsperwin):
   return float(runsabovereplacement) / float(runsperwin)
+
+@callback(
+  Output('leverage-runs', 'data'),
+  Input('pitching-runs', 'data'),
+  Input('gmli', 'value'),
+  Input(component_id = 'position-p', component_property = 'value')
+  )
+def update_leverage_runs(pitchingruns, gmli, position):
+  if position == 'Starter':
+    leverage = 1
+  else:
+    leverage = gmli
+  return pitchingruns * (leverage - 1) / 2
 
 
 ## Display callbacks
@@ -725,6 +754,24 @@ def update_input_selections(selection):
   else:
     inputtype = outputs_era
   return inputtype
+
+@callback(
+  Output(component_id = 'leverage-display', component_property = 'hidden'),
+  Input(component_id = 'position-p', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection == 'Starter':
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output('leverage-runs-display', 'children'),
+  Input('leverage-runs', 'data')
+  )
+def update_leverage_runs_display(leverageruns):
+  return f'Leverage Runs: ' + str(round(leverageruns, 1))
 
 
 if __name__ == '__main__':
