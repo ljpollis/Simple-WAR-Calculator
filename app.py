@@ -458,29 +458,30 @@ era_inputs = dbc.Col(
 )
 
 outputs_era = [
-  html.Div(children=[
-    html.Div(id='pitching-runs'),
-    html.Div(id='replacement-runs-p'),
-    html.Div(id='runs-above-replacement-p'),
-    html.Div(id='wins-above-replacement-p'),
-    html.Div(id='leverage-runs'),
-    html.Div(id='kwera'),
-    html.Div(id='fip'),
-    html.H6(id='kwera-display'),
-    html.H6(id='fip-display'),
-    html.Br(),
-    html.Br(),
-    html.H6(id='pitching-runs-display'),
-    html.Br(),
-    html.H6(id='leverage-runs-display'),
-    html.Br(),
-    html.H6(id='replacement-runs-p-display'),
-    html.Br(),
-    html.H6(id='runs-above-replacement-p-display'),
-    html.Br(),
-    html.Br(),
-    html.Br(),
-    html.H4(id='wins-above-replacement-p-display')
+  html.Div(
+    [
+      html.Div(id='pitching-runs'),
+      html.Div(id='replacement-runs-p'),
+      html.Div(id='runs-above-replacement-p'),
+      html.Div(id='wins-above-replacement-p'),
+      html.Div(id='leverage-runs'),
+      html.Div(id='kwera'),
+      html.Div(id='fip'),
+      html.H6(id='kwera-display'),
+      html.H6(id='fip-display'),
+      html.Br(id='pitching-post-rate-stat-break-display-1'),
+      html.Br(id='pitching-post-rate-stat-break-display-2'),
+      html.H6(id='pitching-runs-display'),
+      html.Br(),
+      html.H6(id='leverage-runs-display'),
+      html.Br(),
+      html.H6(id='replacement-runs-p-display'),
+      html.Br(),
+      html.H6(id='runs-above-replacement-p-display'),
+      html.Br(),
+      html.Br(),
+      html.Br(),
+      html.H4(id='wins-above-replacement-p-display')
     ]
   )
 ]
@@ -946,17 +947,6 @@ def update_kwera_display(kwera):
   return f'kwERA: ' + str(round(kwera, 2))
 
 @callback(
-  Output(component_id = 'kwera-display', component_property = 'hidden'),
-  Input(component_id = 'radios', component_property = 'value')
-  )
-def update_input_selections(selection):
-  if selection != 5:
-    hide = True
-  else:
-    hide = False
-  return hide
-
-@callback(
   Output(component_id = 'hr-display', component_property = 'hidden'),
   Input(component_id = 'radios', component_property = 'value')
   )
@@ -973,18 +963,6 @@ def update_input_selections(selection):
   )
 def update_fip_display(fip):
   return f'FIP: ' + str(round(fip, 2))
-
-
-@callback(
-  Output(component_id = 'fip-display', component_property = 'hidden'),
-  Input(component_id = 'radios', component_property = 'value')
-  )
-def update_input_selections(selection):
-  if selection != 6:
-    hide = True
-  else:
-    hide = False
-  return hide
 
 @callback(
   Output('ip', 'value'),
@@ -1067,6 +1045,10 @@ def update_options(selection):
   Output('bb-break-display', 'hidden'),
   Output('hr-row-display', 'hidden'),
   Output('hr-break-display', 'hidden'),
+  Output('kwera-display', 'hidden'),
+  Output('fip-display', 'hidden'),
+  Output('pitching-post-rate-stat-break-display-1', 'hidden'),
+  Output('pitching-post-rate-stat-break-display-2', 'hidden'),
   Input(component_id = 'radios', component_property = 'value')
   )
 def update_options(selection):
@@ -1075,17 +1057,26 @@ def update_options(selection):
     k = True
     bb = True
     hr = True
+    kwera = True
+    fip = True
+    estimator = True
   elif selection == 5:
     era = True
     k = False
     bb = False
     hr = True
+    kwera = False
+    fip = True
+    estimator = False
   else:
     era = True
     k = False
     bb = False
     hr = False
-  return era, era, k, k, bb, bb, hr, hr
+    kwera = True
+    fip = False
+    estimator = False
+  return era, era, k, k, bb, bb, hr, hr, kwera, fip, estimator, estimator
 
 
 if __name__ == '__main__':
