@@ -300,7 +300,33 @@ hr_row = html.Div(
       ], id = 'hr-display'
     )
 
-batting_type = html.Div(
+player_type_select = html.Div(
+  [
+    html.H5(
+      [
+        "Player Type: ",
+        dbc.RadioItems(
+          id="player-type",
+          className="btn-group",
+          inputClassName="btn-check",
+          labelClassName="btn btn-outline-primary",
+          labelCheckedClassName="active",
+          options=
+            [
+              {"label": "Batters", "value": 1},
+              {"label": "Pitchers", "value": 2}
+            ],
+          value=1,
+        ),
+        html.Div(id="output2"),
+      ],
+    className="radio-group",
+    )
+  ],
+  style = {"margin-left": "10px"}
+)
+
+version_select = html.Div(
   [
     html.H5(
       [
@@ -310,17 +336,7 @@ batting_type = html.Div(
           className="btn-group",
           inputClassName="btn-check",
           labelClassName="btn btn-outline-primary",
-          labelCheckedClassName="active",
-          options=
-            [
-              {"label": "Original", "value": 1},
-              {"label": "OPS+", "value": 2},
-              {"label": "ERA", "value": 3},
-              {"label": "RA9", "value": 4},
-              {"label": "kwERA", "value": 5},
-              {"label": "FIP", "value": 6}
-            ],
-          value=1,
+          labelCheckedClassName="active"
         ),
         html.Div(id="output"),
       ],
@@ -329,6 +345,7 @@ batting_type = html.Div(
   ],
   style = {"margin-left": "10px"}
 )
+
 
 xwrcplus_inputs = dbc.Col(
   [
@@ -468,7 +485,9 @@ outputs_era = [
 app.layout = [
   html.H1('Simple WAR Calculator'),
   html.Br(),
-  batting_type,
+  player_type_select,
+  html.Br(),
+  version_select,
   html.Br(),
   dbc.Row(
     [
@@ -981,6 +1000,28 @@ def update_ip_default(selection):
     defaultbb = 20
     defaulthr = 10
   return defaultip, defaultk, defaultbb, defaulthr
+
+@callback(
+  Output('radios', 'options'),
+  Output('radios', 'value'),
+  Input(component_id = 'player-type', component_property = 'value')
+  )
+def update_options(selection):
+  if selection == 1:
+    choices = [
+      {"label": "Original (xwRC+)", "value": 1},
+      {"label": "OPS+", "value": 2}
+    ]
+    default = 1
+  else:
+    choices = [
+      {"label": "Original (ERA)", "value": 3},
+      {"label": "RA9", "value": 4},
+      {"label": "kwERA", "value": 5},
+      {"label": "FIP", "value": 6}
+    ]
+    default = 3
+  return choices, default
 
 if __name__ == '__main__':
     app.run(debug=True)
