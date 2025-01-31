@@ -19,7 +19,31 @@ roundbutton = {
 }
 
 outputs = [
-  html.Div(children=[
+  html.Div(
+    [
+      html.H6(id='rate-stat-display'),
+      html.Br(),
+      html.Br(),
+      html.H6(id='batting-runs-display'),
+      html.Br(),
+      html.H6(id='defense-runs-display'),
+      html.Br(),
+      html.H6(id='baserunning-runs-display'),
+      html.Br(),
+      html.H6(id='positional-runs-display'),
+      html.Br(),
+      html.H6(id='replacement-runs-display'),
+      html.Br(),
+      html.H6(id='runs-above-replacement-display'),
+      html.Br(),
+      html.Br(),
+      html.Br(),
+      html.H4(id='wins-above-replacement-display')
+    ]
+  )
+]
+
+outoftheway = [
     html.Div(id='xwrc'),
     html.Div(id='batting-runs'),
     html.Div(id='defense-runs'),
@@ -28,27 +52,7 @@ outputs = [
     html.Div(id='replacement-runs'),
     html.Div(id='runs-above-replacement'),
     html.Div(id='wins-above-replacement'),
-    html.Div(id='ops-plus'),
-    html.H6(id='rate-stat-display'),
-    html.Br(),
-    html.Br(),
-    html.H6(id='batting-runs-display'),
-    html.Br(),
-    html.H6(id='defense-runs-display'),
-    html.Br(),
-    html.H6(id='baserunning-runs-display'),
-    html.Br(),
-    html.H6(id='positional-runs-display'),
-    html.Br(),
-    html.H6(id='replacement-runs-display'),
-    html.Br(),
-    html.H6(id='runs-above-replacement-display'),
-    html.Br(),
-    html.Br(),
-    html.Br(),
-    html.H4(id='wins-above-replacement-display')
-    ]
-  )
+    html.Div(id='ops-plus')
 ]
 
 home_runs_row = dbc.Row(
@@ -490,7 +494,8 @@ app.layout = [
       dbc.Col(id = "inputs", style = {"margin-left": "10px"}, width = 3),
       dbc.Col(id = "outputs", width = 3)
     ], justify = "start"
-  )
+  ),
+  dbc.Row(outoftheway)
 ]
 
 
