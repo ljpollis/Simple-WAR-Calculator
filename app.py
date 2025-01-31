@@ -228,10 +228,15 @@ lg_slg_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'league-slg', value = '.399', type = 'number', step = 0.001), width = 1)
 ])
 
-era_row = dbc.Row([
-  dbc.Col(html.Label(id = 'era-label'), width = 4),
-  dbc.Col(dcc.Input(id = 'era', type = 'number', step = 0.01), width = 1)
-])
+era_row = html.Div(
+      [
+        dbc.Row([
+          dbc.Col(html.Label(id = 'era-label'), width = 4),
+          dbc.Col(dcc.Input(id = 'era', type = 'number', step = 0.01), width = 1),
+          html.Br()
+          ])
+      ], id = 'era-display'
+    )
 
 ip_row = dbc.Row([
   dbc.Col(html.Label('IP:'), width = 4),
@@ -272,6 +277,19 @@ leverage_row = html.Div(
       ], id = 'leverage-display'
     )
 
+k_bb_row = html.Div(
+      [
+        dbc.Col([dbc.Row([
+          dbc.Col(html.Label('Strikeouts:'), width = 4),
+          dbc.Col(dcc.Input(id = 'k', value = 200, type = 'number', step = 1), width = 1)]),
+          html.Br(),
+          dbc.Row([dbc.Col(html.Label('Walks:'), width = 4),
+          dbc.Col(dcc.Input(id = 'bb', value = 50, type = 'number', step = 1), width = 1)]),
+          html.Br()
+          ])
+      ], id = 'k-bb-display'
+    )
+
 batting_type = html.Div(
   [
     html.H5(
@@ -288,7 +306,8 @@ batting_type = html.Div(
               {"label": "Original", "value": 1},
               {"label": "OPS+", "value": 2},
               {"label": "ERA", "value": 3},
-              {"label": "RA9", "value": 4}
+              {"label": "RA9", "value": 4},
+              {"label": "kwERA", "value": 5}
             ],
           value=1,
         ),
@@ -375,6 +394,8 @@ opsplus_inputs = dbc.Col(
 era_inputs = dbc.Col(
   [
     era_row,
+    html.Br(),
+    k_bb_row,
     html.Br(),
     ip_row,
     html.Br(),
@@ -822,6 +843,28 @@ def update_era_default(selection):
   else:
     default = 4.08
   return default
+
+@callback(
+  Output(component_id = 'k-bb-display', component_property = 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection < 5:
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output(component_id = 'era-display', component_property = 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection > 4:
+    hide = True
+  else:
+    hide = False
+  return hide
 
 if __name__ == '__main__':
     app.run(debug=True)
