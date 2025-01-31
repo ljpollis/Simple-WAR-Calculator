@@ -347,53 +347,26 @@ version_select = html.Div(
 )
 
 
-xwrcplus_inputs = dbc.Col(
+hitting_inputs = dbc.Col(
   [
-    home_runs_row,
-    html.Br(),
-    walks_row,
-    html.Br(),
-    strikeouts_row,
-    html.Br(),
-    stolen_bases_row,
-    html.Br(),
-    babip_row,
-    html.Br(),
-    plate_appearances_row,
-    html.Br(),
-    games_row,
-    html.Br(),
-    park_factor_row,
-    html.Br(),
-    dbc.Row(
-      [
-        dbc.Col(nontextselections, width = 10)
-      ]
-    ),
-    html.Br(),
-    dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
-    html.Br(),
-    html.Br(),
-    html.Div(
-      [
-        runs_per_pa_row,
-        html.Br(),
-        replacement_level_row,
-        html.Br(),
-        runs_per_win_row], id = 'advanced-selection')
-      ]
-    )
-    
-opsplus_inputs = dbc.Col(
-  [
-    obp_row,
-    html.Br(),
-    slg_row,
-    html.Br(),
-    lg_obp_row,
-    html.Br(),
-    lg_slg_row,
-    html.Br(),
+    html.Div(home_runs_row, id = 'home-runs-row-display'),
+    html.Br(id = 'home-runs-break-display'),
+    html.Div(walks_row, id = 'walks-row-display'),
+    html.Br(id = 'walks-break-display'),
+    html.Div(strikeouts_row, id = 'strikeouts-row-display'),
+    html.Br(id = 'strikeouts-break-display'),
+    html.Div(stolen_bases_row, id = 'stolen-bases-row-display'),
+    html.Br(id = 'stolen-bases-break-display'),
+    html.Div(babip_row, id = 'babip-row-display'),
+    html.Br(id = 'babip-break-display'),
+    html.Div(obp_row, id = 'obp-row-display'),
+    html.Br(id = 'obp-break-display'),
+    html.Div(slg_row, id = 'slg-row-display'),
+    html.Br(id = 'slg-break-display'),
+    html.Div(lg_obp_row, id = 'lg-obp-row-display'),
+    html.Br(id = 'lg-obp-break-display'),
+    html.Div(lg_slg_row, id = 'lg-slg-row-display'),
+    html.Br(id = 'lg-slg-break-display'),
     plate_appearances_row,
     html.Br(),
     games_row,
@@ -792,9 +765,9 @@ def update_xwrc_display(opsplus):
   )
 def update_input_selections(selection):
   if selection == 1:
-    inputtype = xwrcplus_inputs
+    inputtype = hitting_inputs
   elif selection == 2:
-    inputtype = opsplus_inputs
+    inputtype = hitting_inputs
   else:
     inputtype = era_inputs
   return inputtype
@@ -1022,6 +995,36 @@ def update_options(selection):
     ]
     default = 3
   return choices, default
+
+@callback(
+  Output('home-runs-row-display', 'hidden'),
+  Output('home-runs-break-display', 'hidden'),
+  Output('walks-row-display', 'hidden'),
+  Output('walks-break-display', 'hidden'),
+  Output('strikeouts-row-display', 'hidden'),
+  Output('strikeouts-break-display', 'hidden'),
+  Output('stolen-bases-row-display', 'hidden'),
+  Output('stolen-bases-break-display', 'hidden'),
+  Output('babip-row-display', 'hidden'),
+  Output('babip-break-display', 'hidden'),
+  Output('obp-row-display', 'hidden'),
+  Output('obp-break-display', 'hidden'),
+  Output('slg-row-display', 'hidden'),
+  Output('slg-break-display', 'hidden'),
+  Output('lg-obp-row-display', 'hidden'),
+  Output('lg-obp-break-display', 'hidden'),
+  Output('lg-slg-row-display', 'hidden'),
+  Output('lg-slg-break-display', 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_options(selection):
+  if selection == 1:
+    wrcplus = False
+    opsplus = True
+  else:
+    wrcplus = True
+    opsplus = False
+  return wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus
 
 if __name__ == '__main__':
     app.run(debug=True)
