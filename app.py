@@ -444,7 +444,9 @@ outputs_era = [
     html.Div(id='wins-above-replacement-p'),
     html.Div(id='leverage-runs'),
     html.Div(id='kwera'),
+    html.Div(id='fip'),
     html.H6(id='kwera-display'),
+    html.H6(id='fip-display'),
     html.Br(),
     html.Br(),
     html.H6(id='pitching-runs-display'),
@@ -653,6 +655,17 @@ def update_leverage_runs(pitchingruns, gmli, position):
   )
 def update_kwera(k, bb, ip, era):
   return float(era) + 1.73 - 12 * (float(k) - float(bb)) / float(ip) / 4.23
+
+@callback(
+  Output('fip', 'data'),
+  Input('k', 'value'),
+  Input('bb', 'value'),
+  Input('hr', 'value'),
+  Input('ip', 'value'),
+  Input('league-era', 'value')
+  )
+def update_kwera(k, bb, hr, ip, era):
+  return float(era) - .91 + (13 * float(hr) + 3 * float(bb) - 2 * float(k)) / float(ip)
 
 
 ## Display callbacks
@@ -922,6 +935,26 @@ def update_input_selections(selection):
   )
 def update_input_selections(selection):
   if selection < 6:
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output(component_id = 'fip-display', component_property = 'children'),
+  Input(component_id = 'fip', component_property = 'data')
+  )
+def update_fip_display(fip):
+  return f'FIP: ' + str(round(fip, 2))
+
+
+
+@callback(
+  Output(component_id = 'fip-display', component_property = 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection != 6:
     hide = True
   else:
     hide = False
