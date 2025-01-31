@@ -228,6 +228,50 @@ lg_slg_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'league-slg', value = '.399', type = 'number', step = 0.001), width = 1)
 ])
 
+era_row = dbc.Row([
+  dbc.Col(html.Label('ERA:'), width = 4),
+  dbc.Col(dcc.Input(id = 'era', value = '4.15', type = 'number', step = 0.01), width = 1)
+])
+
+ip_row = dbc.Row([
+  dbc.Col(html.Label('IP:'), width = 4),
+  dbc.Col(dcc.Input(id = 'ip', value = '200', type = 'number', step = 1), width = 1)
+])
+
+lg_era_row = dbc.Row([
+  dbc.Col(html.Label('League ERA:'), width = 4),
+  dbc.Col(dcc.Input(id = 'league-era', value = 4.08, type = 'number', step = 0.01), width = 1)
+])
+
+replacement_level_p_row = dbc.Row([
+  dbc.Col(
+    html.Div(
+      [
+        html.Label('Replacement Level (Runs per 200 IP):'),
+        dbc.Button('?', id = 'replacement-level-p-?',style=roundbutton),
+        dbc.Tooltip(
+            "The difference in performance between an average player and a pitcher you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)",
+            target="replacement-level-p-?")
+      ]
+    ), width = 4, style={"verticalAlign": "center"}),
+  dbc.Col(dcc.Input(id = 'replacement-level-p', value = '-18.5', type = 'number', step = 0.1), width = 1)
+])
+
+positional_adjustment_row = dbc.Row([
+  dbc.Col(html.Label('Positional Adjustment:'), width = 4),
+  dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
+])
+
+leverage_row = html.Div(
+      [
+        dbc.Row([
+          dbc.Col(html.Label('Entrance Leverage Index:'), width = 4),
+          dbc.Col(dcc.Input(id = 'gmli', value = 1.00, type = 'number', step = 0.01), width = 1),
+          html.Br()
+          ])
+      ], id = 'leverage-display'
+    )
+
 batting_type = html.Div(
   [
     html.H5(
@@ -243,6 +287,7 @@ batting_type = html.Div(
             [
               {"label": "Original", "value": 1},
               {"label": "OPS+", "value": 2},
+              {"label": "ERA", "value": 3}
             ],
           value=1,
         ),
@@ -325,6 +370,58 @@ opsplus_inputs = dbc.Col(
         runs_per_win_row], id = 'advanced-selection')
       ]
     )
+    
+era_inputs = dbc.Col(
+  [
+    era_row,
+    html.Br(),
+    ip_row,
+    html.Br(),
+    lg_era_row,
+    html.Br(),
+    park_factor_row,
+    html.Br(),
+    leverage_row,
+    html.Br(),
+    dbc.Row([
+      html.Label('Primary Position'),
+      dcc.Dropdown(['Starter', 'Reliever'], 'Starter', id = 'position-p')
+    ]),
+    html.Br(),
+    dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
+    html.Br(),
+    html.Br(),
+    html.Div(
+      [
+        positional_adjustment_row,
+        html.Br(),
+        replacement_level_p_row,
+        html.Br(),
+        runs_per_win_row], id = 'advanced-selection')
+      ]
+    )
+
+outputs_era = [
+  html.Div(children=[
+    html.Div(id='pitching-runs'),
+    html.Div(id='replacement-runs-p'),
+    html.Div(id='runs-above-replacement-p'),
+    html.Div(id='wins-above-replacement-p'),
+    html.Div(id='leverage-runs'),
+    html.H6(id='pitching-runs-display'),
+    html.Br(),
+    html.H6(id='leverage-runs-display'),
+    html.Br(),
+    html.H6(id='replacement-runs-p-display'),
+    html.Br(),
+    html.H6(id='runs-above-replacement-p-display'),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.H4(id='wins-above-replacement-p-display')
+    ]
+  )
+]
 
 
 app.layout = [
@@ -335,7 +432,7 @@ app.layout = [
   dbc.Row(
     [
       dbc.Col(id = "inputs", style = {"margin-left": "10px"}, width = 3),
-      dbc.Col(outputs, width = 3)
+      dbc.Col(id = "outputs", width = 3)
     ], justify = "start"
   )
 ]
@@ -450,6 +547,54 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
 def update_ops_plus(obp, slg, leagueobp, leagueslg):
   return 100 * (float(obp) / float(leagueobp) + float(slg) / float(leagueslg) - 1)
 
+@callback(
+  Output('pitching-runs', 'data'),
+  Input('era', 'value'),
+  Input('league-era', 'value'),
+  Input('ip', 'value'),
+  Input('positional-adjustment', 'value')
+  )
+def update_pitching_runs(era, leagueera, ip, adjustment):
+  return (float(leagueera) - float(era) + adjustment) * int(ip) / 9 *1.094
+
+@callback(
+  Output('replacement-runs-p', 'data'),
+  Input('ip', 'value'),
+  Input('replacement-level-p', 'value')
+  )
+def update_replacement_runs_p(ip, replacementlevel):
+  return float(ip) * - float(replacementlevel) / 200
+
+@callback(
+  Output('runs-above-replacement-p', 'data'),
+  Input('pitching-runs', 'data'),
+  Input('leverage-runs', 'data'),
+  Input('replacement-runs-p', 'data')
+  )
+def update_runs_above_replacement(pitchingruns, leverageruns, replacementruns):
+  return pitchingruns + leverageruns + replacementruns
+
+@callback(
+  Output('wins-above-replacement-p', 'data'),
+  Input('runs-above-replacement-p', 'data'),
+  Input('runs-per-win', 'value')
+  )
+def update_wins_above_replacement(runsabovereplacement, runsperwin):
+  return float(runsabovereplacement) / float(runsperwin)
+
+@callback(
+  Output('leverage-runs', 'data'),
+  Input('pitching-runs', 'data'),
+  Input('gmli', 'value'),
+  Input(component_id = 'position-p', component_property = 'value')
+  )
+def update_leverage_runs(pitchingruns, gmli, position):
+  if position == 'Starter':
+    leverage = 1
+  else:
+    leverage = gmli
+  return pitchingruns * (leverage - 1) / 2
+
 
 ## Display callbacks
 
@@ -554,9 +699,79 @@ def update_xwrc_display(opsplus):
 def update_input_selections(selection):
   if selection == 1:
     inputtype = xwrcplus_inputs
-  else:
+  elif selection == 2:
     inputtype = opsplus_inputs
+  else:
+    inputtype = era_inputs
   return inputtype
+
+@callback(
+  Output(component_id = 'positional-adjustment', component_property = 'value'),
+  Input(component_id = 'position-p', component_property = 'value')
+  )
+def update_positional_adjustment(position):
+  if position == 'Starter':
+    era = 0.07
+  else:
+    era = -0.11
+  return era
+
+@callback(
+  Output('pitching-runs-display', 'children'),
+  Input('pitching-runs', 'data')
+  )
+def update_pitching_runs_display(pitchingruns):
+  return f'Pitching Runs: ' + str(round(pitchingruns, 1))
+
+@callback(
+  Output('replacement-runs-p-display', 'children'),
+  Input('replacement-runs-p', 'data')
+  )
+def update_replacement_runs_display(replacementruns):
+  return f'Replacement Runs: ' + str(round(replacementruns, 1))
+
+@callback(
+  Output('runs-above-replacement-p-display', 'children'),
+  Input('runs-above-replacement-p', 'data')
+  )
+def update_runs_above_replacement_p_display(runsabovereplacement):
+  return f'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
+
+@callback(
+  Output('wins-above-replacement-p-display', 'children'),
+  Input('wins-above-replacement-p', 'data')
+  )
+def update_wins_above_replacement_p_display(winsabovereplacement):
+  return f'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
+
+@callback(
+  Output(component_id = 'outputs', component_property = 'children'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection < 3:
+    inputtype = outputs
+  else:
+    inputtype = outputs_era
+  return inputtype
+
+@callback(
+  Output(component_id = 'leverage-display', component_property = 'hidden'),
+  Input(component_id = 'position-p', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection == 'Starter':
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output('leverage-runs-display', 'children'),
+  Input('leverage-runs', 'data')
+  )
+def update_leverage_runs_display(leverageruns):
+  return f'Leverage Runs: ' + str(round(leverageruns, 1))
 
 
 if __name__ == '__main__':
