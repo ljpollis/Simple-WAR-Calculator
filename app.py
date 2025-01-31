@@ -51,88 +51,153 @@ outputs = [
   )
 ]
 
+home_runs_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Home Runs:'), width = 4),
+    dbc.Col(dcc.Input(id = 'home-runs', value = '16', type = 'number'), width = 1)
+  ]
+)
+
+walks_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Walks:'), width = 4),
+    dbc.Col(dcc.Input(id = 'walks', value = '50', type = 'number'), width = 1)
+  ]
+)
+
+strikeouts_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Strikeouts:'), width = 4),
+    dbc.Col(dcc.Input(id = 'strikeouts', value = '75', type = 'number'), width = 1)
+  ]
+)
+
+stolen_bases_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Stolen Bases:'), width = 4),
+    dbc.Col(dcc.Input(id = 'stolen-bases', value = '8', type = 'number'), width = 1)
+  ]
+)
+
+babip_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('BABIP:'),
+          dbc.Button('?', id = 'babip-?',style=roundbutton),
+          dbc.Tooltip(
+            "The proportion of batted balls within the field of play that fall for hits. Essentially batting average that doesn't count home runs or strikeouts.",
+            target="babip-?")
+         ]
+      ), width = 4, style={"verticalAlign": "center"}
+    ),
+    dbc.Col(dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001), width = 1)
+  ]
+)
+
+obp_row = dbc.Row(
+  [
+    dbc.Col(html.Label('OBP:'), width = 4),
+    dbc.Col(dcc.Input(id = 'obp', value = '.400', type = 'number', step = 0.001), width = 1)
+  ]
+)
+
+slg_row = dbc.Row(
+  [
+    dbc.Col(html.Label('SLG:'), width = 4),
+    dbc.Col(dcc.Input(id = 'slg', value = '.500', type = 'number', step = 0.001), width = 1)
+  ]
+)
+
+lg_obp_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('League OBP:'),
+          dbc.Button('?', id = 'league-obp-?',style=roundbutton),
+          dbc.Tooltip(
+            "The average OBP for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.",
+            target="league-obp-?"
+          )
+        ]
+      ), width = 4, style={"verticalAlign": "center"}
+    ),
+    dbc.Col(dcc.Input(id = 'league-obp', value = '.312', type = 'number', step = 0.001), width = 1)
+  ]
+)
+
+lg_slg_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('League SLG:'),
+          dbc.Button('?', id = 'league-slg-?',style=roundbutton),
+          dbc.Tooltip(
+            "The average SLG for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.",
+            target="league-slg-?"
+          )
+        ]
+      ), width = 4, style={"verticalAlign": "center"}
+    ),
+    dbc.Col(dcc.Input(id = 'league-slg', value = '.399', type = 'number', step = 0.001), width = 1)
+  ]
+)
+
+plate_appearances_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Plate Appearances:'), width = 4),
+    dbc.Col(dcc.Input(id = 'plate-appearances', value = '600', type = 'number'), width = 1)
+  ]
+)
+
+games_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Games:'), width = 4),
+    dbc.Col(dcc.Input(id = 'games', value = '150', type = 'number'), width = 1)
+  ]
+)
+
 nontextselections = [
   html.Label('Primary Position'),
   dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
   html.Br(),
   html.Div(
-      [
-        html.Label('Defensive Performance'),
-        dbc.Button('?', id = 'defense-20-80-?',style=roundbutton),
-        dbc.Tooltip(
-            "Baseball scouts grade tools on the 20-80 scale. For defense, 50 is the MLB average, 80 is Ozzie Smith, and 20 is Adam Dunn.",
-            target="defense-20-80-?")
-      ]
-    ),
+    [
+      html.Label('Defensive Performance'),
+      dbc.Button('?', id = 'defense-20-80-?',style=roundbutton),
+      dbc.Tooltip(
+        "Baseball scouts grade tools on the 20-80 scale. For defense, 50 is the MLB average, 80 is Ozzie Smith, and 20 is Adam Dunn.",
+        target="defense-20-80-?")
+    ]
+  ),
   dcc.Slider(
     id = 'defense',
     min = 20,
     max = 80,
     step = 5,
     value = 50
-    ),
+  ),
   html.Br(),
   html.Div(
-      [
-        html.Label('Baserunning Performance'),
-        dbc.Button('?', id = 'baserunning-20-80-?',style=roundbutton),
-        dbc.Tooltip(
-            "Baseball scouts grade tools on the 20-80 scale. For speed, 50 is the MLB average, 80 is Billy Hamilton, and 20 is Billy Butler.",
-            target="baserunning-20-80-?")
-      ]
-    ),
+    [
+      html.Label('Baserunning Performance'),
+      dbc.Button('?', id = 'baserunning-20-80-?',style=roundbutton),
+      dbc.Tooltip(
+        "Baseball scouts grade tools on the 20-80 scale. For speed, 50 is the MLB average, 80 is Billy Hamilton, and 20 is Billy Butler.",
+        target="baserunning-20-80-?")
+    ]
+  ),
   dcc.Slider(
     id = 'baserunning', 
     min = 20,
     max = 80,
     step = 5,
     value = 50
-    )
+  )
 ]
-
-home_runs_row = dbc.Row([
-  dbc.Col(html.Label('Home Runs:'), width = 4),
-  dbc.Col(dcc.Input(id = 'home-runs', value = '16', type = 'number'), width = 1)
-])
-
-walks_row = dbc.Row([
-  dbc.Col(html.Label('Walks:'), width = 4),
-  dbc.Col(dcc.Input(id = 'walks', value = '50', type = 'number'), width = 1)
-])
-
-strikeouts_row = dbc.Row([
-  dbc.Col(html.Label('Strikeouts:'), width = 4),
-  dbc.Col(dcc.Input(id = 'strikeouts', value = '75', type = 'number'), width = 1)
-])
-
-stolen_bases_row = dbc.Row([
-  dbc.Col(html.Label('Stolen Bases:'), width = 4),
-  dbc.Col(dcc.Input(id = 'stolen-bases', value = '8', type = 'number'), width = 1)
-])
-
-babip_row = dbc.Row([
-  dbc.Col(
-    html.Div(
-      [
-        html.Label('BABIP:'),
-        dbc.Button('?', id = 'babip-?',style=roundbutton),
-        dbc.Tooltip(
-            "The proportion of batted balls within the field of play that fall for hits. Essentially batting average that doesn't count home runs or strikeouts.",
-            target="babip-?")
-      ]
-    ), width = 4, style={"verticalAlign": "center"}),
-  dbc.Col(dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001), width = 1)
-])
-
-plate_appearances_row = dbc.Row([
-  dbc.Col(html.Label('PA:'), width = 4),
-  dbc.Col(dcc.Input(id = 'plate-appearances', value = '600', type = 'number'), width = 1)
-])
-
-games_row = dbc.Row([
-  dbc.Col(html.Label('Games:'), width = 4),
-  dbc.Col(dcc.Input(id = 'games', value = '150', type = 'number'), width = 1)
-])
 
 park_factor_row = dbc.Row([
   dbc.Col(
@@ -188,44 +253,6 @@ runs_per_win_row = dbc.Row([
       ]
     ), width = 4, style={"verticalAlign": "center"}),
   dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
-])
-
-obp_row = dbc.Row([
-  dbc.Col(html.Label('OBP:'), width = 4),
-  dbc.Col(dcc.Input(id = 'obp', value = '.400', type = 'number', step = 0.001), width = 1)
-])
-
-slg_row = dbc.Row([
-  dbc.Col(html.Label('SLG:'), width = 4),
-  dbc.Col(dcc.Input(id = 'slg', value = '.500', type = 'number', step = 0.001), width = 1)
-])
-
-lg_obp_row = dbc.Row([
-  dbc.Col(
-    html.Div(
-      [
-        html.Label('League OBP:'),
-        dbc.Button('?', id = 'league-obp-?',style=roundbutton),
-        dbc.Tooltip(
-            "The average OBP for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.",
-            target="league-obp-?")
-      ]
-    ), width = 4, style={"verticalAlign": "center"}),
-  dbc.Col(dcc.Input(id = 'league-obp', value = '.312', type = 'number', step = 0.001), width = 1)
-])
-
-lg_slg_row = dbc.Row([
-  dbc.Col(
-    html.Div(
-      [
-        html.Label('League SLG:'),
-        dbc.Button('?', id = 'league-slg-?',style=roundbutton),
-        dbc.Tooltip(
-            "The average SLG for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.",
-            target="league-obp-?")
-      ]
-    ), width = 4, style={"verticalAlign": "center"}),
-  dbc.Col(dcc.Input(id = 'league-slg', value = '.399', type = 'number', step = 0.001), width = 1)
 ])
 
 era_row = html.Div(
@@ -367,17 +394,13 @@ hitting_inputs = dbc.Col(
     html.Br(id = 'lg-obp-break-display'),
     html.Div(lg_slg_row, id = 'lg-slg-row-display'),
     html.Br(id = 'lg-slg-break-display'),
-    plate_appearances_row,
-    html.Br(),
-    games_row,
-    html.Br(),
-    park_factor_row,
-    html.Br(),
-    dbc.Row(
-      [
-        dbc.Col(nontextselections, width = 10)
-      ]
-    ),
+    html.Div(plate_appearances_row, id = 'plate-appearances-row-display'),
+    html.Br(id = 'plate-appearances-break-display'),
+    html.Div(games_row, id = 'games-row-display'),
+    html.Br(id = 'games-break-display'),
+    html.Div(park_factor_row, id = 'park-factor-row-display'),
+    html.Br(id = 'park-factor-break-display'),
+    dbc.Row(dbc.Col(nontextselections, width = 10)),
     html.Br(),
     dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
     html.Br(),
