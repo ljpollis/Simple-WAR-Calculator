@@ -229,8 +229,8 @@ lg_slg_row = dbc.Row([
 ])
 
 era_row = dbc.Row([
-  dbc.Col(html.Label('ERA:'), width = 4),
-  dbc.Col(dcc.Input(id = 'era', value = '4.15', type = 'number', step = 0.01), width = 1)
+  dbc.Col(html.Label(id = 'era-label'), width = 4),
+  dbc.Col(dcc.Input(id = 'era', type = 'number', step = 0.01), width = 1)
 ])
 
 ip_row = dbc.Row([
@@ -239,8 +239,8 @@ ip_row = dbc.Row([
 ])
 
 lg_era_row = dbc.Row([
-  dbc.Col(html.Label('League ERA:'), width = 4),
-  dbc.Col(dcc.Input(id = 'league-era', value = 4.08, type = 'number', step = 0.01), width = 1)
+  dbc.Col(html.Label(id = 'league-era-label'), width = 4),
+  dbc.Col(dcc.Input(id = 'league-era', type = 'number', step = 0.01), width = 1)
 ])
 
 replacement_level_p_row = dbc.Row([
@@ -287,7 +287,8 @@ batting_type = html.Div(
             [
               {"label": "Original", "value": 1},
               {"label": "OPS+", "value": 2},
-              {"label": "ERA", "value": 3}
+              {"label": "ERA", "value": 3},
+              {"label": "RA9", "value": 4}
             ],
           value=1,
         ),
@@ -552,10 +553,15 @@ def update_ops_plus(obp, slg, leagueobp, leagueslg):
   Input('era', 'value'),
   Input('league-era', 'value'),
   Input('ip', 'value'),
-  Input('positional-adjustment', 'value')
+  Input('positional-adjustment', 'value'),
+  Input(component_id = 'radios', component_property = 'value')
   )
-def update_pitching_runs(era, leagueera, ip, adjustment):
-  return (float(leagueera) - float(era) + adjustment) * int(ip) / 9 *1.094
+def update_pitching_runs(era, leagueera, ip, positionaladjustment, selection):
+  if selection == 3:
+    adjustment = 1.094
+  else:
+    adjustment = 1
+  return (float(leagueera) - float(era) + float(positionaladjustment)) * int(ip) / 9 * adjustment
 
 @callback(
   Output('replacement-runs-p', 'data'),
@@ -773,6 +779,49 @@ def update_input_selections(selection):
 def update_leverage_runs_display(leverageruns):
   return f'Leverage Runs: ' + str(round(leverageruns, 1))
 
+@callback(
+  Output('era-label', 'children'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_era_label(selection):
+  if selection == 3:
+    label = 'ERA: '
+  else:
+    label = 'RA9: '
+  return label
+
+@callback(
+  Output('era', 'value'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_era_default(selection):
+  if selection == 3:
+    default = 3.99
+  else:
+    default = 4.39
+  return default
+
+@callback(
+  Output('league-era-label', 'children'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_league_era_label(selection):
+  if selection == 3:
+    label = 'League ERA: '
+  else:
+    label = 'League RA9: '
+  return label
+
+@callback(
+  Output('league-era', 'value'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_era_default(selection):
+  if selection == 3:
+    default = 4.08
+  else:
+    default = 4.46
+  return default
 
 if __name__ == '__main__':
     app.run(debug=True)
