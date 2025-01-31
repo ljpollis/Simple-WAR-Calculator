@@ -857,17 +857,6 @@ def update_input_selections(selection):
   return inputtype
 
 @callback(
-  Output(component_id = 'leverage-display', component_property = 'hidden'),
-  Input(component_id = 'position-p', component_property = 'value')
-  )
-def update_input_selections(selection):
-  if selection == 'Starter':
-    hide = True
-  else:
-    hide = False
-  return hide
-
-@callback(
   Output('leverage-runs-display', 'children'),
   Input('leverage-runs', 'data')
   )
@@ -919,44 +908,11 @@ def update_era_default(selection):
   return default
 
 @callback(
-  Output(component_id = 'k-bb-display', component_property = 'hidden'),
-  Input(component_id = 'radios', component_property = 'value')
-  )
-def update_input_selections(selection):
-  if selection < 5:
-    hide = True
-  else:
-    hide = False
-  return hide
-
-@callback(
-  Output(component_id = 'era-display', component_property = 'hidden'),
-  Input(component_id = 'radios', component_property = 'value')
-  )
-def update_input_selections(selection):
-  if selection > 4:
-    hide = True
-  else:
-    hide = False
-  return hide
-
-@callback(
   Output(component_id = 'kwera-display', component_property = 'children'),
   Input(component_id = 'kwera', component_property = 'data')
   )
 def update_kwera_display(kwera):
   return f'kwERA: ' + str(round(kwera, 2))
-
-@callback(
-  Output(component_id = 'hr-display', component_property = 'hidden'),
-  Input(component_id = 'radios', component_property = 'value')
-  )
-def update_input_selections(selection):
-  if selection < 6:
-    hide = True
-  else:
-    hide = False
-  return hide
 
 @callback(
   Output(component_id = 'fip-display', component_property = 'children'),
