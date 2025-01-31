@@ -240,7 +240,7 @@ era_row = html.Div(
 
 ip_row = dbc.Row([
   dbc.Col(html.Label('IP:'), width = 4),
-  dbc.Col(dcc.Input(id = 'ip', value = '200', type = 'number', step = 1), width = 1)
+  dbc.Col(dcc.Input(id = 'ip', type = 'number', step = 1), width = 1)
 ])
 
 lg_era_row = dbc.Row([
@@ -951,7 +951,6 @@ def update_fip_display(fip):
   return f'FIP: ' + str(round(fip, 2))
 
 
-
 @callback(
   Output(component_id = 'fip-display', component_property = 'hidden'),
   Input(component_id = 'radios', component_property = 'value')
@@ -962,6 +961,26 @@ def update_input_selections(selection):
   else:
     hide = False
   return hide
+
+@callback(
+  Output('ip', 'value'),
+  Output('k', 'value'),
+  Output('bb', 'value'),
+  Output('hr', 'value'),
+  Input(component_id = 'position-p', component_property = 'value')
+  )
+def update_ip_default(selection):
+  if selection == 'Starter':
+    defaultip = 200
+    defaultk = 200
+    defaultbb = 50
+    defaulthr = 20
+  else:
+    defaultip = 70
+    defaultk = 70
+    defaultbb = 20
+    defaulthr = 10
+  return defaultip, defaultk, defaultbb, defaulthr
 
 if __name__ == '__main__':
     app.run(debug=True)
