@@ -228,19 +228,24 @@ lg_slg_row = dbc.Row([
   dbc.Col(dcc.Input(id = 'league-slg', value = '.399', type = 'number', step = 0.001), width = 1)
 ])
 
-era_row = dbc.Row([
-  dbc.Col(html.Label('ERA:'), width = 4),
-  dbc.Col(dcc.Input(id = 'era', value = '4.15', type = 'number', step = 0.01), width = 1)
-])
+era_row = html.Div(
+      [
+        dbc.Row([
+          dbc.Col(html.Label(id = 'era-label'), width = 4),
+          dbc.Col(dcc.Input(id = 'era', type = 'number', step = 0.01), width = 1),
+          html.Br()
+          ])
+      ], id = 'era-display'
+    )
 
 ip_row = dbc.Row([
   dbc.Col(html.Label('IP:'), width = 4),
-  dbc.Col(dcc.Input(id = 'ip', value = '200', type = 'number', step = 1), width = 1)
+  dbc.Col(dcc.Input(id = 'ip', type = 'number', step = 1), width = 1)
 ])
 
 lg_era_row = dbc.Row([
-  dbc.Col(html.Label('League ERA:'), width = 4),
-  dbc.Col(dcc.Input(id = 'league-era', value = 4.08, type = 'number', step = 0.01), width = 1)
+  dbc.Col(html.Label(id = 'league-era-label'), width = 4),
+  dbc.Col(dcc.Input(id = 'league-era', type = 'number', step = 0.01), width = 1)
 ])
 
 replacement_level_p_row = dbc.Row([
@@ -272,6 +277,29 @@ leverage_row = html.Div(
       ], id = 'leverage-display'
     )
 
+k_bb_row = html.Div(
+      [
+        dbc.Col([dbc.Row([
+          dbc.Col(html.Label('Strikeouts:'), width = 4),
+          dbc.Col(dcc.Input(id = 'k', value = 200, type = 'number', step = 1), width = 1)]),
+          html.Br(),
+          dbc.Row([dbc.Col(html.Label('Walks:'), width = 4),
+          dbc.Col(dcc.Input(id = 'bb', value = 50, type = 'number', step = 1), width = 1)]),
+          html.Br()
+          ])
+      ], id = 'k-bb-display'
+    )
+
+hr_row = html.Div(
+      [
+        dbc.Col([dbc.Row([
+          dbc.Col(html.Label('Home Runs:'), width = 4),
+          dbc.Col(dcc.Input(id = 'hr', value = 10, type = 'number', step = 1), width = 1)]),
+          html.Br()
+          ])
+      ], id = 'hr-display'
+    )
+
 batting_type = html.Div(
   [
     html.H5(
@@ -287,7 +315,10 @@ batting_type = html.Div(
             [
               {"label": "Original", "value": 1},
               {"label": "OPS+", "value": 2},
-              {"label": "ERA", "value": 3}
+              {"label": "ERA", "value": 3},
+              {"label": "RA9", "value": 4},
+              {"label": "kwERA", "value": 5},
+              {"label": "FIP", "value": 6}
             ],
           value=1,
         ),
@@ -375,6 +406,10 @@ era_inputs = dbc.Col(
   [
     era_row,
     html.Br(),
+    k_bb_row,
+    html.Br(),
+    hr_row,
+    html.Br(),
     ip_row,
     html.Br(),
     lg_era_row,
@@ -408,6 +443,12 @@ outputs_era = [
     html.Div(id='runs-above-replacement-p'),
     html.Div(id='wins-above-replacement-p'),
     html.Div(id='leverage-runs'),
+    html.Div(id='kwera'),
+    html.Div(id='fip'),
+    html.H6(id='kwera-display'),
+    html.H6(id='fip-display'),
+    html.Br(),
+    html.Br(),
     html.H6(id='pitching-runs-display'),
     html.Br(),
     html.H6(id='leverage-runs-display'),
@@ -552,10 +593,23 @@ def update_ops_plus(obp, slg, leagueobp, leagueslg):
   Input('era', 'value'),
   Input('league-era', 'value'),
   Input('ip', 'value'),
-  Input('positional-adjustment', 'value')
+  Input('positional-adjustment', 'value'),
+  Input('kwera', 'data'),
+  Input('fip', 'data'),
+  Input(component_id = 'radios', component_property = 'value')
   )
-def update_pitching_runs(era, leagueera, ip, adjustment):
-  return (float(leagueera) - float(era) + adjustment) * int(ip) / 9 *1.094
+def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, selection):
+  if selection == 4:
+    adjustment = 1
+  else:
+    adjustment = 1.094
+  if selection < 5:
+    erainput = era
+  elif selection == 5:
+    erainput = kwera
+  else:
+    erainput = fip
+  return (float(leagueera) - float(erainput) + float(positionaladjustment)) * int(ip) / 9 * adjustment
 
 @callback(
   Output('replacement-runs-p', 'data'),
@@ -594,6 +648,27 @@ def update_leverage_runs(pitchingruns, gmli, position):
   else:
     leverage = gmli
   return pitchingruns * (leverage - 1) / 2
+
+@callback(
+  Output('kwera', 'data'),
+  Input('k', 'value'),
+  Input('bb', 'value'),
+  Input('ip', 'value'),
+  Input('league-era', 'value')
+  )
+def update_kwera(k, bb, ip, era):
+  return float(era) + 1.73 - 12 * (float(k) - float(bb)) / float(ip) / 4.23
+
+@callback(
+  Output('fip', 'data'),
+  Input('k', 'value'),
+  Input('bb', 'value'),
+  Input('hr', 'value'),
+  Input('ip', 'value'),
+  Input('league-era', 'value')
+  )
+def update_kwera(k, bb, hr, ip, era):
+  return float(era) - .91 + (13 * float(hr) + 3 * float(bb) - 2 * float(k)) / float(ip)
 
 
 ## Display callbacks
@@ -773,6 +848,139 @@ def update_input_selections(selection):
 def update_leverage_runs_display(leverageruns):
   return f'Leverage Runs: ' + str(round(leverageruns, 1))
 
+@callback(
+  Output('era-label', 'children'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_era_label(selection):
+  if selection == 4:
+    label = 'RA9: '
+  else:
+    label = 'ERA: '
+  return label
+
+@callback(
+  Output('era', 'value'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_era_default(selection):
+  if selection == 4:
+    default = 4.39
+  else:
+    default = 3.99
+  return default
+
+@callback(
+  Output('league-era-label', 'children'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_league_era_label(selection):
+  if selection == 4:
+    label = 'League RA9: '
+  else:
+    label = 'League ERA: '
+  return label
+
+@callback(
+  Output('league-era', 'value'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_era_default(selection):
+  if selection == 4:
+    default = 4.46
+  else:
+    default = 4.08
+  return default
+
+@callback(
+  Output(component_id = 'k-bb-display', component_property = 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection < 5:
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output(component_id = 'era-display', component_property = 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection > 4:
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output(component_id = 'kwera-display', component_property = 'children'),
+  Input(component_id = 'kwera', component_property = 'data')
+  )
+def update_kwera_display(kwera):
+  return f'kwERA: ' + str(round(kwera, 2))
+
+@callback(
+  Output(component_id = 'kwera-display', component_property = 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection != 5:
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output(component_id = 'hr-display', component_property = 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection < 6:
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output(component_id = 'fip-display', component_property = 'children'),
+  Input(component_id = 'fip', component_property = 'data')
+  )
+def update_fip_display(fip):
+  return f'FIP: ' + str(round(fip, 2))
+
+
+@callback(
+  Output(component_id = 'fip-display', component_property = 'hidden'),
+  Input(component_id = 'radios', component_property = 'value')
+  )
+def update_input_selections(selection):
+  if selection != 6:
+    hide = True
+  else:
+    hide = False
+  return hide
+
+@callback(
+  Output('ip', 'value'),
+  Output('k', 'value'),
+  Output('bb', 'value'),
+  Output('hr', 'value'),
+  Input(component_id = 'position-p', component_property = 'value')
+  )
+def update_ip_default(selection):
+  if selection == 'Starter':
+    defaultip = 200
+    defaultk = 200
+    defaultbb = 50
+    defaulthr = 20
+  else:
+    defaultip = 70
+    defaultk = 70
+    defaultbb = 20
+    defaulthr = 10
+  return defaultip, defaultk, defaultbb, defaulthr
 
 if __name__ == '__main__':
     app.run(debug=True)
