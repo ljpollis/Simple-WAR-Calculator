@@ -52,7 +52,14 @@ outoftheway = [
     html.Div(id='replacement-runs'),
     html.Div(id='runs-above-replacement'),
     html.Div(id='wins-above-replacement'),
-    html.Div(id='ops-plus')
+    html.Div(id='ops-plus'),
+    html.Div(id='pitching-runs'),
+    html.Div(id='replacement-runs-p'),
+    html.Div(id='runs-above-replacement-p'),
+    html.Div(id='wins-above-replacement-p'),
+    html.Div(id='leverage-runs'),
+    html.Div(id='kwera'),
+    html.Div(id='fip'),
 ]
 
 home_runs_row = dbc.Row(
@@ -460,13 +467,6 @@ era_inputs = dbc.Col(
 outputs_era = [
   html.Div(
     [
-      html.Div(id='pitching-runs'),
-      html.Div(id='replacement-runs-p'),
-      html.Div(id='runs-above-replacement-p'),
-      html.Div(id='wins-above-replacement-p'),
-      html.Div(id='leverage-runs'),
-      html.Div(id='kwera'),
-      html.Div(id='fip'),
       html.H6(id='kwera-display'),
       html.H6(id='fip-display'),
       html.Br(id='pitching-post-rate-stat-break-display-1'),
