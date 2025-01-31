@@ -557,10 +557,10 @@ def update_ops_plus(obp, slg, leagueobp, leagueslg):
   Input(component_id = 'radios', component_property = 'value')
   )
 def update_pitching_runs(era, leagueera, ip, positionaladjustment, selection):
-  if selection == 3:
-    adjustment = 1.094
-  else:
+  if selection == 4:
     adjustment = 1
+  else:
+    adjustment = 1.094
   return (float(leagueera) - float(era) + float(positionaladjustment)) * int(ip) / 9 * adjustment
 
 @callback(
@@ -784,10 +784,10 @@ def update_leverage_runs_display(leverageruns):
   Input(component_id = 'radios', component_property = 'value')
   )
 def update_era_label(selection):
-  if selection == 3:
-    label = 'ERA: '
-  else:
+  if selection == 4:
     label = 'RA9: '
+  else:
+    label = 'ERA: '
   return label
 
 @callback(
@@ -795,10 +795,10 @@ def update_era_label(selection):
   Input(component_id = 'radios', component_property = 'value')
   )
 def update_era_default(selection):
-  if selection == 3:
-    default = 3.99
-  else:
+  if selection == 4:
     default = 4.39
+  else:
+    default = 3.99
   return default
 
 @callback(
@@ -806,10 +806,10 @@ def update_era_default(selection):
   Input(component_id = 'radios', component_property = 'value')
   )
 def update_league_era_label(selection):
-  if selection == 3:
-    label = 'League ERA: '
-  else:
+  if selection == 4:
     label = 'League RA9: '
+  else:
+    label = 'League ERA: '
   return label
 
 @callback(
@@ -817,10 +817,10 @@ def update_league_era_label(selection):
   Input(component_id = 'radios', component_property = 'value')
   )
 def update_era_default(selection):
-  if selection == 3:
-    default = 4.08
-  else:
+  if selection == 4:
     default = 4.46
+  else:
+    default = 4.08
   return default
 
 if __name__ == '__main__':
