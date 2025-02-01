@@ -23,7 +23,7 @@ roundbutton = {
 
 #### Callbacks
 
-### Metric Calculations
+### Metric Calculations and Displays
 
 ## xwRC+/OPS+
 
@@ -156,82 +156,6 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
   return war, 'Wins Above Replacement: ' + str(round(war, 1))
 
 
-## Pitching Runs
-
-@callback(
-  Output('pitching-runs', 'data'),
-  Input('era', 'value'),
-  Input('league-era', 'value'),
-  Input('ip', 'value'),
-  Input('positional-adjustment', 'value'),
-  Input('rate-stat-p', 'data'),
-  Input('park-factor', 'value'),
-  Input('radios', 'value')
-  )
-def update_pitching_runs(era, leagueera, ip, positionaladjustment, dips, pf, selection):
-  if selection == 4:
-    adjustment = 1
-  else:
-    adjustment = 1.094
-  if selection < 5:
-    erainput = era
-  else:
-    erainput = dips
-  return (leagueera - erainput * 100 / pf + positionaladjustment) * ip / 9 * adjustment
-
-
-## Leverage Runs
-
-@callback(
-  Output('leverage-runs', 'data'),
-  Input('pitching-runs', 'data'),
-  Input('gmli', 'value'),
-  Input('position-p', 'value')
-  )
-def update_leverage_runs(pitchingruns, gmli, position):
-  if position == 'Starter':
-    leverage = 1
-  else:
-    leverage = gmli
-  return pitchingruns * (leverage - 1) / 2
-
-
-## Replacement Runs - Pitchers
-
-@callback(
-  Output('replacement-runs-p', 'data'),
-  Input('ip', 'value'),
-  Input('replacement-level', 'value')
-  )
-def update_replacement_runs_p(ip, replacementlevel):
-  return ip * - replacementlevel / 200
-
-
-## Runs Above Replacement - Pitchers
-
-@callback(
-  Output('runs-above-replacement-p', 'data'),
-  Input('pitching-runs', 'data'),
-  Input('leverage-runs', 'data'),
-  Input('replacement-runs-p', 'data')
-  )
-def update_runs_above_replacement(pitchingruns, leverageruns, replacementruns):
-  return pitchingruns + leverageruns + replacementruns
-
-
-## Wins Above Replacement - Pitchers
-
-@callback(
-  Output('wins-above-replacement-p', 'data'),
-  Input('runs-above-replacement-p', 'data'),
-  Input('runs-per-win', 'value')
-  )
-def update_wins_above_replacement(runsabovereplacement, runsperwin):
-  return runsabovereplacement / runsperwin
-
-
-### Metric Displays
-
 ## kwERA/FIP
 
 @callback(
@@ -257,51 +181,85 @@ def update_rate_stat_p(k, bb, hr, ip, era, selection):
 ## Pitching Runs
 
 @callback(
+  Output('pitching-runs', 'data'),
   Output('pitching-runs-display', 'children'),
-  Input('pitching-runs', 'data')
+  Input('era', 'value'),
+  Input('league-era', 'value'),
+  Input('ip', 'value'),
+  Input('positional-adjustment', 'value'),
+  Input('rate-stat-p', 'data'),
+  Input('park-factor', 'value'),
+  Input('radios', 'value')
   )
-def update_pitching_runs_display(pitchingruns):
-  return 'Pitching Runs: ' + str(round(pitchingruns, 1))
+def update_pitching_runs(era, leagueera, ip, positionaladjustment, dips, pf, selection):
+  if selection == 4:
+    adjustment = 1
+  else:
+    adjustment = 1.094
+  if selection < 5:
+    erainput = era
+  else:
+    erainput = dips
+  pitching = (leagueera - erainput * 100 / pf + positionaladjustment) * ip / 9 * adjustment
+  return pitching, 'Pitching Runs: ' + str(round(pitching, 1))
 
 
 ## Leverage Runs
 
 @callback(
+  Output('leverage-runs', 'data'),
   Output('leverage-runs-display', 'children'),
-  Input('leverage-runs', 'data')
+  Input('pitching-runs', 'data'),
+  Input('gmli', 'value'),
+  Input('position-p', 'value')
   )
-def update_leverage_runs_display(leverageruns):
-  return 'Leverage Runs: ' + str(round(leverageruns, 1))
+def update_leverage_runs(pitchingruns, gmli, position):
+  if position == 'Starter':
+    gmli = 1
+  else:
+    gmli = gmli
+  leverage = pitchingruns * (gmli - 1) / 2
+  return leverage, 'Leverage Runs: ' + str(round(leverage, 1))
 
 
 ## Replacement Runs - Pitchers
 
 @callback(
+  Output('replacement-runs-p', 'data'),
   Output('replacement-runs-p-display', 'children'),
-  Input('replacement-runs-p', 'data')
+  Input('ip', 'value'),
+  Input('replacement-level', 'value')
   )
-def update_replacement_runs_display(replacementruns):
-  return 'Replacement Runs: ' + str(round(replacementruns, 1))
+def update_replacement_runs_p(ip, replacementlevel):
+  replacement = ip * - replacementlevel / 200
+  return replacement, 'Replacement Runs: ' + str(round(replacement, 1))
 
 
 ## Runs Above Replacement - Pitchers
 
 @callback(
+  Output('runs-above-replacement-p', 'data'),
   Output('runs-above-replacement-p-display', 'children'),
-  Input('runs-above-replacement-p', 'data')
+  Input('pitching-runs', 'data'),
+  Input('leverage-runs', 'data'),
+  Input('replacement-runs-p', 'data')
   )
-def update_runs_above_replacement_p_display(runsabovereplacement):
-  return 'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
+def update_runs_above_replacement(pitchingruns, leverageruns, replacementruns):
+  rar = pitchingruns + leverageruns + replacementruns
+  return rar, 'Runs Above Replacement: ' + str(round(rar, 1))
 
 
 ## Wins Above Replacement - Pitchers
 
 @callback(
+  Output('wins-above-replacement-p', 'data'),
   Output('wins-above-replacement-p-display', 'children'),
-  Input('wins-above-replacement-p', 'data')
+  Input('runs-above-replacement-p', 'data'),
+  Input('runs-per-win', 'value')
   )
-def update_wins_above_replacement_p_display(winsabovereplacement):
-  return 'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
+def update_wins_above_replacement(runsabovereplacement, runsperwin):
+  war = runsabovereplacement / runsperwin
+  return war, 'Wins Above Replacement: ' + str(round(war, 1))
 
 
 ### Default Inputs
