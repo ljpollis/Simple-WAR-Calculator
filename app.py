@@ -159,33 +159,6 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
   return runsabovereplacement / runsperwin
 
 
-## kwERA
-
-@callback(
-  Output('kwera', 'data'),
-  Input('k', 'value'),
-  Input('bb', 'value'),
-  Input('ip', 'value'),
-  Input('league-era', 'value')
-  )
-def update_kwera(k, bb, ip, era):
-  return era + 1.73 - 12 * (k - bb) / ip / 4.23
-
-
-## FIP
-
-@callback(
-  Output('fip', 'data'),
-  Input('k', 'value'),
-  Input('bb', 'value'),
-  Input('hr', 'value'),
-  Input('ip', 'value'),
-  Input('league-era', 'value')
-  )
-def update_kwera(k, bb, hr, ip, era):
-  return era - .91 + (13 * hr + 3 * bb - 2 * k) / ip
-
-
 ## Pitching Runs
 
 @callback(
@@ -194,22 +167,19 @@ def update_kwera(k, bb, hr, ip, era):
   Input('league-era', 'value'),
   Input('ip', 'value'),
   Input('positional-adjustment', 'value'),
-  Input('kwera', 'data'),
-  Input('fip', 'data'),
+  Input('rate-stat-p', 'data'),
   Input('park-factor', 'value'),
   Input('radios', 'value')
   )
-def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, pf, selection):
+def update_pitching_runs(era, leagueera, ip, positionaladjustment, dips, pf, selection):
   if selection == 4:
     adjustment = 1
   else:
     adjustment = 1.094
   if selection < 5:
     erainput = era
-  elif selection == 5:
-    erainput = kwera
   else:
-    erainput = fip
+    erainput = dips
   return (leagueera - erainput * 100 / pf + positionaladjustment) * ip / 9 * adjustment
 
 
@@ -361,19 +331,23 @@ def update_wins_above_replacement_display(winsabovereplacement):
 ## kwERA/FIP
 
 @callback(
+  Output('rate-stat-p', 'data'),
   Output('rate-stat-p-display', 'children'),
-  Input('kwera', 'data'),
-  Input('fip', 'data'),
+  Input('k', 'value'),
+  Input('bb', 'value'),
+  Input('hr', 'value'),
+  Input('ip', 'value'),
+  Input('league-era', 'value'),
   Input('radios', 'value')
   )
-def update_rate_stat_p(kwera, fip, selection):
+def update_rate_stat_p(k, bb, hr, ip, era, selection):
   if selection == 5:
-    stat = kwera
+    stat = era + 1.73 - 12 * (k - bb) / ip / 4.23
     label = 'kwERA+: '
   else:
-    stat = fip
+    stat = era - .91 + (13 * hr + 3 * bb - 2 * k) / ip
     label = 'FIP: '
-  return label + str(round(stat, 2))
+  return stat, label + str(round(stat, 2))
 
 
 ## Pitching Runs
@@ -1223,8 +1197,7 @@ vestigial = [
     html.Div(id = 'runs-above-replacement-p'),
     html.Div(id = 'wins-above-replacement-p'),
     html.Div(id = 'leverage-runs'),
-    html.Div(id = 'kwera'),
-    html.Div(id = 'fip'),
+    html.Div(id = 'rate-stat-p')
 ]
 
 
