@@ -32,8 +32,8 @@ roundbutton = {
   Output('radios', 'value'),
   Input('player-type', 'value')
   )
-def update_options(selection):
-  if selection == 1:
+def update_version_choices(playertype):
+  if playertype == 1:
     choices = [
       {'label' : 'Original (xwRC+)', 'value' : 1},
       {'label' : 'OPS+', 'value' : 2}
@@ -56,12 +56,12 @@ def update_options(selection):
   Output('inputs', 'children'),
   Input('radios', 'value')
   )
-def update_input_selections(selection):
+def update_input_groups(selection):
   if selection < 3:
-    inputtype = inputs_hitters
+    inputgroup = inputs_hitters
   else:
-    inputtype = inputs_pitchers
-  return inputtype
+    inputgroup = inputs_pitchers
+  return inputgroup
 
 
 ## Replacement Level
@@ -72,8 +72,8 @@ def update_input_selections(selection):
   Output('replacement-level-info', 'children'),
   Input('radios', 'value')
   )
-def update_options(selection):
-  if selection < 3:
+def update_replacement_level(version):
+  if version < 3:
     label = 'Replacement Level (Runs per 600 PA):'
     default = -20
     info = 'The difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)'
@@ -90,8 +90,8 @@ def update_options(selection):
   Output('outputs', 'children'),
   Input('radios', 'value')
   )
-def update_input_selections(selection):
-  if selection < 3:
+def update_input_selections(version):
+  if version < 3:
     inputtype = outputs_hitters
   else:
     inputtype = outputs_pitchers
@@ -109,8 +109,8 @@ def update_input_selections(selection):
   Output('league-era-label', 'children'),
   Input('radios', 'value')
   )
-def update_era_default(selection):
-  if selection == 4:
+def update_era_displays(version):
+  if version == 4:
     default = 4.39
     defaultleague = 4.46
     label = 'RA9: '
@@ -137,8 +137,8 @@ def update_era_default(selection):
   Output('leverage-runs-display', 'hidden'),
   Input('position-p', 'value')
   )
-def update_ip_default(selection):
-  if selection == 'Starter':
+def update_pitcher_inputs(role):
+  if (role) == 'Starter':
     defaultip = 200
     defaultk = 200
     defaultbb = 50
@@ -204,8 +204,8 @@ def toggle_advanced(nclicks):
   Input('runs-per-pa', 'value'),
   Input('radios', 'value')
   )
-def update_xwrc(hr, bb, k, sb, babip, pa, obp, slg, leagueobp, leagueslg, pf, rppa, selection):
-  if selection == 1:
+def update_hitter_rate(hr, bb, k, sb, babip, pa, obp, slg, leagueobp, leagueslg, pf, rppa, version):
+  if version == 1:
     stat = (1184.34 * hr / pa + 275.21 * bb / pa - 180.52 * k / pa + 422.14 * babip + 151.75 * sb / pa - 51.57) * 100 / pf
     label = 'xwRC+: '
   else:
@@ -379,8 +379,8 @@ def update_replacement_runs_p(ip, replacementlevel):
   Input('replacement-runs-p', 'data'),
   Input('radios', 'value')
   )
-def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns, pitchingruns, leverageruns, replacementrunsp, selection):
-  if selection < 3:
+def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns, pitchingruns, leverageruns, replacementrunsp, version):
+  if version < 3:
     rar = battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
   else:
     rar = pitchingruns + leverageruns + replacementrunsp
@@ -396,7 +396,7 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
   Input('runs-per-win', 'value'),
   Input('radios', 'value')
   )
-def update_wins_above_replacement(rar, runsperwin, selection):
+def update_wins_above_replacement(rar, runsperwin):
   war = rar / runsperwin
   return war, 'Wins Above Replacement: ' + str(round(war, 1))
 
@@ -426,8 +426,8 @@ def update_wins_above_replacement(rar, runsperwin, selection):
   Output('lg-slg-break-display', 'hidden'),
   Input('radios', 'value')
   )
-def update_options(selection):
-  if selection == 1:
+def update_inputs_hitting(version):
+  if version == 1:
     wrcplus = False
     opsplus = True
   else:
@@ -452,14 +452,14 @@ def update_options(selection):
   Output('pitching-post-rate-stat-break-display-2', 'hidden'),
   Input('radios', 'value')
   )
-def update_options(selection):
-  if selection < 5:
+def update_inputs_pitching(version):
+  if version < 5:
     era = False
     k = True
     bb = True
     hr = True
     estimator = True
-  elif selection == 5:
+  elif version == 5:
     era = True
     k = False
     bb = False
@@ -479,12 +479,12 @@ def update_options(selection):
   Output('park-factor-info', 'children'),
   Input('radios', 'value')
   )
-def update_options(selection):
-  if selection == 1:
+def update_park_factor_info(version):
+  if version == 1:
     info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense).'
-  elif selection == 2:
+  elif version == 2:
     info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league OBP and SLG, leave this at 100.'
-  elif selection == 4:
+  elif version == 4:
     info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league RA9, leave this at 100.'
   else:
     info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league ERA, leave this at 100.'
