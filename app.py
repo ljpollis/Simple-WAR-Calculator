@@ -262,9 +262,30 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
   return war, 'Wins Above Replacement: ' + str(round(war, 1))
 
 
-### Default Inputs
+### Pitching Inputs
 
-## Pitching Role Adjustment
+## Baselines by ERA/RA9
+
+@callback(
+  Output('era', 'value'),
+  Output('league-era', 'value'),
+  Output('era-label', 'children'),
+  Output('league-era-label', 'children'),
+  Input('radios', 'value')
+  )
+def update_era_default(selection):
+  if selection == 4:
+    default = 4.39
+    defaultleague = 4.46
+    label = 'RA9: '
+    labelleague = 'League RA9: '
+  else:
+    default = 3.99
+    defaultleague = 4.08
+    label = 'ERA: '
+    labelleague = 'League ERA: '
+  return default, defaultleague, label, labelleague
+
 
 @callback(
   Output('positional-adjustment', 'value'),
@@ -272,38 +293,10 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
   )
 def update_positional_adjustment(position):
   if position == 'Starter':
-    era = 0.07
+    adjustment = 0.07
   else:
-    era = -0.11
-  return era
-
-
-## ERA/RA9
-
-@callback(
-  Output('era', 'value'),
-  Input('radios', 'value')
-  )
-def update_era_default(selection):
-  if selection == 4:
-    default = 4.39
-  else:
-    default = 3.99
-  return default
-
-
-## League ERA/RA9
-
-@callback(
-  Output('league-era', 'value'),
-  Input('radios', 'value')
-  )
-def update_era_default(selection):
-  if selection == 4:
-    default = 4.46
-  else:
-    default = 4.08
-  return default
+    adjustment = -0.11
+  return adjustment
 
 
 ## SP/RP Counting Stats
@@ -327,36 +320,6 @@ def update_ip_default(selection):
     defaultbb = 20
     defaulthr = 10
   return defaultip, defaultk, defaultbb, defaulthr
-
-
-### Input Labels
-
-## ERA/RA9
-
-@callback(
-  Output('era-label', 'children'),
-  Input('radios', 'value')
-  )
-def update_era_label(selection):
-  if selection == 4:
-    label = 'RA9: '
-  else:
-    label = 'ERA: '
-  return label
-
-
-## League ERA/RA9
-
-@callback(
-  Output('league-era-label', 'children'),
-  Input('radios', 'value')
-  )
-def update_league_era_label(selection):
-  if selection == 4:
-    label = 'League RA9: '
-  else:
-    label = 'League ERA: '
-  return label
 
 
 ### Advanced Inputs
