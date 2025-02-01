@@ -393,8 +393,7 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
   Output('wins-above-replacement', 'data'),
   Output('wins-above-replacement-display', 'children'),
   Input('runs-above-replacement', 'data'),
-  Input('runs-per-win', 'value'),
-  Input('radios', 'value')
+  Input('runs-per-win', 'value')
   )
 def update_wins_above_replacement(rar, runsperwin):
   war = rar / runsperwin
