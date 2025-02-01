@@ -25,52 +25,46 @@ roundbutton = {
 
 ### Metric Calculations
 
-## xwRC+
+## xwRC+/OPS+
 
 @callback(
-  Output('xwrc', 'data'),
+  Output('rate-stat', 'data'),
+  Output('rate-stat-display', 'children'),
   Input('home-runs', 'value'),
   Input('walks', 'value'),
   Input('strikeouts', 'value'),
   Input('stolen-bases', 'value'),
   Input('babip', 'value'),
   Input('plate-appearances', 'value'),
-  Input('park-factor', 'value')
-  )
-def update_xwrc(hr, bb, k, sb, babip, pa, pf):
-  return (1184.34 * hr / pa + 275.21 * bb / pa - 180.52 * k / pa + 422.14 * babip + 151.75 * sb / pa - 51.57) * 100 / pf
-
-
-## OPS+
-
-@callback(
-  Output('ops-plus', 'data'),
   Input('obp', 'value'),
   Input('slg', 'value'),
   Input('league-obp', 'value'),
-  Input('league-slg', 'value')
+  Input('league-slg', 'value'),
+  Input('park-factor', 'value'),
+  Input('radios', 'value')
   )
-def update_ops_plus(obp, slg, leagueobp, leagueslg):
-  return 100 * (obp / leagueobp + slg / leagueslg - 1)
+def update_xwrc(hr, bb, k, sb, babip, pa, obp, slg, leagueobp, leagueslg, pf, selection):
+  if selection == 1:
+    stat = (1184.34 * hr / pa + 275.21 * bb / pa - 180.52 * k / pa + 422.14 * babip + 151.75 * sb / pa - 51.57) * 100 / pf
+    label = 'xwRC+: '
+  else:
+    stat = 100 * (obp / leagueobp + slg / leagueslg - 1) * 100 / pf
+    label = 'OPS+: '
+  return stat, label + str(int(stat))
 
 
 ## Batting Runs
 
 @callback(
   Output('batting-runs', 'data'),
-  Input('xwrc', 'data'),
-  Input('ops-plus', 'data'),
+  Input('rate-stat', 'data'),
   Input('plate-appearances', 'value'),
   Input('park-factor', 'value'),
   Input('runs-per-pa', 'value'),
   Input('radios', 'value')
   )
-def update_batting_runs(xwrc, opsplus, pa, pf, rppa, selection):
-  if selection == 1:
-    inputtype = xwrc
-  else:
-    inputtype = opsplus
-  return (inputtype + pf - 200) * rppa * pa / 100
+def update_batting_runs(stat, pa, pf, rppa, selection):
+  return (stat + pf - 200) * rppa * pa / 100
 
 
 ## Defense Runs
@@ -234,24 +228,6 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
 
 
 ### Metric Displays
-
-## wRC+/OPS+
-
-@callback(
-  Output('rate-stat-display', 'children'),
-  Input('xwrc', 'data'),
-  Input('ops-plus', 'data'),
-  Input('radios', 'value')
-  )
-def update_rate_stat(xwrc, opsplus, selection):
-  if selection == 1:
-    stat = xwrc
-    label = 'xwRC+: '
-  else:
-    stat = opsplus
-    label = 'OPS+: '
-  return label + str(int(stat))
-
 
 ## Batting Runs
 
@@ -1183,7 +1159,7 @@ outputs_pitchers = [
 ## Vestigial Phantom Outputs that are Necessary for Some Reason
 
 vestigial = [
-    html.Div(id = 'xwrc'),
+    html.Div(id = 'rate-stat'),
     html.Div(id = 'batting-runs'),
     html.Div(id = 'defense-runs'),
     html.Div(id = 'baserunning-runs'),
@@ -1191,7 +1167,6 @@ vestigial = [
     html.Div(id = 'replacement-runs'),
     html.Div(id = 'runs-above-replacement'),
     html.Div(id = 'wins-above-replacement'),
-    html.Div(id = 'ops-plus'),
     html.Div(id = 'pitching-runs'),
     html.Div(id = 'replacement-runs-p'),
     html.Div(id = 'runs-above-replacement-p'),
