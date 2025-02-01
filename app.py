@@ -135,7 +135,7 @@ def update_era_displays(version):
   Output('leverage-break-display', 'hidden'),
   Output('leverage-runs-break-display', 'hidden'),
   Output('leverage-runs-display', 'hidden'),
-  Input('position-p', 'value')
+  Input('pitcher-role', 'value')
   )
 def update_pitcher_inputs(role):
   if (role) == 'Starter':
@@ -340,7 +340,7 @@ def update_pitching_runs(era, leagueera, ip, positionaladjustment, dips, pf, sel
   Output('leverage-runs-display', 'children'),
   Input('pitching-runs', 'data'),
   Input('gmli', 'value'),
-  Input('position-p', 'value')
+  Input('pitcher-role', 'value')
   )
 def update_leverage_runs(pitchingruns, gmli, position):
   if position == 'Starter':
@@ -798,14 +798,25 @@ leverage_row = dbc.Row(
 
 pitching_role_row = dbc.Row(
   [
-    html.Label('Primary Position'),
-    dcc.Dropdown(['Starter', 'Reliever'], 'Starter', id = 'position-p')
+    html.Label('Pitcher Role:'),
+    dcc.Dropdown(['Starter', 'Reliever'], 'Starter', id = 'pitcher-role')
   ]
 )
 
 positional_adjustment_row = dbc.Row(
   [
-    dbc.Col(html.Label('Positional Adjustment:'), width = 4),
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('Positional Adjustment:'),
+          dbc.Button('?', id = 'positional-adjustment-?', style = roundbutton),
+          dbc.Tooltip(
+            "Adjusting for the fact that it's easier to pitch out of the bullpen than to be a starter.",
+            target = 'positional-adjustment-?'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
     dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
   ]
 )
