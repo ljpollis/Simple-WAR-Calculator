@@ -234,7 +234,7 @@ def update_leverage_runs(pitchingruns, gmli, position):
 @callback(
   Output('replacement-runs-p', 'data'),
   Input('ip', 'value'),
-  Input('replacement-level-p', 'value')
+  Input('replacement-level', 'value')
   )
 def update_replacement_runs_p(ip, replacementlevel):
   return ip * - replacementlevel / 200
@@ -594,6 +594,26 @@ def update_input_selections(selection):
   return inputtype
 
 
+## Replacement Level
+
+@callback(
+  Output('replacement-level-label', 'children'),
+  Output('replacement-level', 'value'),
+  Output('replacement-level-info', 'children'),
+  Input('radios', 'value')
+  )
+def update_options(selection):
+  if selection < 3:
+    label = 'Replacement Level (Runs per 600 PA):'
+    default = -20
+    info = 'The difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)'
+  else:
+    label = 'Replacement Level (Runs per 200 IP):'
+    default = -18.5
+    info = 'The difference in performance between an average player and a pitcher you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)'
+  return label, default, info
+
+
 ## Outputs
 
 @callback(
@@ -921,16 +941,16 @@ replacement_level_row = dbc.Row(
     dbc.Col(
       html.Div(
         [
-          html.Label('Replacement Level (Runs per 600 PA):'),
+          html.Label(id = 'replacement-level-label'),
           dbc.Button('?', id = 'replacement-level-?', style = roundbutton),
           dbc.Tooltip(
-            'The difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)',
+            id = 'replacement-level-info',
             target = 'replacement-level-?'
           )
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'replacement-level', value = -20, type = 'number', step = 0.1), width = 1)
+    dbc.Col(dcc.Input(id = 'replacement-level', type = 'number', step = 0.1), width = 1)
   ]
 )
 
@@ -1044,24 +1064,6 @@ positional_adjustment_row = dbc.Row(
   ]
 )
 
-replacement_level_p_row = dbc.Row(
-  [
-    dbc.Col(
-      html.Div(
-        [
-          html.Label('Replacement Level (Runs per 200 IP):'),
-          dbc.Button('?', id = 'replacement-level-p-?', style = roundbutton),
-          dbc.Tooltip(
-            'The difference in performance between an average player and a pitcher you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)',
-            target = 'replacement-level-p-?'
-          )
-        ]
-      ), width = 4, style = {'verticalAlign' : 'center'}
-    ),
-    dbc.Col(dcc.Input(id = 'replacement-level-p', value = -18.5, type = 'number', step = 0.1), width = 1)
-  ]
-)
-
 k_row = dbc.Row(
   [
     dbc.Col(html.Label('Strikeouts'), width = 4),
@@ -1154,7 +1156,7 @@ inputs_pitchers = dbc.Col(
       [
         positional_adjustment_row,
         html.Br(),
-        replacement_level_p_row,
+        replacement_level_row,
         html.Br(),
         runs_per_win_row
       ], id = 'advanced-selection'
