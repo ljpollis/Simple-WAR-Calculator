@@ -135,7 +135,7 @@ def update_era_displays(version):
   Output('leverage-break-display', 'hidden'),
   Output('leverage-runs-break-display', 'hidden'),
   Output('leverage-runs-display', 'hidden'),
-  Input('position-p', 'value')
+  Input('pitcher-role', 'value')
   )
 def update_pitcher_inputs(role):
   if (role) == 'Starter':
@@ -340,7 +340,7 @@ def update_pitching_runs(era, leagueera, ip, positionaladjustment, dips, pf, sel
   Output('leverage-runs-display', 'children'),
   Input('pitching-runs', 'data'),
   Input('gmli', 'value'),
-  Input('position-p', 'value')
+  Input('pitcher-role', 'value')
   )
 def update_leverage_runs(pitchingruns, gmli, position):
   if position == 'Starter':
@@ -487,6 +487,19 @@ def update_park_factor_info(version):
     info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league RA9, leave this at 100.'
   else:
     info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league ERA, leave this at 100.'
+  return info
+
+## League ERA/RA9 Explanations
+
+@callback(
+  Output('league-era-info', 'children'),
+  Input('radios', 'value')
+  )
+def update_park_factor_info(version):
+  if version == 4:
+    info = 'The average RA9 for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.'
+  else:
+    info = 'The average ERA for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.'
   return info
 
 
@@ -784,28 +797,62 @@ ip_row = dbc.Row(
 
 lg_era_row = dbc.Row(
   [
-    dbc.Col(html.Label(id = 'league-era-label'), width = 4),
-    dbc.Col(dcc.Input(id = 'league-era', type = 'number', step = 0.01), width = 1),
+    dbc.Col(
+      html.Div(
+        [
+          html.Label(id = 'league-era-label'),
+          dbc.Button('?', id = 'league-era-?', style = roundbutton),
+          dbc.Tooltip(
+            target = 'league-era-?',
+            id = 'league-era-info'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
+    dbc.Col(dcc.Input(id = 'league-era', type = 'number', step = 0.01), width = 1)
   ]
 )
 
 leverage_row = dbc.Row(
   [
-    dbc.Col(html.Label('Entrance Leverage Index:'), width = 4),
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('Entrance Leverage Index:'),
+          dbc.Button('?', id = 'gmli-?', style = roundbutton),
+          dbc.Tooltip(
+            "The average Leverage Index when the reliever entered the game. Usually ranges from 2.0 (exclusively close and late situations) to 0.5 (full mop-up duty).",
+            target = 'gmli-?',
+            id = 'gmli-info'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
     dbc.Col(dcc.Input(id = 'gmli', value = 1.00, type = 'number', step = 0.01), width = 1)
   ]
 )
 
 pitching_role_row = dbc.Row(
   [
-    html.Label('Primary Position'),
-    dcc.Dropdown(['Starter', 'Reliever'], 'Starter', id = 'position-p')
+    html.Label('Pitcher Role:'),
+    dcc.Dropdown(['Starter', 'Reliever'], 'Starter', id = 'pitcher-role')
   ]
 )
 
 positional_adjustment_row = dbc.Row(
   [
-    dbc.Col(html.Label('Positional Adjustment:'), width = 4),
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('Positional Adjustment:'),
+          dbc.Button('?', id = 'positional-adjustment-?', style = roundbutton),
+          dbc.Tooltip(
+            "Adjusting for the fact that it's easier to pitch out of the bullpen than to be a starter.",
+            target = 'positional-adjustment-?'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
     dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
   ]
 )
