@@ -146,7 +146,7 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
   if selection < 3:
     rar = battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
   else:
-    rar = pitchingruns + leverageruns + replacementruns
+    rar = pitchingruns + leverageruns + replacementrunsp
   return rar, 'Runs Above Replacement: ' + str(round(rar, 1))
 
 
