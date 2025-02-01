@@ -489,6 +489,19 @@ def update_park_factor_info(version):
     info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league ERA, leave this at 100.'
   return info
 
+## League ERA/RA9 Explanations
+
+@callback(
+  Output('league-era-info', 'children'),
+  Input('radios', 'value')
+  )
+def update_park_factor_info(version):
+  if version == 4:
+    info = 'The average RA9 for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.'
+  else:
+    info = 'The average ERA for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.'
+  return info
+
 
 #### UI
 
@@ -784,8 +797,19 @@ ip_row = dbc.Row(
 
 lg_era_row = dbc.Row(
   [
-    dbc.Col(html.Label(id = 'league-era-label'), width = 4),
-    dbc.Col(dcc.Input(id = 'league-era', type = 'number', step = 0.01), width = 1),
+    dbc.Col(
+      html.Div(
+        [
+          html.Label(id = 'league-era-label'),
+          dbc.Button('?', id = 'league-era-?', style = roundbutton),
+          dbc.Tooltip(
+            target = 'league-era-?',
+            id = 'league-era-info'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
+    dbc.Col(dcc.Input(id = 'league-era', type = 'number', step = 0.01), width = 1)
   ]
 )
 
