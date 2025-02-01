@@ -358,24 +358,22 @@ def update_wins_above_replacement_display(winsabovereplacement):
   return 'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
 
 
-## kwERA
+## kwERA/FIP
 
 @callback(
-  Output('kwera-display', 'children'),
-  Input('kwera', 'data')
+  Output('rate-stat-p-display', 'children'),
+  Input('kwera', 'data'),
+  Input('fip', 'data'),
+  Input('radios', 'value')
   )
-def update_kwera_display(kwera):
-  return 'kwERA: ' + str(round(kwera, 2))
-
-
-## FIP
-
-@callback(
-  Output('fip-display', 'children'),
-  Input('fip', 'data')
-  )
-def update_fip_display(fip):
-  return 'FIP: ' + str(round(fip, 2))
+def update_rate_stat_p(kwera, fip, selection):
+  if selection == 5:
+    stat = kwera
+    label = 'kwERA+: '
+  else:
+    stat = fip
+    label = 'FIP: '
+  return label + str(round(stat, 2))
 
 
 ## Pitching Runs
@@ -674,8 +672,7 @@ def update_options(selection):
   Output('bb-break-display', 'hidden'),
   Output('hr-row-display', 'hidden'),
   Output('hr-break-display', 'hidden'),
-  Output('kwera-display', 'hidden'),
-  Output('fip-display', 'hidden'),
+  Output('rate-stat-p-display', 'hidden'),
   Output('pitching-post-rate-stat-break-display-1', 'hidden'),
   Output('pitching-post-rate-stat-break-display-2', 'hidden'),
   Input('radios', 'value')
@@ -686,26 +683,20 @@ def update_options(selection):
     k = True
     bb = True
     hr = True
-    kwera = True
-    fip = True
     estimator = True
   elif selection == 5:
     era = True
     k = False
     bb = False
     hr = True
-    kwera = False
-    fip = True
     estimator = False
   else:
     era = True
     k = False
     bb = False
     hr = False
-    kwera = True
-    fip = False
     estimator = False
-  return era, era, k, k, bb, bb, hr, hr, kwera, fip, estimator, estimator
+  return era, era, k, k, bb, bb, hr, hr, estimator, estimator, estimator
 
 ## Park Factor Explanations
 
@@ -1197,8 +1188,7 @@ outputs_hitters = [
 outputs_pitchers = [
   html.Div(
     [
-      html.H6(id = 'kwera-display'),
-      html.H6(id = 'fip-display'),
+      html.H6(id = 'rate-stat-p-display'),
       html.Br(id = 'pitching-post-rate-stat-break-display-1'),
       html.Br(id = 'pitching-post-rate-stat-break-display-2'),
       html.H6(id = 'pitching-runs-display'),
