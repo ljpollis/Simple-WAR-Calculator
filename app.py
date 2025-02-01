@@ -211,7 +211,7 @@ def update_hitter_rate(hr, bb, k, sb, babip, pa, obp, slg, leagueobp, leagueslg,
   else:
     stat = 100 * (obp / leagueobp + slg / leagueslg - 1) * 100 / pf
     label = 'OPS+: '
-  battingruns = (stat + pf - 200) * rppa * pa / 100
+  battingruns = (stat - 100) * rppa * pa / 100
   return stat, label + str(int(stat)), battingruns, 'Batting Runs: ' + str(round(battingruns, 1))
 
 
@@ -393,8 +393,7 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
   Output('wins-above-replacement', 'data'),
   Output('wins-above-replacement-display', 'children'),
   Input('runs-above-replacement', 'data'),
-  Input('runs-per-win', 'value'),
-  Input('radios', 'value')
+  Input('runs-per-win', 'value')
   )
 def update_wins_above_replacement(rar, runsperwin):
   war = rar / runsperwin
