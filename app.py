@@ -127,43 +127,6 @@ def update_replacement_runs(pa, replacementlevel):
   return replacement, 'Replacement Runs: ' + str(round(replacement, 1))
 
 
-## Runs Above Replacement 
-
-@callback(
-  Output('runs-above-replacement', 'data'),
-  Output('runs-above-replacement-display', 'children'),
-  Input('batting-runs', 'data'),
-  Input('defense-runs', 'data'),
-  Input('baserunning-runs', 'data'),
-  Input('positional-runs', 'data'),
-  Input('replacement-runs', 'data'),
-  Input('pitching-runs', 'data'),
-  Input('leverage-runs', 'data'),
-  Input('replacement-runs-p', 'data'),
-  Input('radios', 'value')
-  )
-def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns, pitchingruns, leverageruns, replacementrunsp, selection):
-  if selection < 3:
-    rar = battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
-  else:
-    rar = pitchingruns + leverageruns + replacementrunsp
-  return rar, 'Runs Above Replacement: ' + str(round(rar, 1))
-
-
-## Wins Above Replacement
-
-@callback(
-  Output('wins-above-replacement', 'data'),
-  Output('wins-above-replacement-display', 'children'),
-  Input('runs-above-replacement', 'data'),
-  Input('runs-per-win', 'value'),
-  Input('radios', 'value')
-  )
-def update_wins_above_replacement(rar, runsperwin, selection):
-  war = rar / runsperwin
-  return war, 'Wins Above Replacement: ' + str(round(war, 1))
-
-
 ## kwERA/FIP
 
 @callback(
@@ -241,6 +204,43 @@ def update_leverage_runs(pitchingruns, gmli, position):
 def update_replacement_runs_p(ip, replacementlevel):
   replacement = ip * - replacementlevel / 200
   return replacement, 'Replacement Runs: ' + str(round(replacement, 1))
+
+
+## Runs Above Replacement 
+
+@callback(
+  Output('runs-above-replacement', 'data'),
+  Output('runs-above-replacement-display', 'children'),
+  Input('batting-runs', 'data'),
+  Input('defense-runs', 'data'),
+  Input('baserunning-runs', 'data'),
+  Input('positional-runs', 'data'),
+  Input('replacement-runs', 'data'),
+  Input('pitching-runs', 'data'),
+  Input('leverage-runs', 'data'),
+  Input('replacement-runs-p', 'data'),
+  Input('radios', 'value')
+  )
+def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns, pitchingruns, leverageruns, replacementrunsp, selection):
+  if selection < 3:
+    rar = battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
+  else:
+    rar = pitchingruns + leverageruns + replacementrunsp
+  return rar, 'Runs Above Replacement: ' + str(round(rar, 1))
+
+
+## Wins Above Replacement
+
+@callback(
+  Output('wins-above-replacement', 'data'),
+  Output('wins-above-replacement-display', 'children'),
+  Input('runs-above-replacement', 'data'),
+  Input('runs-per-win', 'value'),
+  Input('radios', 'value')
+  )
+def update_wins_above_replacement(rar, runsperwin, selection):
+  war = rar / runsperwin
+  return war, 'Wins Above Replacement: ' + str(round(war, 1))
 
 
 ### Pitching Inputs
