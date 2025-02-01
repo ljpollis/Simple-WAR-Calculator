@@ -532,14 +532,14 @@ app.layout = [
 ## Calculation callbacks
 
 @callback(
-  Output(component_id = 'xwrc', component_property = 'data'),
-  Input(component_id = 'home-runs', component_property = 'value'),
-  Input(component_id = 'walks', component_property = 'value'),
-  Input(component_id = 'strikeouts', component_property = 'value'),
-  Input(component_id = 'stolen-bases', component_property = 'value'),
-  Input(component_id = 'babip', component_property = 'value'),
-  Input(component_id = 'plate-appearances', component_property = 'value'),
-  Input(component_id = 'park-factor', component_property = 'value')
+  Output('xwrc', 'data'),
+  Input('home-runs', 'value'),
+  Input('walks', 'value'),
+  Input('strikeouts', 'value'),
+  Input('stolen-bases', 'value'),
+  Input('babip', 'value'),
+  Input('plate-appearances', 'value'),
+  Input('park-factor', 'value')
   )
 def update_xwrc(hr, bb, k, sb, babip, pa, pf):
   return (1184.34 * hr / pa + 275.21 * bb / pa - 180.52 * k / pa + 422.14 * babip + 151.75 * sb / pa - 51.57) * 100 / pf
@@ -551,7 +551,7 @@ def update_xwrc(hr, bb, k, sb, babip, pa, pf):
   Input('plate-appearances', 'value'),
   Input('park-factor', 'value'),
   Input('runs-per-pa', 'value'),
-  Input(component_id = 'radios', component_property = 'value')
+  Input('radios', 'value')
   )
 def update_batting_runs(xwrc, opsplus, pa, pf, rppa, selection):
   if selection == 1:
@@ -647,7 +647,7 @@ def update_ops_plus(obp, slg, leagueobp, leagueslg):
   Input('kwera', 'data'),
   Input('fip', 'data'),
   Input('park-factor', 'value'),
-  Input(component_id = 'radios', component_property = 'value')
+  Input('radios', 'value')
   )
 def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, pf, selection):
   if selection == 4:
@@ -691,7 +691,7 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
   Output('leverage-runs', 'data'),
   Input('pitching-runs', 'data'),
   Input('gmli', 'value'),
-  Input(component_id = 'position-p', component_property = 'value')
+  Input('position-p', 'value')
   )
 def update_leverage_runs(pitchingruns, gmli, position):
   if position == 'Starter':
@@ -725,10 +725,10 @@ def update_kwera(k, bb, hr, ip, era):
 ## Display callbacks
 
 @callback(
-  Output(component_id = 'rate-stat-display', component_property = 'children'),
-  Input(component_id = 'xwrc', component_property = 'data'),
-  Input(component_id = 'ops-plus', component_property = 'data'),
-  Input(component_id = 'radios', component_property = 'value')
+  Output('rate-stat-display', 'children'),
+  Input('xwrc', 'data'),
+  Input('ops-plus', 'data'),
+  Input('radios', 'value')
   )
 def update_rate_stat(xwrc, opsplus, selection):
   if selection == 1:
@@ -812,15 +812,15 @@ def toggle_advanced(nclicks):
   return label
 
 @callback(
-  Output(component_id = 'ops-plus-display', component_property = 'children'),
-  Input(component_id = 'ops-plus', component_property = 'data')
+  Output('ops-plus-display', 'children'),
+  Input('ops-plus', 'data')
   )
 def update_xwrc_display(opsplus):
   return 'OPS+: ' + str(int(opsplus))
 
 @callback(
-  Output(component_id = 'inputs', component_property = 'children'),
-  Input(component_id = 'radios', component_property = 'value')
+  Output('inputs', 'children'),
+  Input('radios', 'value')
   )
 def update_input_selections(selection):
   if selection == 1:
@@ -832,8 +832,8 @@ def update_input_selections(selection):
   return inputtype
 
 @callback(
-  Output(component_id = 'positional-adjustment', component_property = 'value'),
-  Input(component_id = 'position-p', component_property = 'value')
+  Output('positional-adjustment', 'value'),
+  Input('position-p', 'value')
   )
 def update_positional_adjustment(position):
   if position == 'Starter':
@@ -871,8 +871,8 @@ def update_wins_above_replacement_p_display(winsabovereplacement):
   return 'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
 
 @callback(
-  Output(component_id = 'outputs', component_property = 'children'),
-  Input(component_id = 'radios', component_property = 'value')
+  Output('outputs', 'children'),
+  Input('radios', 'value')
   )
 def update_input_selections(selection):
   if selection < 3:
@@ -890,7 +890,7 @@ def update_leverage_runs_display(leverageruns):
 
 @callback(
   Output('era-label', 'children'),
-  Input(component_id = 'radios', component_property = 'value')
+  Input('radios', 'value')
   )
 def update_era_label(selection):
   if selection == 4:
@@ -901,7 +901,7 @@ def update_era_label(selection):
 
 @callback(
   Output('era', 'value'),
-  Input(component_id = 'radios', component_property = 'value')
+  Input('radios', 'value')
   )
 def update_era_default(selection):
   if selection == 4:
@@ -912,7 +912,7 @@ def update_era_default(selection):
 
 @callback(
   Output('league-era-label', 'children'),
-  Input(component_id = 'radios', component_property = 'value')
+  Input('radios', 'value')
   )
 def update_league_era_label(selection):
   if selection == 4:
@@ -923,7 +923,7 @@ def update_league_era_label(selection):
 
 @callback(
   Output('league-era', 'value'),
-  Input(component_id = 'radios', component_property = 'value')
+  Input('radios', 'value')
   )
 def update_era_default(selection):
   if selection == 4:
@@ -933,15 +933,15 @@ def update_era_default(selection):
   return default
 
 @callback(
-  Output(component_id = 'kwera-display', component_property = 'children'),
-  Input(component_id = 'kwera', component_property = 'data')
+  Output('kwera-display', 'children'),
+  Input('kwera', 'data')
   )
 def update_kwera_display(kwera):
   return 'kwERA: ' + str(round(kwera, 2))
 
 @callback(
-  Output(component_id = 'fip-display', component_property = 'children'),
-  Input(component_id = 'fip', component_property = 'data')
+  Output('fip-display', 'children'),
+  Input('fip', 'data')
   )
 def update_fip_display(fip):
   return 'FIP: ' + str(round(fip, 2))
@@ -951,7 +951,7 @@ def update_fip_display(fip):
   Output('k', 'value'),
   Output('bb', 'value'),
   Output('hr', 'value'),
-  Input(component_id = 'position-p', component_property = 'value')
+  Input('position-p', 'value')
   )
 def update_ip_default(selection):
   if selection == 'Starter':
@@ -969,7 +969,7 @@ def update_ip_default(selection):
 @callback(
   Output('radios', 'options'),
   Output('radios', 'value'),
-  Input(component_id = 'player-type', component_property = 'value')
+  Input('player-type', 'value')
   )
 def update_options(selection):
   if selection == 1:
@@ -1007,7 +1007,7 @@ def update_options(selection):
   Output('lg-obp-break-display', 'hidden'),
   Output('lg-slg-row-display', 'hidden'),
   Output('lg-slg-break-display', 'hidden'),
-  Input(component_id = 'radios', component_property = 'value')
+  Input('radios', 'value')
   )
 def update_options(selection):
   if selection == 1:
@@ -1031,7 +1031,7 @@ def update_options(selection):
   Output('fip-display', 'hidden'),
   Output('pitching-post-rate-stat-break-display-1', 'hidden'),
   Output('pitching-post-rate-stat-break-display-2', 'hidden'),
-  Input(component_id = 'radios', component_property = 'value')
+  Input('radios', 'value')
   )
 def update_options(selection):
   if selection < 5:
@@ -1076,7 +1076,7 @@ def update_options(selection):
 
 @callback(
   Output('park-factor-info', 'children'),
-  Input(component_id = 'radios', component_property = 'value')
+  Input('radios', 'value')
   )
 def update_options(selection):
   if selection == 1:
