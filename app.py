@@ -287,25 +287,18 @@ def update_era_default(selection):
   return default, defaultleague, label, labelleague
 
 
-@callback(
-  Output('positional-adjustment', 'value'),
-  Input('position-p', 'value')
-  )
-def update_positional_adjustment(position):
-  if position == 'Starter':
-    adjustment = 0.07
-  else:
-    adjustment = -0.11
-  return adjustment
-
-
-## SP/RP Counting Stats
+## Defaults by Role
 
 @callback(
   Output('ip', 'value'),
   Output('k', 'value'),
   Output('bb', 'value'),
   Output('hr', 'value'),
+  Output('positional-adjustment', 'value'),
+  Output('leverage-row-display', 'hidden'),
+  Output('leverage-break-display', 'hidden'),
+  Output('leverage-runs-break-display', 'hidden'),
+  Output('leverage-runs-display', 'hidden'),
   Input('position-p', 'value')
   )
 def update_ip_default(selection):
@@ -314,12 +307,16 @@ def update_ip_default(selection):
     defaultk = 200
     defaultbb = 50
     defaulthr = 20
+    adjustment = .07
+    leverage = True
   else:
     defaultip = 70
     defaultk = 70
     defaultbb = 20
     defaulthr = 10
-  return defaultip, defaultk, defaultbb, defaulthr
+    adjustment = -.11
+    leverage = False
+  return defaultip, defaultk, defaultbb, defaulthr, adjustment, leverage, leverage, leverage, leverage
 
 
 ### Advanced Inputs
@@ -511,25 +508,6 @@ def update_options(selection):
   else:
     info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league ERA, leave this at 100.'
   return info
-
-
-### UI Displays by Pitcher Type
-
-## Leverage
-
-@callback(
-  Output('leverage-row-display', 'hidden'),
-  Output('leverage-break-display', 'hidden'),
-  Output('leverage-runs-break-display', 'hidden'),
-  Output('leverage-runs-display', 'hidden'),
-  Input('position-p', 'value')
-  )
-def update_options(selection):
-  if selection == 'Starter':
-    leverage = True
-  else:
-    leverage = False
-  return leverage, leverage, leverage, leverage
 
 
 #### UI
