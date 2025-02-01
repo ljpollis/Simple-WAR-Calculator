@@ -127,7 +127,7 @@ def update_replacement_runs(pa, replacementlevel):
   return replacement, 'Replacement Runs: ' + str(round(replacement, 1))
 
 
-## Runs Above Replacement - Hitters
+## Runs Above Replacement 
 
 @callback(
   Output('runs-above-replacement', 'data'),
@@ -136,10 +136,17 @@ def update_replacement_runs(pa, replacementlevel):
   Input('defense-runs', 'data'),
   Input('baserunning-runs', 'data'),
   Input('positional-runs', 'data'),
-  Input('replacement-runs', 'data')
+  Input('replacement-runs', 'data'),
+  Input('pitching-runs', 'data'),
+  Input('leverage-runs', 'data'),
+  Input('replacement-runs-p', 'data'),
+  Input('radios', 'value')
   )
-def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns):
-  rar = battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
+def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns, pitchingruns, leverageruns, replacementrunsp, selection):
+  if selection < 3:
+    rar = battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
+  else:
+    rar = pitchingruns + leverageruns + replacementruns
   return rar, 'Runs Above Replacement: ' + str(round(rar, 1))
 
 
@@ -149,15 +156,10 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
   Output('wins-above-replacement', 'data'),
   Output('wins-above-replacement-display', 'children'),
   Input('runs-above-replacement', 'data'),
-  Input('runs-above-replacement-p', 'data'),
   Input('runs-per-win', 'value'),
   Input('radios', 'value')
   )
-def update_wins_above_replacement(rar_pos, rar_p, runsperwin, selection):
-  if selection < 3:
-    rar = rar_pos
-  else:
-    rar = rar_p
+def update_wins_above_replacement(rar, runsperwin, selection):
   war = rar / runsperwin
   return war, 'Wins Above Replacement: ' + str(round(war, 1))
 
@@ -239,20 +241,6 @@ def update_leverage_runs(pitchingruns, gmli, position):
 def update_replacement_runs_p(ip, replacementlevel):
   replacement = ip * - replacementlevel / 200
   return replacement, 'Replacement Runs: ' + str(round(replacement, 1))
-
-
-## Runs Above Replacement - Pitchers
-
-@callback(
-  Output('runs-above-replacement-p', 'data'),
-  Output('runs-above-replacement-p-display', 'children'),
-  Input('pitching-runs', 'data'),
-  Input('leverage-runs', 'data'),
-  Input('replacement-runs-p', 'data')
-  )
-def update_runs_above_replacement(pitchingruns, leverageruns, replacementruns):
-  rar = pitchingruns + leverageruns + replacementruns
-  return rar, 'Runs Above Replacement: ' + str(round(rar, 1))
 
 
 ### Pitching Inputs
@@ -965,7 +953,7 @@ outputs_pitchers = [
       html.Br(id = 'leverage-runs-break-display'),
       html.H6(id = 'replacement-runs-p-display'),
       html.Br(),
-      html.H6(id = 'runs-above-replacement-p-display'),
+      html.H6(id = 'runs-above-replacement-display'),
       html.Br(),
       html.Br(),
       html.Br(),
@@ -987,7 +975,6 @@ vestigial = [
     html.Div(id = 'wins-above-replacement'),
     html.Div(id = 'pitching-runs'),
     html.Div(id = 'replacement-runs-p'),
-    html.Div(id = 'runs-above-replacement-p'),
     html.Div(id = 'leverage-runs'),
     html.Div(id = 'rate-stat-p')
 ]
