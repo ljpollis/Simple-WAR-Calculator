@@ -744,7 +744,7 @@ def update_rate_stat(xwrc, opsplus, selection):
   Input('batting-runs', 'data')
   )
 def update_batting_runs_display(battingruns):
-  return f'Batting Runs: ' + str(round(battingruns, 1))
+  return 'Batting Runs: ' + str(round(battingruns, 1))
 
 @callback(
   Output('defense-runs-display', 'children'),
@@ -756,42 +756,42 @@ def update_defense_runs_display(position, defenseruns):
     dh_caveat = ' (DH, does not play defense)'
   else:
     dh_caveat = ''
-  return f'Defensive Runs: ' + str(round(defenseruns, 1)) + dh_caveat
+  return 'Defensive Runs: ' + str(round(defenseruns, 1)) + dh_caveat
 
 @callback(
   Output('baserunning-runs-display', 'children'),
   Input('baserunning-runs', 'data')
   )
 def update_baserunning_runs_display(baserunningruns):
-  return f'Baserunning Runs: ' + str(round(baserunningruns, 1))
+  return 'Baserunning Runs: ' + str(round(baserunningruns, 1))
 
 @callback(
   Output('positional-runs-display', 'children'),
   Input('positional-runs', 'data')
   )
 def update_replacement_runs_display(positionalruns):
-  return f'Positional Runs: ' + str(round(positionalruns, 1))
+  return 'Positional Runs: ' + str(round(positionalruns, 1))
 
 @callback(
   Output('replacement-runs-display', 'children'),
   Input('replacement-runs', 'data')
   )
 def update_replacement_runs_display(replacementruns):
-  return f'Replacement Runs: ' + str(round(replacementruns, 1))
+  return 'Replacement Runs: ' + str(round(replacementruns, 1))
 
 @callback(
   Output('runs-above-replacement-display', 'children'),
   Input('runs-above-replacement', 'data')
   )
 def update_runs_above_replacement_display(runsabovereplacement):
-  return f'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
+  return 'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
 
 @callback(
   Output('wins-above-replacement-display', 'children'),
   Input('wins-above-replacement', 'data')
   )
 def update_wins_above_replacement_display(winsabovereplacement):
-  return f'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
+  return 'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
 
 @callback(
   Output('advanced-selection', 'hidden'),
@@ -816,7 +816,7 @@ def toggle_advanced(nclicks):
   Input(component_id = 'ops-plus', component_property = 'data')
   )
 def update_xwrc_display(opsplus):
-  return f'OPS+: ' + str(int(opsplus))
+  return 'OPS+: ' + str(int(opsplus))
 
 @callback(
   Output(component_id = 'inputs', component_property = 'children'),
@@ -847,28 +847,28 @@ def update_positional_adjustment(position):
   Input('pitching-runs', 'data')
   )
 def update_pitching_runs_display(pitchingruns):
-  return f'Pitching Runs: ' + str(round(pitchingruns, 1))
+  return 'Pitching Runs: ' + str(round(pitchingruns, 1))
 
 @callback(
   Output('replacement-runs-p-display', 'children'),
   Input('replacement-runs-p', 'data')
   )
 def update_replacement_runs_display(replacementruns):
-  return f'Replacement Runs: ' + str(round(replacementruns, 1))
+  return 'Replacement Runs: ' + str(round(replacementruns, 1))
 
 @callback(
   Output('runs-above-replacement-p-display', 'children'),
   Input('runs-above-replacement-p', 'data')
   )
 def update_runs_above_replacement_p_display(runsabovereplacement):
-  return f'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
+  return 'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
 
 @callback(
   Output('wins-above-replacement-p-display', 'children'),
   Input('wins-above-replacement-p', 'data')
   )
 def update_wins_above_replacement_p_display(winsabovereplacement):
-  return f'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
+  return 'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
 
 @callback(
   Output(component_id = 'outputs', component_property = 'children'),
@@ -886,7 +886,7 @@ def update_input_selections(selection):
   Input('leverage-runs', 'data')
   )
 def update_leverage_runs_display(leverageruns):
-  return f'Leverage Runs: ' + str(round(leverageruns, 1))
+  return 'Leverage Runs: ' + str(round(leverageruns, 1))
 
 @callback(
   Output('era-label', 'children'),
@@ -937,14 +937,14 @@ def update_era_default(selection):
   Input(component_id = 'kwera', component_property = 'data')
   )
 def update_kwera_display(kwera):
-  return f'kwERA: ' + str(round(kwera, 2))
+  return 'kwERA: ' + str(round(kwera, 2))
 
 @callback(
   Output(component_id = 'fip-display', component_property = 'children'),
   Input(component_id = 'fip', component_property = 'data')
   )
 def update_fip_display(fip):
-  return f'FIP: ' + str(round(fip, 2))
+  return 'FIP: ' + str(round(fip, 2))
 
 @callback(
   Output('ip', 'value'),
