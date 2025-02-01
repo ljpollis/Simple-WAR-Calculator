@@ -419,9 +419,7 @@ def update_options(selection):
   Input('radios', 'value')
   )
 def update_input_selections(selection):
-  if selection == 1:
-    inputtype = inputs_hitters
-  elif selection == 2:
+  if selection < 3:
     inputtype = inputs_hitters
   else:
     inputtype = inputs_pitchers
