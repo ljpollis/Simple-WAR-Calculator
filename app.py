@@ -872,9 +872,10 @@ inputs_hitters = dbc.Col(
         html.Br(),
         replacement_level_row,
         html.Br(),
-        runs_per_win_row], id = 'advanced-selection')
-      ]
-    )
+        runs_per_win_row
+      ], id = 'advanced-selection')
+  ]
+)
 
 inputs_pitchers = dbc.Col(
   [
