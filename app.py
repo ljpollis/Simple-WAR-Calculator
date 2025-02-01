@@ -1,3 +1,5 @@
+#### Initialize App
+
 from dash import callback, Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
 
@@ -18,49 +20,764 @@ roundbutton = {
     'margin' : 2,
 }
 
-outputs = [
-  html.Div(
-    [
-      html.H6(id = 'rate-stat-display'),
-      html.Br(),
-      html.Br(),
-      html.H6(id = 'batting-runs-display'),
-      html.Br(),
-      html.H6(id = 'defense-runs-display'),
-      html.Br(),
-      html.H6(id = 'baserunning-runs-display'),
-      html.Br(),
-      html.H6(id = 'positional-runs-display'),
-      html.Br(),
-      html.H6(id = 'replacement-runs-display'),
-      html.Br(),
-      html.H6(id = 'runs-above-replacement-display'),
-      html.Br(),
-      html.Br(),
-      html.Br(),
-      html.H4(id = 'wins-above-replacement-display')
-    ]
-  )
-]
 
-outoftheway = [
-    html.Div(id = 'xwrc'),
-    html.Div(id = 'batting-runs'),
-    html.Div(id = 'defense-runs'),
-    html.Div(id = 'baserunning-runs'),
-    html.Div(id = 'positional-runs'),
-    html.Div(id = 'replacement-runs'),
-    html.Div(id = 'runs-above-replacement'),
-    html.Div(id = 'wins-above-replacement'),
-    html.Div(id = 'ops-plus'),
-    html.Div(id = 'pitching-runs'),
-    html.Div(id = 'replacement-runs-p'),
-    html.Div(id = 'runs-above-replacement-p'),
-    html.Div(id = 'wins-above-replacement-p'),
-    html.Div(id = 'leverage-runs'),
-    html.Div(id = 'kwera'),
-    html.Div(id = 'fip'),
-]
+#### Callbacks
+
+### Metric Calculations
+
+## xwRC+
+
+@callback(
+  Output('xwrc', 'data'),
+  Input('home-runs', 'value'),
+  Input('walks', 'value'),
+  Input('strikeouts', 'value'),
+  Input('stolen-bases', 'value'),
+  Input('babip', 'value'),
+  Input('plate-appearances', 'value'),
+  Input('park-factor', 'value')
+  )
+def update_xwrc(hr, bb, k, sb, babip, pa, pf):
+  return (1184.34 * hr / pa + 275.21 * bb / pa - 180.52 * k / pa + 422.14 * babip + 151.75 * sb / pa - 51.57) * 100 / pf
+
+
+## OPS+
+
+@callback(
+  Output('ops-plus', 'data'),
+  Input('obp', 'value'),
+  Input('slg', 'value'),
+  Input('league-obp', 'value'),
+  Input('league-slg', 'value')
+  )
+def update_ops_plus(obp, slg, leagueobp, leagueslg):
+  return 100 * (obp / leagueobp + slg / leagueslg - 1)
+
+
+## Batting Runs
+
+@callback(
+  Output('batting-runs', 'data'),
+  Input('xwrc', 'data'),
+  Input('ops-plus', 'data'),
+  Input('plate-appearances', 'value'),
+  Input('park-factor', 'value'),
+  Input('runs-per-pa', 'value'),
+  Input('radios', 'value')
+  )
+def update_batting_runs(xwrc, opsplus, pa, pf, rppa, selection):
+  if selection == 1:
+    inputtype = xwrc
+  else:
+    inputtype = opsplus
+  return (inputtype + pf - 200) * rppa * pa / 100
+
+
+## Defense Runs
+
+@callback(
+  Output('defense-runs', 'data'),
+  Input('position', 'value'),
+  Input('defense', 'value'),
+  Input('games', 'value')
+  )
+def update_defense_runs(position, defense, games):
+  if position == 'DH':
+    defense = 0
+  else:
+    defense = (defense - 50) * games / 150
+  return defense
+
+
+## Baserunning Runs
+
+@callback(
+  Output('baserunning-runs', 'data'),
+  Input('baserunning', 'value'),
+  Input('plate-appearances', 'value')
+  )
+def update_baserunning_runs(baserunning, pa):
+  return (baserunning - 50) / 2 * pa / 600
+
+
+## Positional Runs
+
+@callback(
+  Output('positional-runs', 'data'),
+  Input('position', 'value'),
+  Input('games', 'value')
+  )
+def update_positional_runs(position, games):
+  if position == 'C':
+    value = 12.5
+  elif position == '1B':
+    value = -12.5
+  elif position in ['2B', '3B', 'CF']:
+    value = 2.5
+  elif position == 'SS':
+    value = 7.5
+  elif position in ['LF', 'RF']:
+    value = -7.5
+  else:
+    value = -17.5
+  return value * games / 162
+
+
+## Replacement Runs - Hitters
+
+@callback(
+  Output('replacement-runs', 'data'),
+  Input('plate-appearances', 'value'),
+  Input('replacement-level', 'value')
+  )
+def update_replacement_runs(pa, replacementlevel):
+  return pa * -replacementlevel / 600
+
+
+## Runs Above Replacement - Hitters
+
+@callback(
+  Output('runs-above-replacement', 'data'),
+  Input('batting-runs', 'data'),
+  Input('defense-runs', 'data'),
+  Input('baserunning-runs', 'data'),
+  Input('positional-runs', 'data'),
+  Input('replacement-runs', 'data')
+  )
+def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns):
+  return battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
+
+
+## Wins Above Replacement - Hitters
+
+@callback(
+  Output('wins-above-replacement', 'data'),
+  Input('runs-above-replacement', 'data'),
+  Input('runs-per-win', 'value')
+  )
+def update_wins_above_replacement(runsabovereplacement, runsperwin):
+  return runsabovereplacement / runsperwin
+
+
+## kwERA
+
+@callback(
+  Output('kwera', 'data'),
+  Input('k', 'value'),
+  Input('bb', 'value'),
+  Input('ip', 'value'),
+  Input('league-era', 'value')
+  )
+def update_kwera(k, bb, ip, era):
+  return era + 1.73 - 12 * (k - bb) / ip / 4.23
+
+
+## FIP
+
+@callback(
+  Output('fip', 'data'),
+  Input('k', 'value'),
+  Input('bb', 'value'),
+  Input('hr', 'value'),
+  Input('ip', 'value'),
+  Input('league-era', 'value')
+  )
+def update_kwera(k, bb, hr, ip, era):
+  return era - .91 + (13 * hr + 3 * bb - 2 * k) / ip
+
+
+## Pitching Runs
+
+@callback(
+  Output('pitching-runs', 'data'),
+  Input('era', 'value'),
+  Input('league-era', 'value'),
+  Input('ip', 'value'),
+  Input('positional-adjustment', 'value'),
+  Input('kwera', 'data'),
+  Input('fip', 'data'),
+  Input('park-factor', 'value'),
+  Input('radios', 'value')
+  )
+def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, pf, selection):
+  if selection == 4:
+    adjustment = 1
+  else:
+    adjustment = 1.094
+  if selection < 5:
+    erainput = era
+  elif selection == 5:
+    erainput = kwera
+  else:
+    erainput = fip
+  return (leagueera - erainput * 100 / pf + positionaladjustment) * ip / 9 * adjustment
+
+
+## Leverage Runs
+
+@callback(
+  Output('leverage-runs', 'data'),
+  Input('pitching-runs', 'data'),
+  Input('gmli', 'value'),
+  Input('position-p', 'value')
+  )
+def update_leverage_runs(pitchingruns, gmli, position):
+  if position == 'Starter':
+    leverage = 1
+  else:
+    leverage = gmli
+  return pitchingruns * (leverage - 1) / 2
+
+
+## Replacement Runs - Pitchers
+
+@callback(
+  Output('replacement-runs-p', 'data'),
+  Input('ip', 'value'),
+  Input('replacement-level-p', 'value')
+  )
+def update_replacement_runs_p(ip, replacementlevel):
+  return ip * - replacementlevel / 200
+
+
+## Runs Above Replacement - Pitchers
+
+@callback(
+  Output('runs-above-replacement-p', 'data'),
+  Input('pitching-runs', 'data'),
+  Input('leverage-runs', 'data'),
+  Input('replacement-runs-p', 'data')
+  )
+def update_runs_above_replacement(pitchingruns, leverageruns, replacementruns):
+  return pitchingruns + leverageruns + replacementruns
+
+
+## Wins Above Replacement - Pitchers
+
+@callback(
+  Output('wins-above-replacement-p', 'data'),
+  Input('runs-above-replacement-p', 'data'),
+  Input('runs-per-win', 'value')
+  )
+def update_wins_above_replacement(runsabovereplacement, runsperwin):
+  return runsabovereplacement / runsperwin
+
+
+### Metric Displays
+
+## wRC+/OPS+
+
+@callback(
+  Output('rate-stat-display', 'children'),
+  Input('xwrc', 'data'),
+  Input('ops-plus', 'data'),
+  Input('radios', 'value')
+  )
+def update_rate_stat(xwrc, opsplus, selection):
+  if selection == 1:
+    stat = xwrc
+    label = 'xwRC+: '
+  else:
+    stat = opsplus
+    label = 'OPS+: '
+  return label + str(int(stat))
+
+
+## Batting Runs
+
+@callback(
+  Output('batting-runs-display', 'children'),
+  Input('batting-runs', 'data')
+  )
+def update_batting_runs_display(battingruns):
+  return 'Batting Runs: ' + str(round(battingruns, 1))
+
+
+## Defense Runs
+
+@callback(
+  Output('defense-runs-display', 'children'),
+  Input('position', 'value'),
+  Input('defense-runs', 'data')
+  )
+def update_defense_runs_display(position, defenseruns):
+  if position == 'DH':
+    dh_caveat = ' (DH, does not play defense)'
+  else:
+    dh_caveat = ''
+  return 'Defensive Runs: ' + str(round(defenseruns, 1)) + dh_caveat
+
+
+## Baserunning Runs
+
+@callback(
+  Output('baserunning-runs-display', 'children'),
+  Input('baserunning-runs', 'data')
+  )
+def update_baserunning_runs_display(baserunningruns):
+  return 'Baserunning Runs: ' + str(round(baserunningruns, 1))
+
+
+## Positional Runs
+
+@callback(
+  Output('positional-runs-display', 'children'),
+  Input('positional-runs', 'data')
+  )
+def update_replacement_runs_display(positionalruns):
+  return 'Positional Runs: ' + str(round(positionalruns, 1))
+
+
+## Replacement Runs - Hitters
+
+@callback(
+  Output('replacement-runs-display', 'children'),
+  Input('replacement-runs', 'data')
+  )
+def update_replacement_runs_display(replacementruns):
+  return 'Replacement Runs: ' + str(round(replacementruns, 1))
+
+
+## Runs Above Replacement - Hitters
+
+@callback(
+  Output('runs-above-replacement-display', 'children'),
+  Input('runs-above-replacement', 'data')
+  )
+def update_runs_above_replacement_display(runsabovereplacement):
+  return 'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
+
+
+## Wins Above Replacement - Hitters
+
+@callback(
+  Output('wins-above-replacement-display', 'children'),
+  Input('wins-above-replacement', 'data')
+  )
+def update_wins_above_replacement_display(winsabovereplacement):
+  return 'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
+
+
+## kwERA
+
+@callback(
+  Output('kwera-display', 'children'),
+  Input('kwera', 'data')
+  )
+def update_kwera_display(kwera):
+  return 'kwERA: ' + str(round(kwera, 2))
+
+
+## FIP
+
+@callback(
+  Output('fip-display', 'children'),
+  Input('fip', 'data')
+  )
+def update_fip_display(fip):
+  return 'FIP: ' + str(round(fip, 2))
+
+
+## Pitching Runs
+
+@callback(
+  Output('pitching-runs-display', 'children'),
+  Input('pitching-runs', 'data')
+  )
+def update_pitching_runs_display(pitchingruns):
+  return 'Pitching Runs: ' + str(round(pitchingruns, 1))
+
+
+## Leverage Runs
+
+@callback(
+  Output('leverage-runs-display', 'children'),
+  Input('leverage-runs', 'data')
+  )
+def update_leverage_runs_display(leverageruns):
+  return 'Leverage Runs: ' + str(round(leverageruns, 1))
+
+
+## Replacement Runs - Pitchers
+
+@callback(
+  Output('replacement-runs-p-display', 'children'),
+  Input('replacement-runs-p', 'data')
+  )
+def update_replacement_runs_display(replacementruns):
+  return 'Replacement Runs: ' + str(round(replacementruns, 1))
+
+
+## Runs Above Replacement - Pitchers
+
+@callback(
+  Output('runs-above-replacement-p-display', 'children'),
+  Input('runs-above-replacement-p', 'data')
+  )
+def update_runs_above_replacement_p_display(runsabovereplacement):
+  return 'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
+
+
+## Wins Above Replacement - Pitchers
+
+@callback(
+  Output('wins-above-replacement-p-display', 'children'),
+  Input('wins-above-replacement-p', 'data')
+  )
+def update_wins_above_replacement_p_display(winsabovereplacement):
+  return 'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
+
+
+### Default Inputs
+
+## Pitching Role Adjustment
+
+@callback(
+  Output('positional-adjustment', 'value'),
+  Input('position-p', 'value')
+  )
+def update_positional_adjustment(position):
+  if position == 'Starter':
+    era = 0.07
+  else:
+    era = -0.11
+  return era
+
+
+## ERA/RA9
+
+@callback(
+  Output('era', 'value'),
+  Input('radios', 'value')
+  )
+def update_era_default(selection):
+  if selection == 4:
+    default = 4.39
+  else:
+    default = 3.99
+  return default
+
+
+## League ERA/RA9
+
+@callback(
+  Output('league-era', 'value'),
+  Input('radios', 'value')
+  )
+def update_era_default(selection):
+  if selection == 4:
+    default = 4.46
+  else:
+    default = 4.08
+  return default
+
+
+## SP/RP Counting Stats
+
+@callback(
+  Output('ip', 'value'),
+  Output('k', 'value'),
+  Output('bb', 'value'),
+  Output('hr', 'value'),
+  Input('position-p', 'value')
+  )
+def update_ip_default(selection):
+  if selection == 'Starter':
+    defaultip = 200
+    defaultk = 200
+    defaultbb = 50
+    defaulthr = 20
+  else:
+    defaultip = 70
+    defaultk = 70
+    defaultbb = 20
+    defaulthr = 10
+  return defaultip, defaultk, defaultbb, defaulthr
+
+
+### Input Labels
+
+## ERA/RA9
+
+@callback(
+  Output('era-label', 'children'),
+  Input('radios', 'value')
+  )
+def update_era_label(selection):
+  if selection == 4:
+    label = 'RA9: '
+  else:
+    label = 'ERA: '
+  return label
+
+
+## League ERA/RA9
+
+@callback(
+  Output('league-era-label', 'children'),
+  Input('radios', 'value')
+  )
+def update_league_era_label(selection):
+  if selection == 4:
+    label = 'League RA9: '
+  else:
+    label = 'League ERA: '
+  return label
+
+
+### Advanced Inputs
+
+## Show/Hide Advanced Inputs
+
+@callback(
+  Output('advanced-selection', 'hidden'),
+  Input('toggle-button', 'n_clicks')
+  )
+def toggle_advanced(nclicks):
+  return (nclicks % 2 == 0)
+
+
+## Toggle Button Label
+
+@callback(
+  Output('toggle-button', 'children'),
+  Input('toggle-button', 'n_clicks')
+  )
+def toggle_advanced(nclicks):
+  if nclicks % 2 == 1:
+    label = 'Hide Advanced Inputs'
+  else:
+    label = 'Show Advanced Inputs'
+  return label
+
+
+### UI Displays by Player Type
+
+## Versions
+
+@callback(
+  Output('radios', 'options'),
+  Output('radios', 'value'),
+  Input('player-type', 'value')
+  )
+def update_options(selection):
+  if selection == 1:
+    choices = [
+      {'label' : 'Original (xwRC+)', 'value' : 1},
+      {'label' : 'OPS+', 'value' : 2}
+    ]
+    default = 1
+  else:
+    choices = [
+      {'label' : 'Original (ERA)', 'value' : 3},
+      {'label' : 'RA9', 'value' : 4},
+      {'label' : 'kwERA', 'value' : 5},
+      {'label' : 'FIP', 'value' : 6}
+    ]
+    default = 3
+  return choices, default
+
+
+## Inputs
+
+@callback(
+  Output('inputs', 'children'),
+  Input('radios', 'value')
+  )
+def update_input_selections(selection):
+  if selection == 1:
+    inputtype = inputs_hitters
+  elif selection == 2:
+    inputtype = inputs_hitters
+  else:
+    inputtype = inputs_pitchers
+  return inputtype
+
+
+## Outputs
+
+@callback(
+  Output('outputs', 'children'),
+  Input('radios', 'value')
+  )
+def update_input_selections(selection):
+  if selection < 3:
+    inputtype = outputs_hitters
+  else:
+    inputtype = outputs_pitchers
+  return inputtype
+
+
+### UI Displays by Version Type
+
+## Hitter Inputs
+
+@callback(
+  Output('home-runs-row-display', 'hidden'),
+  Output('home-runs-break-display', 'hidden'),
+  Output('walks-row-display', 'hidden'),
+  Output('walks-break-display', 'hidden'),
+  Output('strikeouts-row-display', 'hidden'),
+  Output('strikeouts-break-display', 'hidden'),
+  Output('stolen-bases-row-display', 'hidden'),
+  Output('stolen-bases-break-display', 'hidden'),
+  Output('babip-row-display', 'hidden'),
+  Output('babip-break-display', 'hidden'),
+  Output('obp-row-display', 'hidden'),
+  Output('obp-break-display', 'hidden'),
+  Output('slg-row-display', 'hidden'),
+  Output('slg-break-display', 'hidden'),
+  Output('lg-obp-row-display', 'hidden'),
+  Output('lg-obp-break-display', 'hidden'),
+  Output('lg-slg-row-display', 'hidden'),
+  Output('lg-slg-break-display', 'hidden'),
+  Input('radios', 'value')
+  )
+def update_options(selection):
+  if selection == 1:
+    wrcplus = False
+    opsplus = True
+  else:
+    wrcplus = True
+    opsplus = False
+  return wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus
+
+
+## Pitcher Inputs
+
+@callback(
+  Output('era-row-display', 'hidden'),
+  Output('era-break-display', 'hidden'),
+  Output('k-row-display', 'hidden'),
+  Output('k-break-display', 'hidden'),
+  Output('bb-row-display', 'hidden'),
+  Output('bb-break-display', 'hidden'),
+  Output('hr-row-display', 'hidden'),
+  Output('hr-break-display', 'hidden'),
+  Output('kwera-display', 'hidden'),
+  Output('fip-display', 'hidden'),
+  Output('pitching-post-rate-stat-break-display-1', 'hidden'),
+  Output('pitching-post-rate-stat-break-display-2', 'hidden'),
+  Input('radios', 'value')
+  )
+def update_options(selection):
+  if selection < 5:
+    era = False
+    k = True
+    bb = True
+    hr = True
+    kwera = True
+    fip = True
+    estimator = True
+  elif selection == 5:
+    era = True
+    k = False
+    bb = False
+    hr = True
+    kwera = False
+    fip = True
+    estimator = False
+  else:
+    era = True
+    k = False
+    bb = False
+    hr = False
+    kwera = True
+    fip = False
+    estimator = False
+  return era, era, k, k, bb, bb, hr, hr, kwera, fip, estimator, estimator
+
+## Park Factor Explanations
+
+@callback(
+  Output('park-factor-info', 'children'),
+  Input('radios', 'value')
+  )
+def update_options(selection):
+  if selection == 1:
+    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense).'
+  elif selection == 2:
+    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league OBP and SLG, leave this at 100.'
+  elif selection == 4:
+    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league RA9, leave this at 100.'
+  else:
+    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league ERA, leave this at 100.'
+  return info
+
+
+### UI Displays by Pitcher Type
+
+## Leverage
+
+@callback(
+  Output('leverage-row-display', 'hidden'),
+  Output('leverage-break-display', 'hidden'),
+  Output('leverage-runs-break-display', 'hidden'),
+  Output('leverage-runs-display', 'hidden'),
+  Input('position-p', 'value')
+  )
+def update_options(selection):
+  if selection == 'Starter':
+    leverage = True
+  else:
+    leverage = False
+  return leverage, leverage, leverage, leverage
+
+
+#### UI
+
+### Inputs
+
+## Static Input
+
+player_type_select = html.Div(
+  [
+    html.H5(
+      [
+        'Player Type: ',
+        dbc.RadioItems(
+          id = 'player-type',
+          className = 'btn-group',
+          inputClassName = 'btn-check',
+          labelClassName = 'btn btn-outline-primary',
+          labelCheckedClassName = 'active',
+          options =
+            [
+              {'label' : 'Batters', 'value' : 1},
+              {'label' : 'Pitchers', 'value' : 2}
+            ],
+          value = 1,
+        ),
+        html.Div(id = 'output2'),
+      ],
+    className = 'radio-group',
+    )
+  ],
+  style = {'margin-left' : '10px'}
+)
+
+
+## Dynamic Input Blocks
+
+version_select = html.Div(
+  [
+    html.H5(
+      [
+        'Version: ',
+        dbc.RadioItems(
+          id = 'radios',
+          className = 'btn-group',
+          inputClassName = 'btn-check',
+          labelClassName = 'btn btn-outline-primary',
+          labelCheckedClassName = 'active'
+        ),
+        html.Div(id = 'output'),
+      ],
+    className = 'radio-group',
+    )
+  ],
+  style = {'margin-left' : '10px'}
+)
 
 home_runs_row = dbc.Row(
   [
@@ -108,56 +825,6 @@ babip_row = dbc.Row(
   ]
 )
 
-obp_row = dbc.Row(
-  [
-    dbc.Col(html.Label('OBP:'), width = 4),
-    dbc.Col(dcc.Input(id = 'obp', value = .400, type = 'number', step = 0.001), width = 1)
-  ]
-)
-
-slg_row = dbc.Row(
-  [
-    dbc.Col(html.Label('SLG:'), width = 4),
-    dbc.Col(dcc.Input(id = 'slg', value = .500, type = 'number', step = 0.001), width = 1)
-  ]
-)
-
-lg_obp_row = dbc.Row(
-  [
-    dbc.Col(
-      html.Div(
-        [
-          html.Label('League OBP:'),
-          dbc.Button('?', id = 'league-obp-?', style = roundbutton),
-          dbc.Tooltip(
-            'The average OBP for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.',
-            target = 'league-obp-?'
-          )
-        ]
-      ), width = 4, style = {'verticalAlign' : 'center'}
-    ),
-    dbc.Col(dcc.Input(id = 'league-obp', value = .312, type = 'number', step = 0.001), width = 1)
-  ]
-)
-
-lg_slg_row = dbc.Row(
-  [
-    dbc.Col(
-      html.Div(
-        [
-          html.Label('League SLG:'),
-          dbc.Button('?', id = 'league-slg-?', style = roundbutton),
-          dbc.Tooltip(
-            'The average SLG for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.',
-            target = 'league-slg-?'
-          )
-        ]
-      ), width = 4, style = {'verticalAlign' : 'center'}
-    ),
-    dbc.Col(dcc.Input(id = 'league-slg', value = .399, type = 'number', step = 0.001), width = 1)
-  ]
-)
-
 plate_appearances_row = dbc.Row(
   [
     dbc.Col(html.Label('Plate Appearances:'), width = 4),
@@ -172,7 +839,25 @@ games_row = dbc.Row(
   ]
 )
 
-nontextselections = [
+park_factor_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('Park Factor:'),
+          dbc.Button('?', id = 'park-factor-?', style = roundbutton),
+          dbc.Tooltip(
+            target = 'park-factor-?',
+            id = 'park-factor-info'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
+    dbc.Col(dcc.Input(id = 'park-factor', value = 100, type = 'number'), width = 1)
+  ]
+)
+
+hitting_selections = [
   html.Label('Primary Position'),
   dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
   html.Br(),
@@ -212,24 +897,6 @@ nontextselections = [
     value = 50
   )
 ]
-
-park_factor_row = dbc.Row(
-  [
-    dbc.Col(
-      html.Div(
-        [
-          html.Label('Park Factor:'),
-          dbc.Button('?', id = 'park-factor-?', style = roundbutton),
-          dbc.Tooltip(
-            target = 'park-factor-?',
-            id = 'park-factor-info'
-          )
-        ]
-      ), width = 4, style = {'verticalAlign' : 'center'}
-    ),
-    dbc.Col(dcc.Input(id = 'park-factor', value = 100, type = 'number'), width = 1)
-  ]
-)
 
 runs_per_pa_row = dbc.Row(
   [
@@ -285,31 +952,60 @@ runs_per_win_row = dbc.Row(
   ]
 )
 
+obp_row = dbc.Row(
+  [
+    dbc.Col(html.Label('OBP:'), width = 4),
+    dbc.Col(dcc.Input(id = 'obp', value = .400, type = 'number', step = 0.001), width = 1)
+  ]
+)
+
+slg_row = dbc.Row(
+  [
+    dbc.Col(html.Label('SLG:'), width = 4),
+    dbc.Col(dcc.Input(id = 'slg', value = .500, type = 'number', step = 0.001), width = 1)
+  ]
+)
+
+lg_obp_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('League OBP:'),
+          dbc.Button('?', id = 'league-obp-?', style = roundbutton),
+          dbc.Tooltip(
+            'The average OBP for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.',
+            target = 'league-obp-?'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
+    dbc.Col(dcc.Input(id = 'league-obp', value = .312, type = 'number', step = 0.001), width = 1)
+  ]
+)
+
+lg_slg_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('League SLG:'),
+          dbc.Button('?', id = 'league-slg-?', style = roundbutton),
+          dbc.Tooltip(
+            'The average SLG for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.',
+            target = 'league-slg-?'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
+    dbc.Col(dcc.Input(id = 'league-slg', value = .399, type = 'number', step = 0.001), width = 1)
+  ]
+)
+
 era_row = dbc.Row(
   [
     dbc.Col(html.Label(id = 'era-label'), width = 4),
     dbc.Col(dcc.Input(id = 'era', type = 'number', step = 0.01), width = 1),
-  ]
-)
-
-k_row = dbc.Row(
-  [
-    dbc.Col(html.Label('Strikeouts'), width = 4),
-    dbc.Col(dcc.Input(id = 'k', type = 'number', step = 1), width = 1),
-  ]
-)
-
-bb_row = dbc.Row(
-  [
-    dbc.Col(html.Label('Walks'), width = 4),
-    dbc.Col(dcc.Input(id = 'bb', type = 'number', step = 1), width = 1),
-  ]
-)
-
-hr_row = dbc.Row(
-  [
-    dbc.Col(html.Label('Home Runs'), width = 4),
-    dbc.Col(dcc.Input(id = 'hr', type = 'number', step = 1), width = 1),
   ]
 )
 
@@ -341,6 +1037,13 @@ pitching_role_row = dbc.Row(
   ]
 )
 
+positional_adjustment_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Positional Adjustment:'), width = 4),
+    dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
+  ]
+)
+
 replacement_level_p_row = dbc.Row(
   [
     dbc.Col(
@@ -359,61 +1062,31 @@ replacement_level_p_row = dbc.Row(
   ]
 )
 
-positional_adjustment_row = dbc.Row(
+k_row = dbc.Row(
   [
-    dbc.Col(html.Label('Positional Adjustment:'), width = 4),
-    dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
+    dbc.Col(html.Label('Strikeouts'), width = 4),
+    dbc.Col(dcc.Input(id = 'k', type = 'number', step = 1), width = 1),
   ]
 )
 
-player_type_select = html.Div(
+bb_row = dbc.Row(
   [
-    html.H5(
-      [
-        'Player Type: ',
-        dbc.RadioItems(
-          id = 'player-type',
-          className = 'btn-group',
-          inputClassName = 'btn-check',
-          labelClassName = 'btn btn-outline-primary',
-          labelCheckedClassName = 'active',
-          options =
-            [
-              {'label' : 'Batters', 'value' : 1},
-              {'label' : 'Pitchers', 'value' : 2}
-            ],
-          value = 1,
-        ),
-        html.Div(id = 'output2'),
-      ],
-    className = 'radio-group',
-    )
-  ],
-  style = {'margin-left' : '10px'}
+    dbc.Col(html.Label('Walks'), width = 4),
+    dbc.Col(dcc.Input(id = 'bb', type = 'number', step = 1), width = 1),
+  ]
 )
 
-version_select = html.Div(
+hr_row = dbc.Row(
   [
-    html.H5(
-      [
-        'Version: ',
-        dbc.RadioItems(
-          id = 'radios',
-          className = 'btn-group',
-          inputClassName = 'btn-check',
-          labelClassName = 'btn btn-outline-primary',
-          labelCheckedClassName = 'active'
-        ),
-        html.Div(id = 'output'),
-      ],
-    className = 'radio-group',
-    )
-  ],
-  style = {'margin-left' : '10px'}
+    dbc.Col(html.Label('Home Runs'), width = 4),
+    dbc.Col(dcc.Input(id = 'hr', type = 'number', step = 1), width = 1),
+  ]
 )
 
 
-hitting_inputs = dbc.Col(
+## Input Structure
+
+inputs_hitters = dbc.Col(
   [
     html.Div(home_runs_row, id = 'home-runs-row-display'),
     html.Br(id = 'home-runs-break-display'),
@@ -439,7 +1112,7 @@ hitting_inputs = dbc.Col(
     html.Br(id = 'games-break-display'),
     html.Div(park_factor_row, id = 'park-factor-row-display'),
     html.Br(id = 'park-factor-break-display'),
-    dbc.Row(dbc.Col(nontextselections, width = 10)),
+    dbc.Row(dbc.Col(hitting_selections, width = 10)),
     html.Br(),
     dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
     html.Br(),
@@ -453,8 +1126,8 @@ hitting_inputs = dbc.Col(
         runs_per_win_row], id = 'advanced-selection')
       ]
     )
-    
-era_inputs = dbc.Col(
+
+inputs_pitchers = dbc.Col(
   [
     html.Div(era_row, id = 'era-row-display'),
     html.Br(id = 'era-break-display'),
@@ -489,7 +1162,37 @@ era_inputs = dbc.Col(
   ]
 )
 
-outputs_era = [
+
+### Outputs
+
+## Output Structure
+
+outputs_hitters = [
+  html.Div(
+    [
+      html.H6(id = 'rate-stat-display'),
+      html.Br(),
+      html.Br(),
+      html.H6(id = 'batting-runs-display'),
+      html.Br(),
+      html.H6(id = 'defense-runs-display'),
+      html.Br(),
+      html.H6(id = 'baserunning-runs-display'),
+      html.Br(),
+      html.H6(id = 'positional-runs-display'),
+      html.Br(),
+      html.H6(id = 'replacement-runs-display'),
+      html.Br(),
+      html.H6(id = 'runs-above-replacement-display'),
+      html.Br(),
+      html.Br(),
+      html.Br(),
+      html.H4(id = 'wins-above-replacement-display')
+    ]
+  )
+]
+
+outputs_pitchers = [
   html.Div(
     [
       html.H6(id = 'kwera-display'),
@@ -511,6 +1214,29 @@ outputs_era = [
   )
 ]
 
+## Vestigial Phantom Outputs that are Necessary for Some Reason
+
+vestigial = [
+    html.Div(id = 'xwrc'),
+    html.Div(id = 'batting-runs'),
+    html.Div(id = 'defense-runs'),
+    html.Div(id = 'baserunning-runs'),
+    html.Div(id = 'positional-runs'),
+    html.Div(id = 'replacement-runs'),
+    html.Div(id = 'runs-above-replacement'),
+    html.Div(id = 'wins-above-replacement'),
+    html.Div(id = 'ops-plus'),
+    html.Div(id = 'pitching-runs'),
+    html.Div(id = 'replacement-runs-p'),
+    html.Div(id = 'runs-above-replacement-p'),
+    html.Div(id = 'wins-above-replacement-p'),
+    html.Div(id = 'leverage-runs'),
+    html.Div(id = 'kwera'),
+    html.Div(id = 'fip'),
+]
+
+
+### App Layout
 
 app.layout = [
   html.H1('Simple WAR Calculator'),
@@ -525,569 +1251,8 @@ app.layout = [
       dbc.Col(id = 'outputs', width = 3)
     ], justify = 'start'
   ),
-  dbc.Row(outoftheway)
+  dbc.Row(vestigial)
 ]
-
-
-## Calculation callbacks
-
-@callback(
-  Output('xwrc', 'data'),
-  Input('home-runs', 'value'),
-  Input('walks', 'value'),
-  Input('strikeouts', 'value'),
-  Input('stolen-bases', 'value'),
-  Input('babip', 'value'),
-  Input('plate-appearances', 'value'),
-  Input('park-factor', 'value')
-  )
-def update_xwrc(hr, bb, k, sb, babip, pa, pf):
-  return (1184.34 * hr / pa + 275.21 * bb / pa - 180.52 * k / pa + 422.14 * babip + 151.75 * sb / pa - 51.57) * 100 / pf
-
-@callback(
-  Output('batting-runs', 'data'),
-  Input('xwrc', 'data'),
-  Input('ops-plus', 'data'),
-  Input('plate-appearances', 'value'),
-  Input('park-factor', 'value'),
-  Input('runs-per-pa', 'value'),
-  Input('radios', 'value')
-  )
-def update_batting_runs(xwrc, opsplus, pa, pf, rppa, selection):
-  if selection == 1:
-    inputtype = xwrc
-  else:
-    inputtype = opsplus
-  return (inputtype + pf - 200) * rppa * pa / 100
-
-@callback(
-  Output('defense-runs', 'data'),
-  Input('position', 'value'),
-  Input('defense', 'value'),
-  Input('games', 'value')
-  )
-def update_defense_runs(position, defense, games):
-  if position == 'DH':
-    defense = 0
-  else:
-    defense = (defense - 50) * games / 150
-  return defense
-
-@callback(
-  Output('baserunning-runs', 'data'),
-  Input('baserunning', 'value'),
-  Input('plate-appearances', 'value')
-  )
-def update_baserunning_runs(baserunning, pa):
-  return (baserunning - 50) / 2 * pa / 600
-
-@callback(
-  Output('positional-runs', 'data'),
-  Input('position', 'value'),
-  Input('games', 'value')
-  )
-def update_positional_runs(position, games):
-  if position == 'C':
-    value = 12.5
-  elif position == '1B':
-    value = -12.5
-  elif position in ['2B', '3B', 'CF']:
-    value = 2.5
-  elif position == 'SS':
-    value = 7.5
-  elif position in ['LF', 'RF']:
-    value = -7.5
-  else:
-    value = -17.5
-  return value * games / 162
-
-@callback(
-  Output('replacement-runs', 'data'),
-  Input('plate-appearances', 'value'),
-  Input('replacement-level', 'value')
-  )
-def update_replacement_runs(pa, replacementlevel):
-  return pa * -replacementlevel / 600
-
-@callback(
-  Output('runs-above-replacement', 'data'),
-  Input('batting-runs', 'data'),
-  Input('defense-runs', 'data'),
-  Input('baserunning-runs', 'data'),
-  Input('positional-runs', 'data'),
-  Input('replacement-runs', 'data')
-  )
-def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns):
-  return battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
-
-@callback(
-  Output('wins-above-replacement', 'data'),
-  Input('runs-above-replacement', 'data'),
-  Input('runs-per-win', 'value')
-  )
-def update_wins_above_replacement(runsabovereplacement, runsperwin):
-  return runsabovereplacement / runsperwin
-
-@callback(
-  Output('ops-plus', 'data'),
-  Input('obp', 'value'),
-  Input('slg', 'value'),
-  Input('league-obp', 'value'),
-  Input('league-slg', 'value')
-  )
-def update_ops_plus(obp, slg, leagueobp, leagueslg):
-  return 100 * (obp / leagueobp + slg / leagueslg - 1)
-
-@callback(
-  Output('pitching-runs', 'data'),
-  Input('era', 'value'),
-  Input('league-era', 'value'),
-  Input('ip', 'value'),
-  Input('positional-adjustment', 'value'),
-  Input('kwera', 'data'),
-  Input('fip', 'data'),
-  Input('park-factor', 'value'),
-  Input('radios', 'value')
-  )
-def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, pf, selection):
-  if selection == 4:
-    adjustment = 1
-  else:
-    adjustment = 1.094
-  if selection < 5:
-    erainput = era
-  elif selection == 5:
-    erainput = kwera
-  else:
-    erainput = fip
-  return (leagueera - erainput * 100 / pf + positionaladjustment) * ip / 9 * adjustment
-
-@callback(
-  Output('replacement-runs-p', 'data'),
-  Input('ip', 'value'),
-  Input('replacement-level-p', 'value')
-  )
-def update_replacement_runs_p(ip, replacementlevel):
-  return ip * - replacementlevel / 200
-
-@callback(
-  Output('runs-above-replacement-p', 'data'),
-  Input('pitching-runs', 'data'),
-  Input('leverage-runs', 'data'),
-  Input('replacement-runs-p', 'data')
-  )
-def update_runs_above_replacement(pitchingruns, leverageruns, replacementruns):
-  return pitchingruns + leverageruns + replacementruns
-
-@callback(
-  Output('wins-above-replacement-p', 'data'),
-  Input('runs-above-replacement-p', 'data'),
-  Input('runs-per-win', 'value')
-  )
-def update_wins_above_replacement(runsabovereplacement, runsperwin):
-  return runsabovereplacement / runsperwin
-
-@callback(
-  Output('leverage-runs', 'data'),
-  Input('pitching-runs', 'data'),
-  Input('gmli', 'value'),
-  Input('position-p', 'value')
-  )
-def update_leverage_runs(pitchingruns, gmli, position):
-  if position == 'Starter':
-    leverage = 1
-  else:
-    leverage = gmli
-  return pitchingruns * (leverage - 1) / 2
-
-@callback(
-  Output('kwera', 'data'),
-  Input('k', 'value'),
-  Input('bb', 'value'),
-  Input('ip', 'value'),
-  Input('league-era', 'value')
-  )
-def update_kwera(k, bb, ip, era):
-  return era + 1.73 - 12 * (k - bb) / ip / 4.23
-
-@callback(
-  Output('fip', 'data'),
-  Input('k', 'value'),
-  Input('bb', 'value'),
-  Input('hr', 'value'),
-  Input('ip', 'value'),
-  Input('league-era', 'value')
-  )
-def update_kwera(k, bb, hr, ip, era):
-  return era - .91 + (13 * hr + 3 * bb - 2 * k) / ip
-
-
-## Display callbacks
-
-@callback(
-  Output('rate-stat-display', 'children'),
-  Input('xwrc', 'data'),
-  Input('ops-plus', 'data'),
-  Input('radios', 'value')
-  )
-def update_rate_stat(xwrc, opsplus, selection):
-  if selection == 1:
-    stat = xwrc
-    label = 'xwRC+: '
-  else:
-    stat = opsplus
-    label = 'OPS+: '
-  return label + str(int(stat))
-
-@callback(
-  Output('batting-runs-display', 'children'),
-  Input('batting-runs', 'data')
-  )
-def update_batting_runs_display(battingruns):
-  return 'Batting Runs: ' + str(round(battingruns, 1))
-
-@callback(
-  Output('defense-runs-display', 'children'),
-  Input('position', 'value'),
-  Input('defense-runs', 'data')
-  )
-def update_defense_runs_display(position, defenseruns):
-  if position == 'DH':
-    dh_caveat = ' (DH, does not play defense)'
-  else:
-    dh_caveat = ''
-  return 'Defensive Runs: ' + str(round(defenseruns, 1)) + dh_caveat
-
-@callback(
-  Output('baserunning-runs-display', 'children'),
-  Input('baserunning-runs', 'data')
-  )
-def update_baserunning_runs_display(baserunningruns):
-  return 'Baserunning Runs: ' + str(round(baserunningruns, 1))
-
-@callback(
-  Output('positional-runs-display', 'children'),
-  Input('positional-runs', 'data')
-  )
-def update_replacement_runs_display(positionalruns):
-  return 'Positional Runs: ' + str(round(positionalruns, 1))
-
-@callback(
-  Output('replacement-runs-display', 'children'),
-  Input('replacement-runs', 'data')
-  )
-def update_replacement_runs_display(replacementruns):
-  return 'Replacement Runs: ' + str(round(replacementruns, 1))
-
-@callback(
-  Output('runs-above-replacement-display', 'children'),
-  Input('runs-above-replacement', 'data')
-  )
-def update_runs_above_replacement_display(runsabovereplacement):
-  return 'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
-
-@callback(
-  Output('wins-above-replacement-display', 'children'),
-  Input('wins-above-replacement', 'data')
-  )
-def update_wins_above_replacement_display(winsabovereplacement):
-  return 'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
-
-@callback(
-  Output('advanced-selection', 'hidden'),
-  Input('toggle-button', 'n_clicks')
-  )
-def toggle_advanced(nclicks):
-  return (nclicks % 2 == 0)
-
-@callback(
-  Output('toggle-button', 'children'),
-  Input('toggle-button', 'n_clicks')
-  )
-def toggle_advanced(nclicks):
-  if nclicks % 2 == 1:
-    label = 'Hide Advanced Inputs'
-  else:
-    label = 'Show Advanced Inputs'
-  return label
-
-@callback(
-  Output('ops-plus-display', 'children'),
-  Input('ops-plus', 'data')
-  )
-def update_xwrc_display(opsplus):
-  return 'OPS+: ' + str(int(opsplus))
-
-@callback(
-  Output('inputs', 'children'),
-  Input('radios', 'value')
-  )
-def update_input_selections(selection):
-  if selection == 1:
-    inputtype = hitting_inputs
-  elif selection == 2:
-    inputtype = hitting_inputs
-  else:
-    inputtype = era_inputs
-  return inputtype
-
-@callback(
-  Output('positional-adjustment', 'value'),
-  Input('position-p', 'value')
-  )
-def update_positional_adjustment(position):
-  if position == 'Starter':
-    era = 0.07
-  else:
-    era = -0.11
-  return era
-
-@callback(
-  Output('pitching-runs-display', 'children'),
-  Input('pitching-runs', 'data')
-  )
-def update_pitching_runs_display(pitchingruns):
-  return 'Pitching Runs: ' + str(round(pitchingruns, 1))
-
-@callback(
-  Output('replacement-runs-p-display', 'children'),
-  Input('replacement-runs-p', 'data')
-  )
-def update_replacement_runs_display(replacementruns):
-  return 'Replacement Runs: ' + str(round(replacementruns, 1))
-
-@callback(
-  Output('runs-above-replacement-p-display', 'children'),
-  Input('runs-above-replacement-p', 'data')
-  )
-def update_runs_above_replacement_p_display(runsabovereplacement):
-  return 'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
-
-@callback(
-  Output('wins-above-replacement-p-display', 'children'),
-  Input('wins-above-replacement-p', 'data')
-  )
-def update_wins_above_replacement_p_display(winsabovereplacement):
-  return 'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
-
-@callback(
-  Output('outputs', 'children'),
-  Input('radios', 'value')
-  )
-def update_input_selections(selection):
-  if selection < 3:
-    inputtype = outputs
-  else:
-    inputtype = outputs_era
-  return inputtype
-
-@callback(
-  Output('leverage-runs-display', 'children'),
-  Input('leverage-runs', 'data')
-  )
-def update_leverage_runs_display(leverageruns):
-  return 'Leverage Runs: ' + str(round(leverageruns, 1))
-
-@callback(
-  Output('era-label', 'children'),
-  Input('radios', 'value')
-  )
-def update_era_label(selection):
-  if selection == 4:
-    label = 'RA9: '
-  else:
-    label = 'ERA: '
-  return label
-
-@callback(
-  Output('era', 'value'),
-  Input('radios', 'value')
-  )
-def update_era_default(selection):
-  if selection == 4:
-    default = 4.39
-  else:
-    default = 3.99
-  return default
-
-@callback(
-  Output('league-era-label', 'children'),
-  Input('radios', 'value')
-  )
-def update_league_era_label(selection):
-  if selection == 4:
-    label = 'League RA9: '
-  else:
-    label = 'League ERA: '
-  return label
-
-@callback(
-  Output('league-era', 'value'),
-  Input('radios', 'value')
-  )
-def update_era_default(selection):
-  if selection == 4:
-    default = 4.46
-  else:
-    default = 4.08
-  return default
-
-@callback(
-  Output('kwera-display', 'children'),
-  Input('kwera', 'data')
-  )
-def update_kwera_display(kwera):
-  return 'kwERA: ' + str(round(kwera, 2))
-
-@callback(
-  Output('fip-display', 'children'),
-  Input('fip', 'data')
-  )
-def update_fip_display(fip):
-  return 'FIP: ' + str(round(fip, 2))
-
-@callback(
-  Output('ip', 'value'),
-  Output('k', 'value'),
-  Output('bb', 'value'),
-  Output('hr', 'value'),
-  Input('position-p', 'value')
-  )
-def update_ip_default(selection):
-  if selection == 'Starter':
-    defaultip = 200
-    defaultk = 200
-    defaultbb = 50
-    defaulthr = 20
-  else:
-    defaultip = 70
-    defaultk = 70
-    defaultbb = 20
-    defaulthr = 10
-  return defaultip, defaultk, defaultbb, defaulthr
-
-@callback(
-  Output('radios', 'options'),
-  Output('radios', 'value'),
-  Input('player-type', 'value')
-  )
-def update_options(selection):
-  if selection == 1:
-    choices = [
-      {'label' : 'Original (xwRC+)', 'value' : 1},
-      {'label' : 'OPS+', 'value' : 2}
-    ]
-    default = 1
-  else:
-    choices = [
-      {'label' : 'Original (ERA)', 'value' : 3},
-      {'label' : 'RA9', 'value' : 4},
-      {'label' : 'kwERA', 'value' : 5},
-      {'label' : 'FIP', 'value' : 6}
-    ]
-    default = 3
-  return choices, default
-
-@callback(
-  Output('home-runs-row-display', 'hidden'),
-  Output('home-runs-break-display', 'hidden'),
-  Output('walks-row-display', 'hidden'),
-  Output('walks-break-display', 'hidden'),
-  Output('strikeouts-row-display', 'hidden'),
-  Output('strikeouts-break-display', 'hidden'),
-  Output('stolen-bases-row-display', 'hidden'),
-  Output('stolen-bases-break-display', 'hidden'),
-  Output('babip-row-display', 'hidden'),
-  Output('babip-break-display', 'hidden'),
-  Output('obp-row-display', 'hidden'),
-  Output('obp-break-display', 'hidden'),
-  Output('slg-row-display', 'hidden'),
-  Output('slg-break-display', 'hidden'),
-  Output('lg-obp-row-display', 'hidden'),
-  Output('lg-obp-break-display', 'hidden'),
-  Output('lg-slg-row-display', 'hidden'),
-  Output('lg-slg-break-display', 'hidden'),
-  Input('radios', 'value')
-  )
-def update_options(selection):
-  if selection == 1:
-    wrcplus = False
-    opsplus = True
-  else:
-    wrcplus = True
-    opsplus = False
-  return wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, wrcplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus, opsplus
-
-@callback(
-  Output('era-row-display', 'hidden'),
-  Output('era-break-display', 'hidden'),
-  Output('k-row-display', 'hidden'),
-  Output('k-break-display', 'hidden'),
-  Output('bb-row-display', 'hidden'),
-  Output('bb-break-display', 'hidden'),
-  Output('hr-row-display', 'hidden'),
-  Output('hr-break-display', 'hidden'),
-  Output('kwera-display', 'hidden'),
-  Output('fip-display', 'hidden'),
-  Output('pitching-post-rate-stat-break-display-1', 'hidden'),
-  Output('pitching-post-rate-stat-break-display-2', 'hidden'),
-  Input('radios', 'value')
-  )
-def update_options(selection):
-  if selection < 5:
-    era = False
-    k = True
-    bb = True
-    hr = True
-    kwera = True
-    fip = True
-    estimator = True
-  elif selection == 5:
-    era = True
-    k = False
-    bb = False
-    hr = True
-    kwera = False
-    fip = True
-    estimator = False
-  else:
-    era = True
-    k = False
-    bb = False
-    hr = False
-    kwera = True
-    fip = False
-    estimator = False
-  return era, era, k, k, bb, bb, hr, hr, kwera, fip, estimator, estimator
-
-@callback(
-  Output('leverage-row-display', 'hidden'),
-  Output('leverage-break-display', 'hidden'),
-  Output('leverage-runs-break-display', 'hidden'),
-  Output('leverage-runs-display', 'hidden'),
-  Input('position-p', 'value')
-  )
-def update_options(selection):
-  if selection == 'Starter':
-    leverage = True
-  else:
-    leverage = False
-  return leverage, leverage, leverage, leverage
-
-@callback(
-  Output('park-factor-info', 'children'),
-  Input('radios', 'value')
-  )
-def update_options(selection):
-  if selection == 1:
-    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense).'
-  elif selection == 2:
-    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league OBP and SLG, leave this at 100.'
-  elif selection == 4:
-    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league RA9, leave this at 100.'
-  else:
-    info = 'An adjustment for how favorable the run environment was in the parks where the player hit, due to field size, weather, etc. Usually ranges from around 90 (lower scoring) to 110 (more offense). If you are factoring park into the league ERA, leave this at 100.'
-  return info
 
 
 if __name__ == '__main__':
