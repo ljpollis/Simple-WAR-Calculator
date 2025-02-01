@@ -23,6 +23,81 @@ roundbutton = {
 
 #### Callbacks
 
+### UI Displays by Player Type
+
+## Versions
+
+@callback(
+  Output('radios', 'options'),
+  Output('radios', 'value'),
+  Input('player-type', 'value')
+  )
+def update_options(selection):
+  if selection == 1:
+    choices = [
+      {'label' : 'Original (xwRC+)', 'value' : 1},
+      {'label' : 'OPS+', 'value' : 2}
+    ]
+    default = 1
+  else:
+    choices = [
+      {'label' : 'Original (ERA)', 'value' : 3},
+      {'label' : 'RA9', 'value' : 4},
+      {'label' : 'kwERA', 'value' : 5},
+      {'label' : 'FIP', 'value' : 6}
+    ]
+    default = 3
+  return choices, default
+
+
+## Inputs
+
+@callback(
+  Output('inputs', 'children'),
+  Input('radios', 'value')
+  )
+def update_input_selections(selection):
+  if selection < 3:
+    inputtype = inputs_hitters
+  else:
+    inputtype = inputs_pitchers
+  return inputtype
+
+
+## Replacement Level
+
+@callback(
+  Output('replacement-level-label', 'children'),
+  Output('replacement-level', 'value'),
+  Output('replacement-level-info', 'children'),
+  Input('radios', 'value')
+  )
+def update_options(selection):
+  if selection < 3:
+    label = 'Replacement Level (Runs per 600 PA):'
+    default = -20
+    info = 'The difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)'
+  else:
+    label = 'Replacement Level (Runs per 200 IP):'
+    default = -18.5
+    info = 'The difference in performance between an average player and a pitcher you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)'
+  return label, default, info
+
+
+## Outputs
+
+@callback(
+  Output('outputs', 'children'),
+  Input('radios', 'value')
+  )
+def update_input_selections(selection):
+  if selection < 3:
+    inputtype = outputs_hitters
+  else:
+    inputtype = outputs_pitchers
+  return inputtype
+
+
 ### Pitching Inputs
 
 ## Baselines by ERA/RA9
@@ -104,81 +179,6 @@ def toggle_advanced(nclicks):
   else:
     label = 'Show Advanced Inputs'
   return label
-
-
-### UI Displays by Player Type
-
-## Versions
-
-@callback(
-  Output('radios', 'options'),
-  Output('radios', 'value'),
-  Input('player-type', 'value')
-  )
-def update_options(selection):
-  if selection == 1:
-    choices = [
-      {'label' : 'Original (xwRC+)', 'value' : 1},
-      {'label' : 'OPS+', 'value' : 2}
-    ]
-    default = 1
-  else:
-    choices = [
-      {'label' : 'Original (ERA)', 'value' : 3},
-      {'label' : 'RA9', 'value' : 4},
-      {'label' : 'kwERA', 'value' : 5},
-      {'label' : 'FIP', 'value' : 6}
-    ]
-    default = 3
-  return choices, default
-
-
-## Inputs
-
-@callback(
-  Output('inputs', 'children'),
-  Input('radios', 'value')
-  )
-def update_input_selections(selection):
-  if selection < 3:
-    inputtype = inputs_hitters
-  else:
-    inputtype = inputs_pitchers
-  return inputtype
-
-
-## Replacement Level
-
-@callback(
-  Output('replacement-level-label', 'children'),
-  Output('replacement-level', 'value'),
-  Output('replacement-level-info', 'children'),
-  Input('radios', 'value')
-  )
-def update_options(selection):
-  if selection < 3:
-    label = 'Replacement Level (Runs per 600 PA):'
-    default = -20
-    info = 'The difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)'
-  else:
-    label = 'Replacement Level (Runs per 200 IP):'
-    default = -18.5
-    info = 'The difference in performance between an average player and a pitcher you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)'
-  return label, default, info
-
-
-## Outputs
-
-@callback(
-  Output('outputs', 'children'),
-  Input('radios', 'value')
-  )
-def update_input_selections(selection):
-  if selection < 3:
-    inputtype = outputs_hitters
-  else:
-    inputtype = outputs_pitchers
-  return inputtype
 
 
 ### Metric Calculations and Displays
@@ -495,7 +495,7 @@ def update_options(selection):
 
 ### Inputs
 
-## Static Input
+## Version Selection
 
 player_type_select = html.Div(
   [
