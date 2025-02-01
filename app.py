@@ -30,6 +30,8 @@ roundbutton = {
 @callback(
   Output('rate-stat', 'data'),
   Output('rate-stat-display', 'children'),
+  Output('batting-runs', 'data'),
+  Output('batting-runs-display', 'children'),
   Input('home-runs', 'value'),
   Input('walks', 'value'),
   Input('strikeouts', 'value'),
@@ -41,30 +43,18 @@ roundbutton = {
   Input('league-obp', 'value'),
   Input('league-slg', 'value'),
   Input('park-factor', 'value'),
+  Input('runs-per-pa', 'value'),
   Input('radios', 'value')
   )
-def update_xwrc(hr, bb, k, sb, babip, pa, obp, slg, leagueobp, leagueslg, pf, selection):
+def update_xwrc(hr, bb, k, sb, babip, pa, obp, slg, leagueobp, leagueslg, pf, rppa, selection):
   if selection == 1:
     stat = (1184.34 * hr / pa + 275.21 * bb / pa - 180.52 * k / pa + 422.14 * babip + 151.75 * sb / pa - 51.57) * 100 / pf
     label = 'xwRC+: '
   else:
     stat = 100 * (obp / leagueobp + slg / leagueslg - 1) * 100 / pf
     label = 'OPS+: '
-  return stat, label + str(int(stat))
-
-
-## Batting Runs
-
-@callback(
-  Output('batting-runs', 'data'),
-  Input('rate-stat', 'data'),
-  Input('plate-appearances', 'value'),
-  Input('park-factor', 'value'),
-  Input('runs-per-pa', 'value'),
-  Input('radios', 'value')
-  )
-def update_batting_runs(stat, pa, pf, rppa, selection):
-  return (stat + pf - 200) * rppa * pa / 100
+  battingruns = (stat + pf - 200) * rppa * pa / 100
+  return stat, label + str(int(stat)), battingruns, 'Batting Runs: ' + str(round(battingruns, 1))
 
 
 ## Defense Runs
@@ -228,16 +218,6 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
 
 
 ### Metric Displays
-
-## Batting Runs
-
-@callback(
-  Output('batting-runs-display', 'children'),
-  Input('batting-runs', 'data')
-  )
-def update_batting_runs_display(battingruns):
-  return 'Batting Runs: ' + str(round(battingruns, 1))
-
 
 ## Defense Runs
 
