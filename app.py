@@ -143,16 +143,22 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
   return rar, 'Runs Above Replacement: ' + str(round(rar, 1))
 
 
-## Wins Above Replacement - Hitters
+## Wins Above Replacement
 
 @callback(
   Output('wins-above-replacement', 'data'),
   Output('wins-above-replacement-display', 'children'),
   Input('runs-above-replacement', 'data'),
-  Input('runs-per-win', 'value')
+  Input('runs-above-replacement-p', 'data'),
+  Input('runs-per-win', 'value'),
+  Input('radios', 'value')
   )
-def update_wins_above_replacement(runsabovereplacement, runsperwin):
-  war = runsabovereplacement / runsperwin
+def update_wins_above_replacement(rar_pos, rar_p, runsperwin, selection):
+  if selection < 3:
+    rar = rar_pos
+  else:
+    rar = rar_p
+  war = rar / runsperwin
   return war, 'Wins Above Replacement: ' + str(round(war, 1))
 
 
@@ -247,19 +253,6 @@ def update_replacement_runs_p(ip, replacementlevel):
 def update_runs_above_replacement(pitchingruns, leverageruns, replacementruns):
   rar = pitchingruns + leverageruns + replacementruns
   return rar, 'Runs Above Replacement: ' + str(round(rar, 1))
-
-
-## Wins Above Replacement - Pitchers
-
-@callback(
-  Output('wins-above-replacement-p', 'data'),
-  Output('wins-above-replacement-p-display', 'children'),
-  Input('runs-above-replacement-p', 'data'),
-  Input('runs-per-win', 'value')
-  )
-def update_wins_above_replacement(runsabovereplacement, runsperwin):
-  war = runsabovereplacement / runsperwin
-  return war, 'Wins Above Replacement: ' + str(round(war, 1))
 
 
 ### Pitching Inputs
@@ -976,7 +969,7 @@ outputs_pitchers = [
       html.Br(),
       html.Br(),
       html.Br(),
-      html.H4(id = 'wins-above-replacement-p-display')
+      html.H4(id = 'wins-above-replacement-display')
     ]
   )
 ]
@@ -995,7 +988,6 @@ vestigial = [
     html.Div(id = 'pitching-runs'),
     html.Div(id = 'replacement-runs-p'),
     html.Div(id = 'runs-above-replacement-p'),
-    html.Div(id = 'wins-above-replacement-p'),
     html.Div(id = 'leverage-runs'),
     html.Div(id = 'rate-stat-p')
 ]
