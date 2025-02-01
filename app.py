@@ -791,7 +791,19 @@ lg_era_row = dbc.Row(
 
 leverage_row = dbc.Row(
   [
-    dbc.Col(html.Label('Entrance Leverage Index:'), width = 4),
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('Entrance Leverage Index:'),
+          dbc.Button('?', id = 'gmli-?', style = roundbutton),
+          dbc.Tooltip(
+            "The average Leverage Index when the reliever entered the game. Usually ranges from 2.0 (exclusively close and late situations) to 0.5 (full mop-up duty).",
+            target = 'gmli-?',
+            id = 'gmli-info'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
     dbc.Col(dcc.Input(id = 'gmli', value = 1.00, type = 'number', step = 0.01), width = 1)
   ]
 )
