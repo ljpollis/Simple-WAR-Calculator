@@ -65,28 +65,28 @@ outoftheway = [
 home_runs_row = dbc.Row(
   [
     dbc.Col(html.Label('Home Runs:'), width = 4),
-    dbc.Col(dcc.Input(id = 'home-runs', value = '16', type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'home-runs', value = 16, type = 'number'), width = 1)
   ]
 )
 
 walks_row = dbc.Row(
   [
     dbc.Col(html.Label('Walks:'), width = 4),
-    dbc.Col(dcc.Input(id = 'walks', value = '50', type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'walks', value = 50, type = 'number'), width = 1)
   ]
 )
 
 strikeouts_row = dbc.Row(
   [
     dbc.Col(html.Label('Strikeouts:'), width = 4),
-    dbc.Col(dcc.Input(id = 'strikeouts', value = '75', type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'strikeouts', value = 75, type = 'number'), width = 1)
   ]
 )
 
 stolen_bases_row = dbc.Row(
   [
     dbc.Col(html.Label('Stolen Bases:'), width = 4),
-    dbc.Col(dcc.Input(id = 'stolen-bases', value = '8', type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'stolen-bases', value = 8, type = 'number'), width = 1)
   ]
 )
 
@@ -104,21 +104,21 @@ babip_row = dbc.Row(
          ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'babip', value = .300, type = 'number', step = 0.001), width = 1)
   ]
 )
 
 obp_row = dbc.Row(
   [
     dbc.Col(html.Label('OBP:'), width = 4),
-    dbc.Col(dcc.Input(id = 'obp', value = '.400', type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'obp', value = .400, type = 'number', step = 0.001), width = 1)
   ]
 )
 
 slg_row = dbc.Row(
   [
     dbc.Col(html.Label('SLG:'), width = 4),
-    dbc.Col(dcc.Input(id = 'slg', value = '.500', type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'slg', value = .500, type = 'number', step = 0.001), width = 1)
   ]
 )
 
@@ -136,7 +136,7 @@ lg_obp_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'league-obp', value = '.312', type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'league-obp', value = .312, type = 'number', step = 0.001), width = 1)
   ]
 )
 
@@ -154,21 +154,21 @@ lg_slg_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'league-slg', value = '.399', type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'league-slg', value = .399, type = 'number', step = 0.001), width = 1)
   ]
 )
 
 plate_appearances_row = dbc.Row(
   [
     dbc.Col(html.Label('Plate Appearances:'), width = 4),
-    dbc.Col(dcc.Input(id = 'plate-appearances', value = '600', type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'plate-appearances', value = 600, type = 'number'), width = 1)
   ]
 )
 
 games_row = dbc.Row(
   [
     dbc.Col(html.Label('Games:'), width = 4),
-    dbc.Col(dcc.Input(id = 'games', value = '150', type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'games', value = 150, type = 'number'), width = 1)
   ]
 )
 
@@ -227,7 +227,7 @@ park_factor_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'park-factor', value = '100', type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'park-factor', value = 100, type = 'number'), width = 1)
   ]
 )
 
@@ -245,7 +245,7 @@ runs_per_pa_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'runs-per-pa', value = '.117', type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'runs-per-pa', value = .117, type = 'number', step = 0.001), width = 1)
   ]
 )
 
@@ -263,7 +263,7 @@ replacement_level_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'replacement-level', value = '-20', type = 'number', step = 0.1), width = 1)
+    dbc.Col(dcc.Input(id = 'replacement-level', value = -20, type = 'number', step = 0.1), width = 1)
   ]
 )
 
@@ -281,7 +281,7 @@ runs_per_win_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'runs-per-win', value = 9.683, type = 'number', step = 0.001), width = 1)
   ]
 )
 
@@ -355,7 +355,7 @@ replacement_level_p_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'replacement-level-p', value = '-18.5', type = 'number', step = 0.1), width = 1)
+    dbc.Col(dcc.Input(id = 'replacement-level-p', value = -18.5, type = 'number', step = 0.1), width = 1)
   ]
 )
 
@@ -542,7 +542,7 @@ app.layout = [
   Input(component_id = 'park-factor', component_property = 'value')
   )
 def update_xwrc(hr, bb, k, sb, babip, pa, pf):
-  return (1184.34 * float(hr) / float(pa) + 275.21 * float(bb) / float(pa) - 180.52 * float(k) / float(pa) + 422.14 * float(babip) + 151.75 * float(sb) / float(pa) - 51.57) * 100 / float(pf)
+  return (1184.34 * hr / pa + 275.21 * bb / pa - 180.52 * k / pa + 422.14 * babip + 151.75 * sb / pa - 51.57) * 100 / pf
 
 @callback(
   Output('batting-runs', 'data'),
@@ -558,7 +558,7 @@ def update_batting_runs(xwrc, opsplus, pa, pf, rppa, selection):
     inputtype = xwrc
   else:
     inputtype = opsplus
-  return (inputtype + float(pf) - 200) * float(rppa) * float(pa) / 100
+  return (inputtype + pf - 200) * rppa * pa / 100
 
 @callback(
   Output('defense-runs', 'data'),
@@ -570,7 +570,7 @@ def update_defense_runs(position, defense, games):
   if position == 'DH':
     defense = 0
   else:
-    defense = (float(defense) - 50) * float(games) / 150
+    defense = (defense - 50) * games / 150
   return defense
 
 @callback(
@@ -579,7 +579,7 @@ def update_defense_runs(position, defense, games):
   Input('plate-appearances', 'value')
   )
 def update_baserunning_runs(baserunning, pa):
-  return (float(baserunning) - 50) / 2 * float(pa) / 600
+  return (baserunning - 50) / 2 * pa / 600
 
 @callback(
   Output('positional-runs', 'data'),
@@ -599,7 +599,7 @@ def update_positional_runs(position, games):
     value = -7.5
   else:
     value = -17.5
-  return float(value) * float(games) / 162
+  return value * games / 162
 
 @callback(
   Output('replacement-runs', 'data'),
@@ -607,7 +607,7 @@ def update_positional_runs(position, games):
   Input('replacement-level', 'value')
   )
 def update_replacement_runs(pa, replacementlevel):
-  return float(pa) * -float(replacementlevel) / 600
+  return pa * -replacementlevel / 600
 
 @callback(
   Output('runs-above-replacement', 'data'),
@@ -626,7 +626,7 @@ def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, pos
   Input('runs-per-win', 'value')
   )
 def update_wins_above_replacement(runsabovereplacement, runsperwin):
-  return runsabovereplacement / float(runsperwin)
+  return runsabovereplacement / runsperwin
 
 @callback(
   Output('ops-plus', 'data'),
@@ -636,7 +636,7 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
   Input('league-slg', 'value')
   )
 def update_ops_plus(obp, slg, leagueobp, leagueslg):
-  return 100 * (float(obp) / float(leagueobp) + float(slg) / float(leagueslg) - 1)
+  return 100 * (obp / leagueobp + slg / leagueslg - 1)
 
 @callback(
   Output('pitching-runs', 'data'),
@@ -660,7 +660,7 @@ def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, p
     erainput = kwera
   else:
     erainput = fip
-  return (float(leagueera) - float(erainput) * 100 / int(pf) + float(positionaladjustment)) * int(ip) / 9 * adjustment
+  return (leagueera - erainput * 100 / pf + positionaladjustment) * ip / 9 * adjustment
 
 @callback(
   Output('replacement-runs-p', 'data'),
@@ -668,7 +668,7 @@ def update_pitching_runs(era, leagueera, ip, positionaladjustment, kwera, fip, p
   Input('replacement-level-p', 'value')
   )
 def update_replacement_runs_p(ip, replacementlevel):
-  return float(ip) * - float(replacementlevel) / 200
+  return ip * - replacementlevel / 200
 
 @callback(
   Output('runs-above-replacement-p', 'data'),
@@ -685,7 +685,7 @@ def update_runs_above_replacement(pitchingruns, leverageruns, replacementruns):
   Input('runs-per-win', 'value')
   )
 def update_wins_above_replacement(runsabovereplacement, runsperwin):
-  return float(runsabovereplacement) / float(runsperwin)
+  return runsabovereplacement / runsperwin
 
 @callback(
   Output('leverage-runs', 'data'),
@@ -708,7 +708,7 @@ def update_leverage_runs(pitchingruns, gmli, position):
   Input('league-era', 'value')
   )
 def update_kwera(k, bb, ip, era):
-  return float(era) + 1.73 - 12 * (float(k) - float(bb)) / float(ip) / 4.23
+  return era + 1.73 - 12 * (k - bb) / ip / 4.23
 
 @callback(
   Output('fip', 'data'),
@@ -719,7 +719,7 @@ def update_kwera(k, bb, ip, era):
   Input('league-era', 'value')
   )
 def update_kwera(k, bb, hr, ip, era):
-  return float(era) - .91 + (13 * float(hr) + 3 * float(bb) - 2 * float(k)) / float(ip)
+  return era - .91 + (13 * hr + 3 * bb - 2 * k) / ip
 
 
 ## Display callbacks
@@ -798,14 +798,14 @@ def update_wins_above_replacement_display(winsabovereplacement):
   Input('toggle-button', 'n_clicks')
   )
 def toggle_advanced(nclicks):
-  return (int(nclicks) % 2 == 0)
+  return (nclicks % 2 == 0)
 
 @callback(
   Output('toggle-button', 'children'),
   Input('toggle-button', 'n_clicks')
   )
 def toggle_advanced(nclicks):
-  if int(nclicks) % 2 == 1:
+  if nclicks % 2 == 1:
     label = 'Hide Advanced Inputs'
   else:
     label = 'Show Advanced Inputs'
