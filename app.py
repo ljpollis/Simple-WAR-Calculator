@@ -6,60 +6,60 @@ app = Dash(external_stylesheets = [dbc.themes.BOOTSTRAP])
 app.config.suppress_callback_exceptions = True
 
 roundbutton = {
-    "border": None,
-    "border-radius": "50%",
-    "padding": 0,
-    "backgroundColor": "blue",
-    "color": "white",
-    "textAlign": "center",
-    "fontSize": 10,
-    "height": 20,
-    "width": 20,
-    "margin": 2,
+    'border' : None,
+    'border-radius' : '50%',
+    'padding' : 0,
+    'backgroundColor' : 'blue',
+    'color' : 'white',
+    'textAlign' : 'center',
+    'fontSize' : 10,
+    'height' : 20,
+    'width' : 20,
+    'margin' : 2,
 }
 
 outputs = [
   html.Div(
     [
-      html.H6(id='rate-stat-display'),
+      html.H6(id = 'rate-stat-display'),
       html.Br(),
       html.Br(),
-      html.H6(id='batting-runs-display'),
+      html.H6(id = 'batting-runs-display'),
       html.Br(),
-      html.H6(id='defense-runs-display'),
+      html.H6(id = 'defense-runs-display'),
       html.Br(),
-      html.H6(id='baserunning-runs-display'),
+      html.H6(id = 'baserunning-runs-display'),
       html.Br(),
-      html.H6(id='positional-runs-display'),
+      html.H6(id = 'positional-runs-display'),
       html.Br(),
-      html.H6(id='replacement-runs-display'),
+      html.H6(id = 'replacement-runs-display'),
       html.Br(),
-      html.H6(id='runs-above-replacement-display'),
+      html.H6(id = 'runs-above-replacement-display'),
       html.Br(),
       html.Br(),
       html.Br(),
-      html.H4(id='wins-above-replacement-display')
+      html.H4(id = 'wins-above-replacement-display')
     ]
   )
 ]
 
 outoftheway = [
-    html.Div(id='xwrc'),
-    html.Div(id='batting-runs'),
-    html.Div(id='defense-runs'),
-    html.Div(id='baserunning-runs'),
-    html.Div(id='positional-runs'),
-    html.Div(id='replacement-runs'),
-    html.Div(id='runs-above-replacement'),
-    html.Div(id='wins-above-replacement'),
-    html.Div(id='ops-plus'),
-    html.Div(id='pitching-runs'),
-    html.Div(id='replacement-runs-p'),
-    html.Div(id='runs-above-replacement-p'),
-    html.Div(id='wins-above-replacement-p'),
-    html.Div(id='leverage-runs'),
-    html.Div(id='kwera'),
-    html.Div(id='fip'),
+    html.Div(id = 'xwrc'),
+    html.Div(id = 'batting-runs'),
+    html.Div(id = 'defense-runs'),
+    html.Div(id = 'baserunning-runs'),
+    html.Div(id = 'positional-runs'),
+    html.Div(id = 'replacement-runs'),
+    html.Div(id = 'runs-above-replacement'),
+    html.Div(id = 'wins-above-replacement'),
+    html.Div(id = 'ops-plus'),
+    html.Div(id = 'pitching-runs'),
+    html.Div(id = 'replacement-runs-p'),
+    html.Div(id = 'runs-above-replacement-p'),
+    html.Div(id = 'wins-above-replacement-p'),
+    html.Div(id = 'leverage-runs'),
+    html.Div(id = 'kwera'),
+    html.Div(id = 'fip'),
 ]
 
 home_runs_row = dbc.Row(
@@ -96,12 +96,13 @@ babip_row = dbc.Row(
       html.Div(
         [
           html.Label('BABIP:'),
-          dbc.Button('?', id = 'babip-?',style=roundbutton),
+          dbc.Button('?', id = 'babip-?', style = roundbutton),
           dbc.Tooltip(
             "The proportion of batted balls within the field of play that fall for hits. Essentially batting average that doesn't count home runs or strikeouts.",
-            target="babip-?")
+            target = 'babip-?'
+          )
          ]
-      ), width = 4, style={"verticalAlign": "center"}
+      ), width = 4, style = {'verticalAlign' : 'center'}
     ),
     dbc.Col(dcc.Input(id = 'babip', value = '.300', type = 'number', step = 0.001), width = 1)
   ]
@@ -127,13 +128,13 @@ lg_obp_row = dbc.Row(
       html.Div(
         [
           html.Label('League OBP:'),
-          dbc.Button('?', id = 'league-obp-?',style=roundbutton),
+          dbc.Button('?', id = 'league-obp-?', style = roundbutton),
           dbc.Tooltip(
-            "The average OBP for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.",
-            target="league-obp-?"
+            'The average OBP for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.',
+            target = 'league-obp-?'
           )
         ]
-      ), width = 4, style={"verticalAlign": "center"}
+      ), width = 4, style = {'verticalAlign' : 'center'}
     ),
     dbc.Col(dcc.Input(id = 'league-obp', value = '.312', type = 'number', step = 0.001), width = 1)
   ]
@@ -145,13 +146,13 @@ lg_slg_row = dbc.Row(
       html.Div(
         [
           html.Label('League SLG:'),
-          dbc.Button('?', id = 'league-slg-?',style=roundbutton),
+          dbc.Button('?', id = 'league-slg-?', style = roundbutton),
           dbc.Tooltip(
-            "The average SLG for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.",
-            target="league-slg-?"
+            'The average SLG for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.',
+            target = 'league-slg-?'
           )
         ]
-      ), width = 4, style={"verticalAlign": "center"}
+      ), width = 4, style = {'verticalAlign' : 'center'}
     ),
     dbc.Col(dcc.Input(id = 'league-slg', value = '.399', type = 'number', step = 0.001), width = 1)
   ]
@@ -178,10 +179,11 @@ nontextselections = [
   html.Div(
     [
       html.Label('Defensive Performance'),
-      dbc.Button('?', id = 'defense-20-80-?',style=roundbutton),
+      dbc.Button('?', id = 'defense-20-80-?', style = roundbutton),
       dbc.Tooltip(
-        "Baseball scouts grade tools on the 20-80 scale. For defense, 50 is the MLB average, 80 is Ozzie Smith, and 20 is Adam Dunn.",
-        target="defense-20-80-?")
+        'Baseball scouts grade tools on the 20-80 scale. For defense, 50 is the MLB average, 80 is Ozzie Smith, and 20 is Adam Dunn.',
+        target = 'defense-20-80-?'
+      )
     ]
   ),
   dcc.Slider(
@@ -195,10 +197,11 @@ nontextselections = [
   html.Div(
     [
       html.Label('Baserunning Performance'),
-      dbc.Button('?', id = 'baserunning-20-80-?',style=roundbutton),
+      dbc.Button('?', id = 'baserunning-20-80-?', style = roundbutton),
       dbc.Tooltip(
-        "Baseball scouts grade tools on the 20-80 scale. For speed, 50 is the MLB average, 80 is Billy Hamilton, and 20 is Billy Butler.",
-        target="baserunning-20-80-?")
+        'Baseball scouts grade tools on the 20-80 scale. For speed, 50 is the MLB average, 80 is Billy Hamilton, and 20 is Billy Butler.',
+        target = 'baserunning-20-80-?'
+      )
     ]
   ),
   dcc.Slider(
@@ -210,61 +213,77 @@ nontextselections = [
   )
 ]
 
-park_factor_row = dbc.Row([
-  dbc.Col(
-    html.Div(
-      [
-        html.Label('Park Factor:'),
-        dbc.Button('?', id = 'park-factor-?',style=roundbutton),
-        dbc.Tooltip(
-            target="park-factor-?",
-            id="park-factor-info")
-      ]
-    ), width = 4, style={"verticalAlign": "center"}),
-  dbc.Col(dcc.Input(id = 'park-factor', value = '100', type = 'number'), width = 1)
-])
+park_factor_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('Park Factor:'),
+          dbc.Button('?', id = 'park-factor-?', style = roundbutton),
+          dbc.Tooltip(
+            target = 'park-factor-?',
+            id = 'park-factor-info'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
+    dbc.Col(dcc.Input(id = 'park-factor', value = '100', type = 'number'), width = 1)
+  ]
+)
 
-runs_per_pa_row = dbc.Row([
-  dbc.Col(
-    html.Div(
-      [
-        html.Label('League Runs per PA:'),
-        dbc.Button('?', id = 'league-rppa-?',style=roundbutton),
-        dbc.Tooltip(
-            "The baseline runs created per plate appearance across the league.",
-            target="league-rppa-?")
-      ]
-    ), width = 4, style={"verticalAlign": "center"}),
-  dbc.Col(dcc.Input(id = 'runs-per-pa', value = '.117', type = 'number', step = 0.001), width = 1)
-])
+runs_per_pa_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('League Runs per PA:'),
+          dbc.Button('?', id = 'league-rppa-?', style = roundbutton),
+          dbc.Tooltip(
+            'The baseline runs created per plate appearance across the league.',
+            target = 'league-rppa-?'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
+    dbc.Col(dcc.Input(id = 'runs-per-pa', value = '.117', type = 'number', step = 0.001), width = 1)
+  ]
+)
 
-replacement_level_row = dbc.Row([
-  dbc.Col(
-    html.Div(
-      [
-        html.Label('Replacement Level (Runs per 600 PA):'),
-        dbc.Button('?', id = 'replacement-level-?',style=roundbutton),
-        dbc.Tooltip(
-            "The difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)",
-            target="replacement-level-?")
-      ]
-    ), width = 4, style={"verticalAlign": "center"}),
-  dbc.Col(dcc.Input(id = 'replacement-level', value = '-20', type = 'number', step = 0.1), width = 1)
-])
+replacement_level_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('Replacement Level (Runs per 600 PA):'),
+          dbc.Button('?', id = 'replacement-level-?', style = roundbutton),
+          dbc.Tooltip(
+            'The difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)',
+            target = 'replacement-level-?'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
+    dbc.Col(dcc.Input(id = 'replacement-level', value = '-20', type = 'number', step = 0.1), width = 1)
+  ]
+)
 
-runs_per_win_row = dbc.Row([
-  dbc.Col(
-    html.Div(
-      [
-        html.Label('Runs per Win Conversion:'),
-        dbc.Button('?', id = 'runs-per-win-?',style=roundbutton),
-        dbc.Tooltip(
+runs_per_win_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('Runs per Win Conversion:'),
+          dbc.Button('?', id = 'runs-per-win-?', style = roundbutton),
+          dbc.Tooltip(
             "The number of marginal runs scored (or prevented) it takes to increase a team's expected win total by one. Usually around 10 and correlated with R/PA.",
-            target="runs-per-win-?")
-      ]
-    ), width = 4, style={"verticalAlign": "center"}),
-  dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
-])
+            target = 'runs-per-win-?'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
+    dbc.Col(dcc.Input(id = 'runs-per-win', value = '9.683', type = 'number', step = 0.001), width = 1)
+  ]
+)
 
 era_row = dbc.Row(
   [
@@ -322,69 +341,75 @@ pitching_role_row = dbc.Row(
   ]
 )
 
-replacement_level_p_row = dbc.Row([
-  dbc.Col(
-    html.Div(
-      [
-        html.Label('Replacement Level (Runs per 200 IP):'),
-        dbc.Button('?', id = 'replacement-level-p-?',style=roundbutton),
-        dbc.Tooltip(
-            "The difference in performance between an average player and a pitcher you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)",
-            target="replacement-level-p-?")
-      ]
-    ), width = 4, style={"verticalAlign": "center"}),
-  dbc.Col(dcc.Input(id = 'replacement-level-p', value = '-18.5', type = 'number', step = 0.1), width = 1)
-])
+replacement_level_p_row = dbc.Row(
+  [
+    dbc.Col(
+      html.Div(
+        [
+          html.Label('Replacement Level (Runs per 200 IP):'),
+          dbc.Button('?', id = 'replacement-level-p-?', style = roundbutton),
+          dbc.Tooltip(
+            'The difference in performance between an average player and a pitcher you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)',
+            target = 'replacement-level-p-?'
+          )
+        ]
+      ), width = 4, style = {'verticalAlign' : 'center'}
+    ),
+    dbc.Col(dcc.Input(id = 'replacement-level-p', value = '-18.5', type = 'number', step = 0.1), width = 1)
+  ]
+)
 
-positional_adjustment_row = dbc.Row([
-  dbc.Col(html.Label('Positional Adjustment:'), width = 4),
-  dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
-])
+positional_adjustment_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Positional Adjustment:'), width = 4),
+    dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
+  ]
+)
 
 player_type_select = html.Div(
   [
     html.H5(
       [
-        "Player Type: ",
+        'Player Type: ',
         dbc.RadioItems(
-          id="player-type",
-          className="btn-group",
-          inputClassName="btn-check",
-          labelClassName="btn btn-outline-primary",
-          labelCheckedClassName="active",
-          options=
+          id = 'player-type',
+          className = 'btn-group',
+          inputClassName = 'btn-check',
+          labelClassName = 'btn btn-outline-primary',
+          labelCheckedClassName = 'active',
+          options =
             [
-              {"label": "Batters", "value": 1},
-              {"label": "Pitchers", "value": 2}
+              {'label' : 'Batters', 'value' : 1},
+              {'label' : 'Pitchers', 'value' : 2}
             ],
-          value=1,
+          value = 1,
         ),
-        html.Div(id="output2"),
+        html.Div(id = 'output2'),
       ],
-    className="radio-group",
+    className = 'radio-group',
     )
   ],
-  style = {"margin-left": "10px"}
+  style = {'margin-left' : '10px'}
 )
 
 version_select = html.Div(
   [
     html.H5(
       [
-        "Version: ",
+        'Version: ',
         dbc.RadioItems(
-          id="radios",
-          className="btn-group",
-          inputClassName="btn-check",
-          labelClassName="btn btn-outline-primary",
-          labelCheckedClassName="active"
+          id = 'radios',
+          className = 'btn-group',
+          inputClassName = 'btn-check',
+          labelClassName = 'btn btn-outline-primary',
+          labelCheckedClassName = 'active'
         ),
-        html.Div(id="output"),
+        html.Div(id = 'output'),
       ],
-    className="radio-group",
+    className = 'radio-group',
     )
   ],
-  style = {"margin-left": "10px"}
+  style = {'margin-left' : '10px'}
 )
 
 
@@ -467,21 +492,21 @@ era_inputs = dbc.Col(
 outputs_era = [
   html.Div(
     [
-      html.H6(id='kwera-display'),
-      html.H6(id='fip-display'),
-      html.Br(id='pitching-post-rate-stat-break-display-1'),
-      html.Br(id='pitching-post-rate-stat-break-display-2'),
-      html.H6(id='pitching-runs-display'),
+      html.H6(id = 'kwera-display'),
+      html.H6(id = 'fip-display'),
+      html.Br(id = 'pitching-post-rate-stat-break-display-1'),
+      html.Br(id = 'pitching-post-rate-stat-break-display-2'),
+      html.H6(id = 'pitching-runs-display'),
       html.Br(),
-      html.H6(id='leverage-runs-display'),
-      html.Br(id='leverage-runs-break-display'),
-      html.H6(id='replacement-runs-p-display'),
+      html.H6(id = 'leverage-runs-display'),
+      html.Br(id = 'leverage-runs-break-display'),
+      html.H6(id = 'replacement-runs-p-display'),
       html.Br(),
-      html.H6(id='runs-above-replacement-p-display'),
+      html.H6(id = 'runs-above-replacement-p-display'),
       html.Br(),
       html.Br(),
       html.Br(),
-      html.H4(id='wins-above-replacement-p-display')
+      html.H4(id = 'wins-above-replacement-p-display')
     ]
   )
 ]
@@ -496,9 +521,9 @@ app.layout = [
   html.Br(),
   dbc.Row(
     [
-      dbc.Col(id = "inputs", style = {"margin-left": "10px"}, width = 3),
-      dbc.Col(id = "outputs", width = 3)
-    ], justify = "start"
+      dbc.Col(id = 'inputs', style = {'margin-left' : '10px'}, width = 3),
+      dbc.Col(id = 'outputs', width = 3)
+    ], justify = 'start'
   ),
   dbc.Row(outoftheway)
 ]
@@ -949,16 +974,16 @@ def update_ip_default(selection):
 def update_options(selection):
   if selection == 1:
     choices = [
-      {"label": "Original (xwRC+)", "value": 1},
-      {"label": "OPS+", "value": 2}
+      {'label' : 'Original (xwRC+)', 'value' : 1},
+      {'label' : 'OPS+', 'value' : 2}
     ]
     default = 1
   else:
     choices = [
-      {"label": "Original (ERA)", "value": 3},
-      {"label": "RA9", "value": 4},
-      {"label": "kwERA", "value": 5},
-      {"label": "FIP", "value": 6}
+      {'label' : 'Original (ERA)', 'value' : 3},
+      {'label' : 'RA9', 'value' : 4},
+      {'label' : 'kwERA', 'value' : 5},
+      {'label' : 'FIP', 'value' : 6}
     ]
     default = 3
   return choices, default
