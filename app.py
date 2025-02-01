@@ -61,6 +61,7 @@ def update_xwrc(hr, bb, k, sb, babip, pa, obp, slg, leagueobp, leagueslg, pf, rp
 
 @callback(
   Output('defense-runs', 'data'),
+  Output('defense-runs-display', 'children'),
   Input('position', 'value'),
   Input('defense', 'value'),
   Input('games', 'value')
@@ -68,26 +69,31 @@ def update_xwrc(hr, bb, k, sb, babip, pa, obp, slg, leagueobp, leagueslg, pf, rp
 def update_defense_runs(position, defense, games):
   if position == 'DH':
     defense = 0
+    dh_caveat = ' (DH, does not play defense)'
   else:
     defense = (defense - 50) * games / 150
-  return defense
+    dh_caveat = ''
+  return defense, 'Defensive Runs: ' + str(round(defense, 1)) + dh_caveat
 
 
 ## Baserunning Runs
 
 @callback(
   Output('baserunning-runs', 'data'),
+  Output('baserunning-runs-display', 'children'),
   Input('baserunning', 'value'),
   Input('plate-appearances', 'value')
   )
 def update_baserunning_runs(baserunning, pa):
-  return (baserunning - 50) / 2 * pa / 600
+  baserunning = (baserunning - 50) / 2 * pa / 600
+  return baserunning, 'Baserunning Runs: ' + str(round(baserunning, 1))
 
 
 ## Positional Runs
 
 @callback(
   Output('positional-runs', 'data'),
+  Output('positional-runs-display', 'children'),
   Input('position', 'value'),
   Input('games', 'value')
   )
@@ -104,24 +110,28 @@ def update_positional_runs(position, games):
     value = -7.5
   else:
     value = -17.5
-  return value * games / 162
+  position = value * games / 162
+  return position, 'Positional Runs: ' + str(round(position, 1))
 
 
 ## Replacement Runs - Hitters
 
 @callback(
   Output('replacement-runs', 'data'),
+  Output('replacement-runs-display', 'children'),
   Input('plate-appearances', 'value'),
   Input('replacement-level', 'value')
   )
 def update_replacement_runs(pa, replacementlevel):
-  return pa * -replacementlevel / 600
+  replacement = pa * -replacementlevel / 600
+  return replacement, 'Replacement Runs: ' + str(round(replacement, 1))
 
 
 ## Runs Above Replacement - Hitters
 
 @callback(
   Output('runs-above-replacement', 'data'),
+  Output('runs-above-replacement-display', 'children'),
   Input('batting-runs', 'data'),
   Input('defense-runs', 'data'),
   Input('baserunning-runs', 'data'),
@@ -129,18 +139,21 @@ def update_replacement_runs(pa, replacementlevel):
   Input('replacement-runs', 'data')
   )
 def update_runs_above_replacement(battingruns, defenseruns, baserunningruns, positionalruns, replacementruns):
-  return battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
+  rar = battingruns + defenseruns + baserunningruns + positionalruns + replacementruns
+  return rar, 'Runs Above Replacement: ' + str(round(rar, 1))
 
 
 ## Wins Above Replacement - Hitters
 
 @callback(
   Output('wins-above-replacement', 'data'),
+  Output('wins-above-replacement-display', 'children'),
   Input('runs-above-replacement', 'data'),
   Input('runs-per-win', 'value')
   )
 def update_wins_above_replacement(runsabovereplacement, runsperwin):
-  return runsabovereplacement / runsperwin
+  war = runsabovereplacement / runsperwin
+  return war, 'Wins Above Replacement: ' + str(round(war, 1))
 
 
 ## Pitching Runs
@@ -218,71 +231,6 @@ def update_wins_above_replacement(runsabovereplacement, runsperwin):
 
 
 ### Metric Displays
-
-## Defense Runs
-
-@callback(
-  Output('defense-runs-display', 'children'),
-  Input('position', 'value'),
-  Input('defense-runs', 'data')
-  )
-def update_defense_runs_display(position, defenseruns):
-  if position == 'DH':
-    dh_caveat = ' (DH, does not play defense)'
-  else:
-    dh_caveat = ''
-  return 'Defensive Runs: ' + str(round(defenseruns, 1)) + dh_caveat
-
-
-## Baserunning Runs
-
-@callback(
-  Output('baserunning-runs-display', 'children'),
-  Input('baserunning-runs', 'data')
-  )
-def update_baserunning_runs_display(baserunningruns):
-  return 'Baserunning Runs: ' + str(round(baserunningruns, 1))
-
-
-## Positional Runs
-
-@callback(
-  Output('positional-runs-display', 'children'),
-  Input('positional-runs', 'data')
-  )
-def update_replacement_runs_display(positionalruns):
-  return 'Positional Runs: ' + str(round(positionalruns, 1))
-
-
-## Replacement Runs - Hitters
-
-@callback(
-  Output('replacement-runs-display', 'children'),
-  Input('replacement-runs', 'data')
-  )
-def update_replacement_runs_display(replacementruns):
-  return 'Replacement Runs: ' + str(round(replacementruns, 1))
-
-
-## Runs Above Replacement - Hitters
-
-@callback(
-  Output('runs-above-replacement-display', 'children'),
-  Input('runs-above-replacement', 'data')
-  )
-def update_runs_above_replacement_display(runsabovereplacement):
-  return 'Runs Above Replacement: ' + str(round(runsabovereplacement, 1))
-
-
-## Wins Above Replacement - Hitters
-
-@callback(
-  Output('wins-above-replacement-display', 'children'),
-  Input('wins-above-replacement', 'data')
-  )
-def update_wins_above_replacement_display(winsabovereplacement):
-  return 'Wins Above Replacement: ' + str(round(winsabovereplacement, 1))
-
 
 ## kwERA/FIP
 
