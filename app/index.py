@@ -1054,7 +1054,9 @@ ui = [
       dbc.Col(id = 'outputs', width = 3)
     ], justify = 'start'
   ),
-  dbc.Row(vestigial)
+  dbc.Row(vestigial),
+  html.Script('window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };'),
+  html.Script([], 'defer', src='/_vercel/insights/script.js')
 ]
 
 Application = MainApplication()
