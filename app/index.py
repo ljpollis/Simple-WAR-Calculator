@@ -1056,7 +1056,7 @@ ui = [
   ),
   dbc.Row(vestigial),
   html.Script('window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };'),
-  html.Script([], 'defer', src='/_vercel/insights/script.js')
+  html.Script(defer='defer', src='/_vercel/insights/script.js')
 ]
 
 Application = MainApplication()
