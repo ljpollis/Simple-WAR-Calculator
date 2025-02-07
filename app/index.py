@@ -8,7 +8,8 @@ class MainApplication:
     def __init__(self):
         self.__app = Dash(
             __name__,
-            external_stylesheets = [dbc.themes.BOOTSTRAP]
+            external_stylesheets = [dbc.themes.BOOTSTRAP],
+            title = 'The Simple WAR Calculator'
         )
         self.set_layout()
 
