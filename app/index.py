@@ -2,6 +2,7 @@
 
 from dash import callback, Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
+from dash_extensions import DeferScript
 
 class MainApplication:
     def __init__(self):
@@ -1054,7 +1055,9 @@ ui = [
       dbc.Col(id = 'outputs', width = 3)
     ], justify = 'start'
   ),
-  dbc.Row(vestigial)
+  dbc.Row(vestigial),
+  html.Script('window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };'),
+  DeferScript(src='/_vercel/insights/script.js')
 ]
 
 Application = MainApplication()
