@@ -260,7 +260,7 @@ def update_defense_runs(position, defense, games):
   Input('plate-appearances', 'value')
   )
 def update_baserunning_runs(baserunning, pa):
-  baserunning = (baserunning - 50) / 2 * pa / 600
+  baserunning = (baserunning - 50) / 2.5 * pa / 600
   return baserunning, 'Baserunning Runs: ' + str(round(baserunning, 1))
 
 
