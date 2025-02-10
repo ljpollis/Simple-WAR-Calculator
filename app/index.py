@@ -9,7 +9,7 @@ class MainApplication:
         self.__app = Dash(
             __name__,
             external_stylesheets = [dbc.themes.BOOTSTRAP],
-            title = 'The Simple WAR Calculator'
+            title = 'The Simple WAR Calculator',
         )
         self.set_layout()
 
@@ -921,7 +921,7 @@ inputs_hitters = dbc.Col(
     html.Br(id = 'games-break-display'),
     html.Div(park_factor_row, id = 'park-factor-row-display'),
     html.Br(id = 'park-factor-break-display'),
-    dbc.Row(dbc.Col(hitting_selections, width = 10)),
+    dbc.Row(dbc.Col(hitting_selections, width = 12)),
     html.Br(),
     dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
     html.Br(),
@@ -1043,7 +1043,7 @@ vestigial = [
 
 ### App Layout
 
-ui = [
+ui = html.Div([
   html.H1('Simple WAR Calculator'),
   html.Br(),
   player_type_select,
@@ -1052,15 +1052,15 @@ ui = [
   html.Br(),
   dbc.Row(
     [
-      dbc.Col(id = 'inputs', style = {'margin-left' : '10px'}, width = 3),
-      dbc.Col(id = 'outputs', width = 3)
+      dbc.Col(id = 'inputs', style = {'margin-left' : '10px'}, width = 5, lg = 3),
+      dbc.Col(id = 'outputs', width = 5, lg = 3)
     ], justify = 'start'
   ),
   dbc.Row(vestigial),
   html.Script('window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };'),
   DeferScript(src='/_vercel/insights/script.js')
 ]
-
+, style={'minWidth': '1000px'})
 Application = MainApplication()
 app = Application.app.server
 
