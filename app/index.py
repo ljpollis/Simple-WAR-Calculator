@@ -143,6 +143,7 @@ def update_era_displays(version):
   Output('ip', 'value'),
   Output('k', 'value'),
   Output('bb', 'value'),
+  Output('hbp', 'value'),
   Output('hr', 'value'),
   Output('positional-adjustment', 'value'),
   Output('leverage-row-display', 'hidden'),
@@ -156,6 +157,7 @@ def update_pitcher_inputs(role):
     defaultip = 200
     defaultk = 200
     defaultbb = 50
+    defaulthbp = 9
     defaulthr = 20
     adjustment = .07
     leverage = True
@@ -163,10 +165,11 @@ def update_pitcher_inputs(role):
     defaultip = 70
     defaultk = 70
     defaultbb = 20
+    defaulthbp = 3
     defaulthr = 10
     adjustment = -.11
     leverage = False
-  return defaultip, defaultk, defaultbb, defaulthr, adjustment, leverage, leverage, leverage, leverage
+  return defaultip, defaultk, defaultbb, defaulthbp, defaulthr, adjustment, leverage, leverage, leverage, leverage
 
 
 ### Advanced Inputs
@@ -458,6 +461,8 @@ def update_inputs_hitting(version):
   Output('k-break-display', 'hidden'),
   Output('bb-row-display', 'hidden'),
   Output('bb-break-display', 'hidden'),
+  Output('hbp-row-display', 'hidden'),
+  Output('hbp-break-display', 'hidden'),
   Output('hr-row-display', 'hidden'),
   Output('hr-break-display', 'hidden'),
   Output('rate-stat-p-display', 'hidden'),
@@ -470,21 +475,24 @@ def update_inputs_pitching(version):
     era = False
     k = True
     bb = True
+    hbp = True
     hr = True
     estimator = True
   elif version == 5:
     era = True
     k = False
     bb = False
+    hbp = True
     hr = True
     estimator = False
   else:
     era = True
     k = False
     bb = False
+    hbp = False
     hr = False
     estimator = False
-  return era, era, k, k, bb, bb, hr, hr, estimator, estimator, estimator
+  return era, era, k, k, bb, bb, hbp, hbp, hr, hr, estimator, estimator, estimator
 
 ## Park Factor Explanations
 
@@ -885,6 +893,13 @@ bb_row = dbc.Row(
   ]
 )
 
+hbp_row = dbc.Row(
+  [
+    dbc.Col(html.Label('Hit by Pitches'), width = 4),
+    dbc.Col(dcc.Input(id = 'hbp', type = 'number', step = 1), width = 1),
+  ]
+)
+
 hr_row = dbc.Row(
   [
     dbc.Col(html.Label('Home Runs'), width = 4),
@@ -945,6 +960,8 @@ inputs_pitchers = dbc.Col(
     html.Br(id = 'k-break-display'),
     html.Div(bb_row, id = 'bb-row-display'),
     html.Br(id = 'bb-break-display'),
+    html.Div(hbp_row, id = 'hbp-row-display'),
+    html.Br(id = 'hbp-break-display'),
     html.Div(hr_row, id = 'hr-row-display'),
     html.Br(id = 'hr-break-display'),
     html.Div(ip_row, id = 'ip-row-display'),
