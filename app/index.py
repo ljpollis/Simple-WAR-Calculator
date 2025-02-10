@@ -309,17 +309,18 @@ def update_replacement_runs(pa, replacementlevel):
   Output('rate-stat-p-display', 'children'),
   Input('k', 'value'),
   Input('bb', 'value'),
+  Input('hbp', 'value'),
   Input('hr', 'value'),
   Input('ip', 'value'),
   Input('league-era', 'value'),
   Input('radios', 'value')
   )
-def update_rate_stat_p(k, bb, hr, ip, era, selection):
+def update_rate_stat_p(k, bb, hbp, hr, ip, era, selection):
   if selection == 5:
     stat = era + 1.73 - 12 * (k - bb) / ip / 4.23
     label = 'kwERA+: '
   else:
-    stat = era - .91 + (13 * hr + 3 * bb - 2 * k) / ip
+    stat = era - .91 + (13 * hr + 3 * (bb + hbp) - 2 * k) / ip
     label = 'FIP: '
   return stat, label + str(round(stat, 2))
 
