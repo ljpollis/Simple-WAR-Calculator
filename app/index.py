@@ -88,13 +88,13 @@ def update_input_groups(selection):
   )
 def update_replacement_level(version):
   if version < 3:
-    label = 'Replacement Level (Runs per 600 PA):'
+    label = 'Replacement Level:'
     default = -20
-    info = 'The difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)'
+    info = 'The expected difference in batting performance between an average player and a hitter you could easily call up or sign on short notice, expressed in runs per 600 PA.'
   else:
-    label = 'Replacement Level (Runs per 200 IP):'
+    label = 'Replacement Level:'
     default = -18.5
-    info = 'The difference in performance between an average player and a pitcher you could easily call up or sign on short notice, extrapolated over a full season. (This gap is probably smaller in your beer league than it is in the big leagues.)'
+    info = 'The expected difference in performance between an average player and a pitcher you could easily call up or sign on short notice, expressed in runs per 200 IP.'
   return label, default, info
 
 
@@ -125,12 +125,12 @@ def update_input_selections(version):
   )
 def update_era_displays(version):
   if version == 4:
-    default = 4.39
+    default = 3.99
     defaultleague = 4.46
     label = 'RA9: '
     labelleague = 'League RA9: '
   else:
-    default = 3.99
+    default = 3.55
     defaultleague = 4.08
     label = 'ERA: '
     labelleague = 'League ERA: '
@@ -145,31 +145,29 @@ def update_era_displays(version):
   Output('bb', 'value'),
   Output('hbp', 'value'),
   Output('hr', 'value'),
-  Output('positional-adjustment', 'value'),
+  Output('role-adjustment', 'value'),
   Output('leverage-row-display', 'hidden'),
   Output('leverage-break-display', 'hidden'),
-  Output('leverage-runs-break-display', 'hidden'),
-  Output('leverage-runs-display', 'hidden'),
   Input('pitcher-role', 'value')
   )
 def update_pitcher_inputs(role):
   if (role) == 'Starter':
     defaultip = 200
     defaultk = 200
-    defaultbb = 50
-    defaulthbp = 9
+    defaultbb = 70
+    defaulthbp = 10
     defaulthr = 20
     adjustment = .07
-    leverage = True
+    leverage_input = True
   else:
     defaultip = 70
-    defaultk = 70
-    defaultbb = 20
-    defaulthbp = 3
+    defaultk = 90
+    defaultbb = 25
+    defaulthbp = 5
     defaulthr = 10
     adjustment = -.11
-    leverage = False
-  return defaultip, defaultk, defaultbb, defaulthbp, defaulthr, adjustment, leverage, leverage, leverage, leverage
+    leverage_input = False
+  return defaultip, defaultk, defaultbb, defaulthbp, defaulthr, adjustment, leverage_input, leverage_input
 
 
 ### Advanced Inputs
@@ -260,7 +258,7 @@ def update_defense_runs(position, defense, games):
   Input('plate-appearances', 'value')
   )
 def update_baserunning_runs(baserunning, pa):
-  baserunning = (baserunning - 50) / 2 * pa / 600
+  baserunning = (baserunning - 50) / 2.5 * pa / 600
   return baserunning, 'Baserunning Runs: ' + str(round(baserunning, 1))
 
 
@@ -318,7 +316,7 @@ def update_replacement_runs(pa, replacementlevel):
 def update_rate_stat_p(k, bb, hbp, hr, ip, era, selection):
   if selection == 5:
     stat = era + 1.73 - 12 * (k - bb) / ip / 4.23
-    label = 'kwERA+: '
+    label = 'kwERA: '
   else:
     stat = era - .91 + (13 * hr + 3 * (bb + hbp) - 2 * k) / ip
     label = 'FIP: '
@@ -333,7 +331,7 @@ def update_rate_stat_p(k, bb, hbp, hr, ip, era, selection):
   Input('era', 'value'),
   Input('league-era', 'value'),
   Input('ip', 'value'),
-  Input('positional-adjustment', 'value'),
+  Input('role-adjustment', 'value'),
   Input('rate-stat-p', 'data'),
   Input('park-factor', 'value'),
   Input('radios', 'value')
@@ -356,6 +354,8 @@ def update_pitching_runs(era, leagueera, ip, positionaladjustment, dips, pf, sel
 @callback(
   Output('leverage-runs', 'data'),
   Output('leverage-runs-display', 'children'),
+  Output('leverage-runs-display', 'hidden'),
+  Output('leverage-runs-break-display', 'hidden'),
   Input('pitching-runs', 'data'),
   Input('gmli', 'value'),
   Input('pitcher-role', 'value')
@@ -366,7 +366,11 @@ def update_leverage_runs(pitchingruns, gmli, position):
   else:
     gmli = gmli
   leverage = pitchingruns * (gmli - 1) / 2
-  return leverage, 'Leverage Runs: ' + str(round(leverage, 1))
+  if gmli == 1:
+    hide = True
+  else:
+    hide = False
+  return leverage, 'Leverage Runs: ' + str(round(leverage, 1)), hide, hide
 
 
 ## Replacement Runs - Pitchers
@@ -520,10 +524,28 @@ def update_park_factor_info(version):
   )
 def update_park_factor_info(version):
   if version == 4:
-    info = 'The average RA9 for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.'
+    info = 'The average RA9 for the league environment. If you have a park-adjusted version handy, you can put it here and leave the park factor at 100.'
   else:
-    info = 'The average ERA for the league environment. If you have a park-adjusted version handy, you can put it here and league the park factor at 100.'
+    info = 'The average ERA for the league environment. If you have a park-adjusted version handy, you can put it here and leave the park factor at 100.'
   return info
+
+## Role Adjustment Explanations
+
+@callback(
+  Output('role-adjustment-info', 'children'),
+  Input('radios', 'value'),
+  Input('pitcher-role', 'value'),
+  )
+def update_park_factor_info(version, role):
+  if version == 4:
+    stat = 'RA9'
+  else:
+    stat = 'ERA'
+  if role == 'Starter':
+    description = 'harder to pitch well as a starter.'
+  else:
+    description = 'easier to pitch well as a reliever.'
+  return str("A correction to the league " + stat + ", adjusting for the fact that it's " + description)
 
 
 #### UI
@@ -584,7 +606,7 @@ version_select = html.Div(
 home_runs_row = dbc.Row(
   [
     dbc.Col(html.Label('Home Runs:'), width = 4),
-    dbc.Col(dcc.Input(id = 'home-runs', value = 16, type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'home-runs', value = 25, type = 'number'), width = 1)
   ]
 )
 
@@ -598,14 +620,14 @@ walks_row = dbc.Row(
 strikeouts_row = dbc.Row(
   [
     dbc.Col(html.Label('Strikeouts:'), width = 4),
-    dbc.Col(dcc.Input(id = 'strikeouts', value = 75, type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'strikeouts', value = 120, type = 'number'), width = 1)
   ]
 )
 
 stolen_bases_row = dbc.Row(
   [
     dbc.Col(html.Label('Stolen Bases:'), width = 4),
-    dbc.Col(dcc.Input(id = 'stolen-bases', value = 8, type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'stolen-bases', value = 10, type = 'number'), width = 1)
   ]
 )
 
@@ -623,7 +645,7 @@ babip_row = dbc.Row(
          ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'babip', value = .300, type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'babip', value = .291, type = 'number', step = 0.001), width = 1)
   ]
 )
 
@@ -636,7 +658,7 @@ plate_appearances_row = dbc.Row(
 
 games_row = dbc.Row(
   [
-    dbc.Col(html.Label('Games:'), width = 4),
+    dbc.Col(html.Label('Games Played:'), width = 4),
     dbc.Col(dcc.Input(id = 'games', value = 150, type = 'number'), width = 1)
   ]
 )
@@ -661,14 +683,14 @@ park_factor_row = dbc.Row(
 
 hitting_selections = [
   html.Label('Primary Position'),
-  dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
+  dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'SS', id = 'position'),
   html.Br(),
   html.Div(
     [
       html.Label('Defensive Performance'),
       dbc.Button('?', id = 'defense-20-80-?', style = roundbutton),
       dbc.Tooltip(
-        'Baseball scouts grade tools on the 20-80 scale. For defense, 50 is the MLB average, 80 is Ozzie Smith, and 20 is Adam Dunn.',
+        'Baseball scouts grade tools on a bell curve where the scale runs from 20 to 80, where 50 is the league average. For defense, 80 is Ozzie Smith and 20 is Adam Dunn.',
         target = 'defense-20-80-?'
       )
     ]
@@ -686,7 +708,7 @@ hitting_selections = [
       html.Label('Baserunning Performance'),
       dbc.Button('?', id = 'baserunning-20-80-?', style = roundbutton),
       dbc.Tooltip(
-        'Baseball scouts grade tools on the 20-80 scale. For speed, 50 is the MLB average, 80 is Billy Hamilton, and 20 is Billy Butler.',
+        'Baseball scouts grade tools on a bell curve where the scale runs from 20 to 80, where 50 is the league average. For baserunning, 80 is Billy Hamilton and 20 is Billy Butler.',
         target = 'baserunning-20-80-?'
       )
     ]
@@ -708,7 +730,7 @@ runs_per_pa_row = dbc.Row(
           html.Label('League Runs per PA:'),
           dbc.Button('?', id = 'league-rppa-?', style = roundbutton),
           dbc.Tooltip(
-            'The baseline runs created per plate appearance across the league.',
+            'The baseline of runs created per plate appearance across the league.',
             target = 'league-rppa-?'
           )
         ]
@@ -741,7 +763,7 @@ runs_per_win_row = dbc.Row(
     dbc.Col(
       html.Div(
         [
-          html.Label('Runs per Win Conversion:'),
+          html.Label('Runs per Win:'),
           dbc.Button('?', id = 'runs-per-win-?', style = roundbutton),
           dbc.Tooltip(
             "The number of marginal runs scored (or prevented) it takes to increase a team's expected win total by one. Usually around 10 and correlated with R/PA.",
@@ -756,15 +778,15 @@ runs_per_win_row = dbc.Row(
 
 obp_row = dbc.Row(
   [
-    dbc.Col(html.Label('OBP:'), width = 4),
-    dbc.Col(dcc.Input(id = 'obp', value = .400, type = 'number', step = 0.001), width = 1)
+    dbc.Col(html.Label('On-Base Percentage:'), width = 4),
+    dbc.Col(dcc.Input(id = 'obp', value = .355, type = 'number', step = 0.001), width = 1)
   ]
 )
 
 slg_row = dbc.Row(
   [
-    dbc.Col(html.Label('SLG:'), width = 4),
-    dbc.Col(dcc.Input(id = 'slg', value = .500, type = 'number', step = 0.001), width = 1)
+    dbc.Col(html.Label('Slugging Percentage:'), width = 4),
+    dbc.Col(dcc.Input(id = 'slg', value = .455, type = 'number', step = 0.001), width = 1)
   ]
 )
 
@@ -813,7 +835,7 @@ era_row = dbc.Row(
 
 ip_row = dbc.Row(
   [
-    dbc.Col(html.Label('IP'), width = 4),
+    dbc.Col(html.Label('Innings Pitched:'), width = 4),
     dbc.Col(dcc.Input(id = 'ip', type = 'number', step = 1), width = 1),
   ]
 )
@@ -841,7 +863,7 @@ leverage_row = dbc.Row(
     dbc.Col(
       html.Div(
         [
-          html.Label('Entrance Leverage Index:'),
+          html.Label('gmLI:'),
           dbc.Button('?', id = 'gmli-?', style = roundbutton),
           dbc.Tooltip(
             "The average Leverage Index when the reliever entered the game. Usually ranges from 2.0 (exclusively close and late situations) to 0.5 (full mop-up duty).",
@@ -862,21 +884,21 @@ pitching_role_row = dbc.Row(
   ]
 )
 
-positional_adjustment_row = dbc.Row(
+role_adjustment_row = dbc.Row(
   [
     dbc.Col(
       html.Div(
         [
-          html.Label('Positional Adjustment:'),
-          dbc.Button('?', id = 'positional-adjustment-?', style = roundbutton),
+          html.Label('Role Adjustment:'),
+          dbc.Button('?', id = 'role-adjustment-?', style = roundbutton),
           dbc.Tooltip(
-            "Adjusting for the fact that it's easier to pitch out of the bullpen than to be a starter.",
-            target = 'positional-adjustment-?'
+            target = 'role-adjustment-?',
+            id = 'role-adjustment-info'
           )
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'positional-adjustment', type = 'number', step = 0.01), width = 1)
+    dbc.Col(dcc.Input(id = 'role-adjustment', type = 'number', step = 0.01), width = 1)
   ]
 )
 
@@ -971,17 +993,17 @@ inputs_pitchers = dbc.Col(
     html.Br(id = 'lg-era-break-display'),
     html.Div(park_factor_row, id = 'park_factor-row-display'),
     html.Br(id = 'park_factor-break-display'),
-    html.Div(leverage_row, id = 'leverage-row-display'),
-    html.Br(id = 'leverage-break-display'),
     html.Div(pitching_role_row, id = 'pitching-role-display'),
     html.Br(id = 'pitching-break-display'),
+    html.Div(role_adjustment_row, id = 'role-adjustment-display'),
+    html.Br(),
     dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
     html.Br(),
     html.Br(),
     html.Div(
       [
-        positional_adjustment_row,
-        html.Br(),
+        html.Div(leverage_row, id = 'leverage-row-display'),
+        html.Br(id = 'leverage-break-display'),
         replacement_level_row,
         html.Br(),
         runs_per_win_row
