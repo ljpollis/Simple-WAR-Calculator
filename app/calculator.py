@@ -1096,6 +1096,40 @@ ui = html.Div([
       dbc.Col(id = 'outputs', width = 5, lg = 3)
     ], justify = 'start'
   ),
+  dbc.Row(
+    dbc.Col(
+      [
+        dbc.Row(html.Label(
+          [
+            '© 2025 ',
+            html.A('Lewis Pollis', href = 'https://lewispoll.is/', target = '_blank')
+          ]
+        )),
+        dbc.Row(html.Label(
+          [
+            'Code available ',
+            html.A('here', href = 'https://github.com/ljpollis/Simple-WAR-Calculator', target = '_blank'),
+            '.'
+          ]
+        )),
+        dbc.Row(html.Label(
+          [
+            'Explainer, FAQs, and glossary available ',
+            html.A('here', href = 'https://www.thelewsletter.lewispoll.is/p/reintroducing-the-simple-war-calculator', target = '_blank'),
+            '.'
+          ]
+        )),
+        html.Br(),
+        dbc.Row(html.Label(
+          [
+            'To follow my baseball (and other) writing, subscribe to The Lewsletter ',
+            html.A('here', href = 'https://www.thelewsletter.lewispoll.is/subscribe', target = '_blank'),
+            '.'
+          ]
+        ))
+      ], style = {'margin-left' : '20px'}
+    )
+  ),
   dbc.Row(vestigial),
   html.Script('window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };'),
   DeferScript(src='/_vercel/insights/script.js')
