@@ -9,7 +9,7 @@ class MainApplication:
         self.__app = Dash(
             __name__,
             external_stylesheets = [dbc.themes.BOOTSTRAP],
-            title = 'The Simple WAR Calculator',
+            title = 'The Simple WAR Calculator'
         )
         self.set_layout()
 
@@ -1101,6 +1101,7 @@ ui = html.Div([
   DeferScript(src='/_vercel/insights/script.js')
 ]
 , style={'minWidth': '1000px'})
+
 Application = MainApplication()
 app = Application.app.server
 
