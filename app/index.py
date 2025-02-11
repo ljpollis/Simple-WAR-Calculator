@@ -971,17 +971,17 @@ inputs_pitchers = dbc.Col(
     html.Br(id = 'lg-era-break-display'),
     html.Div(park_factor_row, id = 'park_factor-row-display'),
     html.Br(id = 'park_factor-break-display'),
-    html.Div(leverage_row, id = 'leverage-row-display'),
-    html.Br(id = 'leverage-break-display'),
     html.Div(pitching_role_row, id = 'pitching-role-display'),
     html.Br(id = 'pitching-break-display'),
+    html.Div(positional_adjustment_row, id = 'positional-adjustment-display'),
+    html.Br(),
     dbc.Button(outline = True, color = 'primary', id = 'toggle-button', n_clicks = 0),
     html.Br(),
     html.Br(),
     html.Div(
       [
-        positional_adjustment_row,
-        html.Br(),
+        html.Div(leverage_row, id = 'leverage-row-display'),
+        html.Br(id = 'leverage-break-display'),
         replacement_level_row,
         html.Br(),
         runs_per_win_row
