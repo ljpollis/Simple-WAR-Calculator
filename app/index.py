@@ -530,6 +530,24 @@ def update_park_factor_info(version):
     info = 'The average ERA for the league environment. If you have a park-adjusted version handy, you can put it here and leave the park factor at 100.'
   return info
 
+## Role Adjustment Explanations
+
+@callback(
+  Output('role-adjustment-info', 'children'),
+  Input('radios', 'value'),
+  Input('pitcher-role', 'value'),
+  )
+def update_park_factor_info(version, role):
+  if version == 4:
+    stat = 'RA9'
+  else:
+    stat = 'ERA'
+  if role == 'Starter':
+    description = 'harder to pitch well as a starter.'
+  else:
+    description = 'easier to pitch well as a reliever.'
+  return str("A correction to the league " + stat + ", adjusting for the fact that it's " + description)
+
 
 #### UI
 
@@ -875,8 +893,8 @@ role_adjustment_row = dbc.Row(
           html.Label('Role Adjustment:'),
           dbc.Button('?', id = 'role-adjustment-?', style = roundbutton),
           dbc.Tooltip(
-            "Adjusting for the fact that it's easier to pitch out of the bullpen than to be a starter.",
-            target = 'role-adjustment-?'
+            target = 'role-adjustment-?',
+            id = 'role-adjustment-info'
           )
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
