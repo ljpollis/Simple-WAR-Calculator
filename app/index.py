@@ -125,12 +125,12 @@ def update_input_selections(version):
   )
 def update_era_displays(version):
   if version == 4:
-    default = 4.39
+    default = 3.99
     defaultleague = 4.46
     label = 'RA9: '
     labelleague = 'League RA9: '
   else:
-    default = 3.99
+    default = 3.55
     defaultleague = 4.08
     label = 'ERA: '
     labelleague = 'League ERA: '
@@ -157,17 +157,17 @@ def update_pitcher_inputs(role, gmli):
   if (role) == 'Starter':
     defaultip = 200
     defaultk = 200
-    defaultbb = 50
-    defaulthbp = 9
+    defaultbb = 70
+    defaulthbp = 10
     defaulthr = 20
     adjustment = .07
     leverage_input = True
     leverage_display = True
   else:
     defaultip = 70
-    defaultk = 70
-    defaultbb = 20
-    defaulthbp = 3
+    defaultk = 90
+    defaultbb = 25
+    defaulthbp = 5
     defaulthr = 10
     adjustment = -.11
     leverage_input = False
@@ -607,7 +607,7 @@ version_select = html.Div(
 home_runs_row = dbc.Row(
   [
     dbc.Col(html.Label('Home Runs:'), width = 4),
-    dbc.Col(dcc.Input(id = 'home-runs', value = 16, type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'home-runs', value = 25, type = 'number'), width = 1)
   ]
 )
 
@@ -621,14 +621,14 @@ walks_row = dbc.Row(
 strikeouts_row = dbc.Row(
   [
     dbc.Col(html.Label('Strikeouts:'), width = 4),
-    dbc.Col(dcc.Input(id = 'strikeouts', value = 75, type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'strikeouts', value = 120, type = 'number'), width = 1)
   ]
 )
 
 stolen_bases_row = dbc.Row(
   [
     dbc.Col(html.Label('Stolen Bases:'), width = 4),
-    dbc.Col(dcc.Input(id = 'stolen-bases', value = 8, type = 'number'), width = 1)
+    dbc.Col(dcc.Input(id = 'stolen-bases', value = 10, type = 'number'), width = 1)
   ]
 )
 
@@ -684,7 +684,7 @@ park_factor_row = dbc.Row(
 
 hitting_selections = [
   html.Label('Primary Position'),
-  dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'LF', id = 'position'),
+  dcc.Dropdown(['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'], 'SS', id = 'position'),
   html.Br(),
   html.Div(
     [
@@ -780,14 +780,14 @@ runs_per_win_row = dbc.Row(
 obp_row = dbc.Row(
   [
     dbc.Col(html.Label('On-Base Percentage:'), width = 4),
-    dbc.Col(dcc.Input(id = 'obp', value = .400, type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'obp', value = .355, type = 'number', step = 0.001), width = 1)
   ]
 )
 
 slg_row = dbc.Row(
   [
     dbc.Col(html.Label('Slugging Percentage:'), width = 4),
-    dbc.Col(dcc.Input(id = 'slg', value = .500, type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'slg', value = .455, type = 'number', step = 0.001), width = 1)
   ]
 )
 
