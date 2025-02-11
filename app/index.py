@@ -150,9 +150,10 @@ def update_era_displays(version):
   Output('leverage-break-display', 'hidden'),
   Output('leverage-runs-break-display', 'hidden'),
   Output('leverage-runs-display', 'hidden'),
-  Input('pitcher-role', 'value')
+  Input('pitcher-role', 'value'),
+  Input('gmli', 'value')
   )
-def update_pitcher_inputs(role):
+def update_pitcher_inputs(role, gmli):
   if (role) == 'Starter':
     defaultip = 200
     defaultk = 200
@@ -160,7 +161,8 @@ def update_pitcher_inputs(role):
     defaulthbp = 9
     defaulthr = 20
     adjustment = .07
-    leverage = True
+    leverage_input = True
+    leverage_display = True
   else:
     defaultip = 70
     defaultk = 70
@@ -168,8 +170,11 @@ def update_pitcher_inputs(role):
     defaulthbp = 3
     defaulthr = 10
     adjustment = -.11
-    leverage = False
-  return defaultip, defaultk, defaultbb, defaulthbp, defaulthr, adjustment, leverage, leverage, leverage, leverage
+    leverage_input = False
+    leverage_display = False
+  if gmli == 1:
+    leverage_display = True
+  return defaultip, defaultk, defaultbb, defaulthbp, defaulthr, adjustment, leverage_input, leverage_input, leverage_display, leverage_display
 
 
 ### Advanced Inputs
