@@ -148,12 +148,9 @@ def update_era_displays(version):
   Output('role-adjustment', 'value'),
   Output('leverage-row-display', 'hidden'),
   Output('leverage-break-display', 'hidden'),
-  Output('leverage-runs-break-display', 'hidden'),
-  Output('leverage-runs-display', 'hidden'),
-  Input('pitcher-role', 'value'),
-  Input('gmli', 'value')
+  Input('pitcher-role', 'value')
   )
-def update_pitcher_inputs(role, gmli):
+def update_pitcher_inputs(role):
   if (role) == 'Starter':
     defaultip = 200
     defaultk = 200
@@ -162,7 +159,6 @@ def update_pitcher_inputs(role, gmli):
     defaulthr = 20
     adjustment = .07
     leverage_input = True
-    leverage_display = True
   else:
     defaultip = 70
     defaultk = 90
@@ -171,10 +167,7 @@ def update_pitcher_inputs(role, gmli):
     defaulthr = 10
     adjustment = -.11
     leverage_input = False
-    leverage_display = False
-  if gmli == 1:
-    leverage_display = True
-  return defaultip, defaultk, defaultbb, defaulthbp, defaulthr, adjustment, leverage_input, leverage_input, leverage_display, leverage_display
+  return defaultip, defaultk, defaultbb, defaulthbp, defaulthr, adjustment, leverage_input, leverage_input
 
 
 ### Advanced Inputs
@@ -361,6 +354,8 @@ def update_pitching_runs(era, leagueera, ip, positionaladjustment, dips, pf, sel
 @callback(
   Output('leverage-runs', 'data'),
   Output('leverage-runs-display', 'children'),
+  Output('leverage-runs-display', 'hidden'),
+  Output('leverage-runs-break-display', 'hidden'),
   Input('pitching-runs', 'data'),
   Input('gmli', 'value'),
   Input('pitcher-role', 'value')
@@ -371,7 +366,11 @@ def update_leverage_runs(pitchingruns, gmli, position):
   else:
     gmli = gmli
   leverage = pitchingruns * (gmli - 1) / 2
-  return leverage, 'Leverage Runs: ' + str(round(leverage, 1))
+  if gmli == 1:
+    hide = True
+  else:
+    hide = False
+  return leverage, 'Leverage Runs: ' + str(round(leverage, 1)), hide, hide
 
 
 ## Replacement Runs - Pitchers
