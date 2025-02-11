@@ -2,14 +2,14 @@
     "version": 2,
     "builds": [
         {
-            "src": "app/index.py",
+            "src": "app/calculator.py",
             "use": "@vercel/python"
         }
     ],
     "routes": [
         {
             "src": "(.*)",
-            "dest": "app/index.py"
+            "dest": "app/calculator.py"
         }
     ]
 }
