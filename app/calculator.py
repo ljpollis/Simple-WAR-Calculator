@@ -736,7 +736,7 @@ runs_per_pa_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'runs-per-pa', value = .117, type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'runs-per-pa', value = .118, type = 'number', step = 0.001), width = 1)
   ]
 )
 
