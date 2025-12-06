@@ -126,12 +126,12 @@ def update_input_selections(version):
 def update_era_displays(version):
   if version == 4:
     default = 3.99
-    defaultleague = 4.46
+    defaultleague = 4.52
     label = 'RA9: '
     labelleague = 'League RA9: '
   else:
     default = 3.55
-    defaultleague = 4.08
+    defaultleague = 4.16
     label = 'ERA: '
     labelleague = 'League ERA: '
   return default, defaultleague, label, labelleague
@@ -157,7 +157,7 @@ def update_pitcher_inputs(role):
     defaultbb = 70
     defaulthbp = 10
     defaulthr = 20
-    adjustment = .07
+    adjustment = .05
     leverage_input = True
   else:
     defaultip = 70
@@ -165,7 +165,7 @@ def update_pitcher_inputs(role):
     defaultbb = 25
     defaulthbp = 5
     defaulthr = 10
-    adjustment = -.11
+    adjustment = -.08
     leverage_input = False
   return defaultip, defaultk, defaultbb, defaulthbp, defaulthr, adjustment, leverage_input, leverage_input
 
@@ -315,10 +315,10 @@ def update_replacement_runs(pa, replacementlevel):
   )
 def update_rate_stat_p(k, bb, hbp, hr, ip, era, selection):
   if selection == 5:
-    stat = era + 1.73 - 12 * (k - bb) / ip / 4.23
+    stat = era + 1.66 - 12 * (k - bb) / ip / 4.23
     label = 'kwERA: '
   else:
-    stat = era - .91 + (13 * hr + 3 * (bb + hbp) - 2 * k) / ip
+    stat = era - 1.03 + (13 * hr + 3 * (bb + hbp) - 2 * k) / ip
     label = 'FIP: '
   return stat, label + str(round(stat, 2))
 
@@ -340,7 +340,7 @@ def update_pitching_runs(era, leagueera, ip, positionaladjustment, dips, pf, sel
   if selection == 4:
     adjustment = 1
   else:
-    adjustment = 1.094
+    adjustment = 1.086
   if selection < 5:
     erainput = era
   else:
@@ -736,7 +736,7 @@ runs_per_pa_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'runs-per-pa', value = .117, type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'runs-per-pa', value = .118, type = 'number', step = 0.001), width = 1)
   ]
 )
 
@@ -772,7 +772,7 @@ runs_per_win_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'runs-per-win', value = 9.683, type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'runs-per-win', value = 9.774, type = 'number', step = 0.001), width = 1)
   ]
 )
 
@@ -804,7 +804,7 @@ lg_obp_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'league-obp', value = .312, type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'league-obp', value = .315, type = 'number', step = 0.001), width = 1)
   ]
 )
 
@@ -822,7 +822,7 @@ lg_slg_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'league-slg', value = .399, type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'league-slg', value = .404, type = 'number', step = 0.001), width = 1)
   ]
 )
 
