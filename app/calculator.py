@@ -340,7 +340,7 @@ def update_pitching_runs(era, leagueera, ip, positionaladjustment, dips, pf, sel
   if selection == 4:
     adjustment = 1
   else:
-    adjustment = 1.094
+    adjustment = 1.086
   if selection < 5:
     erainput = era
   else:
