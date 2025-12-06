@@ -804,7 +804,7 @@ lg_obp_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'league-obp', value = .312, type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'league-obp', value = .315, type = 'number', step = 0.001), width = 1)
   ]
 )
 
