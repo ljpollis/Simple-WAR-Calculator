@@ -126,12 +126,12 @@ def update_input_selections(version):
 def update_era_displays(version):
   if version == 4:
     default = 3.99
-    defaultleague = 4.46
+    defaultleague = 4.52
     label = 'RA9: '
     labelleague = 'League RA9: '
   else:
     default = 3.55
-    defaultleague = 4.08
+    defaultleague = 4.16
     label = 'ERA: '
     labelleague = 'League ERA: '
   return default, defaultleague, label, labelleague
