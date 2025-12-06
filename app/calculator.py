@@ -822,7 +822,7 @@ lg_slg_row = dbc.Row(
         ]
       ), width = 4, style = {'verticalAlign' : 'center'}
     ),
-    dbc.Col(dcc.Input(id = 'league-slg', value = .399, type = 'number', step = 0.001), width = 1)
+    dbc.Col(dcc.Input(id = 'league-slg', value = .404, type = 'number', step = 0.001), width = 1)
   ]
 )
 
