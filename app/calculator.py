@@ -157,7 +157,7 @@ def update_pitcher_inputs(role):
     defaultbb = 70
     defaulthbp = 10
     defaulthr = 20
-    adjustment = .07
+    adjustment = .05
     leverage_input = True
   else:
     defaultip = 70
@@ -165,7 +165,7 @@ def update_pitcher_inputs(role):
     defaultbb = 25
     defaulthbp = 5
     defaulthr = 10
-    adjustment = -.11
+    adjustment = -.08
     leverage_input = False
   return defaultip, defaultk, defaultbb, defaulthbp, defaulthr, adjustment, leverage_input, leverage_input
 
