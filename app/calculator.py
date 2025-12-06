@@ -315,10 +315,10 @@ def update_replacement_runs(pa, replacementlevel):
   )
 def update_rate_stat_p(k, bb, hbp, hr, ip, era, selection):
   if selection == 5:
-    stat = era + 1.73 - 12 * (k - bb) / ip / 4.23
+    stat = era + 1.66 - 12 * (k - bb) / ip / 4.23
     label = 'kwERA: '
   else:
-    stat = era - .91 + (13 * hr + 3 * (bb + hbp) - 2 * k) / ip
+    stat = era - 1.03 + (13 * hr + 3 * (bb + hbp) - 2 * k) / ip
     label = 'FIP: '
   return stat, label + str(round(stat, 2))
 
